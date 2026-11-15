@@ -130,7 +130,9 @@
     .tag { padding: 5px 10px; border: 1px solid rgba(159,188,229,.23); border-radius: 999px; color: #c0cce1; font-size: .69rem; background: rgba(255,255,255,.035); }
     .project-visual { min-height: 190px; display: grid; place-items: center; position: relative; }
     .clock-orbit { width: 176px; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid rgba(81,243,229,.45); border-radius: 50%; background: radial-gradient(circle, rgba(81,243,229,.15), rgba(100,170,255,.06) 48%, transparent 70%); box-shadow: 0 0 45px rgba(81,243,229,.13), inset 0 0 35px rgba(100,170,255,.1); }
-    .clock-face { width: 116px; height: 116px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.26); border-radius: 20px; background: linear-gradient(145deg, rgba(8,14,27,.96), rgba(20,27,49,.95)); box-shadow: 0 10px 35px rgba(0,0,0,.35); color: #fff; font: 700 2rem ui-monospace, monospace; text-shadow: 0 0 18px rgba(81,243,229,.8); }
+    .clock-face { position: relative; width: 116px; height: 116px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.26); border-radius: 20px; background: linear-gradient(145deg, rgba(8,14,27,.96), rgba(20,27,49,.95)); box-shadow: 0 10px 35px rgba(0,0,0,.35); color: #fff; font: 700 2rem ui-monospace, monospace; text-shadow: 0 0 18px rgba(81,243,229,.8); }
+    .clock-time { font-variant-numeric: tabular-nums; }
+    .clock-seconds { position: absolute; top: 10px; right: 10px; color: var(--cyan); font: 700 .62rem/1 ui-monospace, monospace; letter-spacing: .02em; text-shadow: 0 0 10px rgba(81,243,229,.8); }
     .project-cta { margin-top: 26px; }
     .about { padding: 18px 0 86px; }
     .about-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 35px; padding: 30px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -228,7 +230,7 @@
           </div>
         </div>
         <div class="project-visual" aria-hidden="true">
-          <div class="clock-orbit"><div class="clock-face">12:45</div></div>
+          <div class="clock-orbit"><div class="clock-face"><span class="clock-time" id="live-clock-time">00:00</span><span class="clock-seconds" id="live-clock-seconds">00</span></div></div>
         </div>
       </article>
     </section>
@@ -265,6 +267,20 @@
   </footer>
   <script>
     document.getElementById("year").textContent = String(new Date().getFullYear());
+
+    const clockTime = document.getElementById("live-clock-time");
+    const clockSeconds = document.getElementById("live-clock-seconds");
+
+    function updateLiveClock() {
+      const now = new Date();
+      clockTime.textContent = [now.getHours(), now.getMinutes()]
+        .map(value => String(value).padStart(2, "0"))
+        .join(":");
+      clockSeconds.textContent = String(now.getSeconds()).padStart(2, "0");
+    }
+
+    updateLiveClock();
+    setInterval(updateLiveClock, 1000);
   </script>
 </body>
 </html>
