@@ -45,8 +45,8 @@
     }
     body::before {
       background:
-        linear-gradient(180deg, rgba(5, 9, 20, .60) 0%, rgba(5, 9, 20, .73) 48%, rgba(5, 9, 20, .91) 100%),
-        linear-gradient(105deg, rgba(5, 17, 35, .54), rgba(30, 10, 44, .25) 55%, rgba(5, 17, 35, .55)),
+        linear-gradient(180deg, rgba(5, 9, 20, .10) 0%, rgba(5, 9, 20, .16) 48%, rgba(5, 9, 20, .28) 100%),
+        linear-gradient(105deg, rgba(5, 17, 35, .08), rgba(30, 10, 44, .06) 55%, rgba(5, 17, 35, .08)),
         url("./background_earth.jpg") center 42% / cover no-repeat;
       transform: scale(1.015);
     }
@@ -65,7 +65,7 @@
     .site-header {
       position: sticky; top: 0; z-index: 20;
       border-bottom: 1px solid rgba(112, 180, 255, .22);
-      background: rgba(5, 9, 20, .68);
+      background: rgba(5, 9, 20, .32);
       backdrop-filter: blur(20px);
     }
     .nav { min-height: 74px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -109,7 +109,7 @@
       position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr);
       gap: 34px; align-items: center; padding: clamp(25px, 5vw, 45px);
       overflow: hidden; border: 1px solid rgba(81,243,229,.38); border-radius: 18px;
-      background: linear-gradient(115deg, rgba(5, 30, 45, .88), rgba(22, 20, 49, .88) 58%, rgba(48, 20, 55, .83));
+      background: linear-gradient(115deg, rgba(5, 30, 45, .62), rgba(22, 20, 49, .62) 58%, rgba(48, 20, 55, .60));
       box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 20px 65px rgba(0,0,0,.28), 0 0 36px rgba(81,243,229,.08);
       backdrop-filter: blur(16px);
     }
@@ -134,7 +134,7 @@
     .contact { padding: 36px 0 88px; text-align: center; }
     .contact h2 { max-width: 650px; margin: 12px auto 14px; }
     .contact p { max-width: 510px; margin: 0 auto 25px; color: var(--muted); font-size: .92rem; }
-    footer { border-top: 1px solid var(--line); padding: 22px 0; color: var(--dim); font-size: .76rem; background: rgba(3,7,16,.42); }
+    footer { border-top: 1px solid var(--line); padding: 22px 0; color: var(--dim); font-size: .76rem; background: rgba(3,7,16,.22); }
     .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
     .footer-mark { color: var(--cyan); font: 750 .67rem ui-monospace, monospace; letter-spacing: .14em; }
     @media (max-width: 720px) {
