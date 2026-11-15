@@ -3,126 +3,147 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080b12">
-  <meta name="description" content="MazBayID — a digital workshop for software, experiments, and connected devices.">
-  <title>MazBayID — Digital Workshop</title>
+  <meta name="theme-color" content="#0a0d14">
+  <meta name="description" content="MazBayID is an independent technology portfolio exploring software, embedded systems, creative tools, and connected devices.">
+  <meta property="og:title" content="MazBayID — Independent Technology Portfolio">
+  <meta property="og:description" content="Building useful software, exploring connected technology, and turning ideas into working systems.">
+  <meta property="og:type" content="website">
+  <title>MazBayID — Independent Technology Portfolio</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #080b12;
-      --panel: rgba(16, 23, 36, .78);
-      --panel-strong: #101725;
-      --text: #edf4ff;
-      --muted: #91a0b8;
-      --line: rgba(148, 169, 204, .16);
-      --cyan: #69e5ee;
-      --blue: #7798ff;
-      --violet: #ad8cff;
-      --max: 1120px;
+      --bg: #0a0d14;
+      --surface: #111722;
+      --surface-2: #151e2b;
+      --text: #f2f5fa;
+      --muted: #9aa8bb;
+      --subtle: #68778c;
+      --line: rgba(164, 184, 211, .14);
+      --accent: #75e1dc;
+      --accent-2: #9db4ff;
+      --max: 1160px;
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
     body {
       margin: 0;
       min-width: 320px;
       background:
-        radial-gradient(ellipse at 12% 8%, rgba(48, 111, 153, .19), transparent 34rem),
-        radial-gradient(ellipse at 88% 24%, rgba(111, 73, 164, .13), transparent 32rem),
+        radial-gradient(ellipse at 78% 3%, rgba(75, 111, 164, .16), transparent 36rem),
+        radial-gradient(ellipse at 8% 28%, rgba(59, 157, 153, .09), transparent 34rem),
         var(--bg);
       color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.6;
+      font: 16px/1.65 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
     a { color: inherit; text-decoration: none; }
-    a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; border-radius: 5px; }
-    .shell { width: min(var(--max), calc(100% - 44px)); margin-inline: auto; }
-    .topbar {
-      position: sticky; top: 0; z-index: 10;
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 7px; }
+    .container { width: min(var(--max), calc(100% - 48px)); margin-inline: auto; }
+    .skip-link { position: absolute; left: 14px; top: -60px; z-index: 30; padding: 10px 14px; border-radius: 8px; background: var(--accent); color: #071314; }
+    .skip-link:focus { top: 12px; }
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
       border-bottom: 1px solid var(--line);
-      background: rgba(8, 11, 18, .78);
+      background: rgba(10, 13, 20, .82);
       backdrop-filter: blur(18px);
     }
     .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: .11em; font-size: .91rem; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; font-size: .88rem; font-weight: 800; letter-spacing: .16em; }
     .brand-mark {
-      width: 34px; height: 34px; display: grid; place-items: center;
-      border: 1px solid rgba(105,229,238,.5); border-radius: 10px;
-      color: var(--cyan); background: rgba(105,229,238,.08);
-      box-shadow: 0 0 24px rgba(105,229,238,.12);
-      font-size: .85rem;
+      display: grid; place-items: center; width: 37px; height: 37px;
+      border: 1px solid rgba(117,225,220,.38); border-radius: 11px;
+      background: rgba(117,225,220,.08); color: var(--accent);
+      font: 700 .82rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      box-shadow: 0 0 26px rgba(117,225,220,.08);
     }
-    .nav-links { display: flex; align-items: center; gap: 29px; color: var(--muted); font-size: .88rem; }
+    .nav-links { display: flex; align-items: center; gap: 30px; color: var(--muted); font-size: .88rem; }
     .nav-links a:hover { color: var(--text); }
-    .nav-cta { padding: 9px 15px; border: 1px solid var(--line); border-radius: 8px; color: var(--text); }
-    .hero { position: relative; padding: 112px 0 94px; overflow: hidden; }
-    .hero::after {
-      content: ""; position: absolute; width: 440px; height: 440px; right: -160px; top: 20px;
-      border: 1px solid rgba(105,229,238,.11); border-radius: 50%;
-      box-shadow: 0 0 0 42px rgba(105,229,238,.025), 0 0 0 86px rgba(105,229,238,.018);
+    .nav-links .nav-contact { padding: 9px 15px; border: 1px solid var(--line); border-radius: 8px; color: var(--text); }
+    .hero { position: relative; padding: 118px 0 104px; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; width: 420px; height: 420px; right: -145px; top: 38px;
+      border: 1px solid rgba(117,225,220,.13); border-radius: 50%;
+      box-shadow: 0 0 0 44px rgba(117,225,220,.025), 0 0 0 92px rgba(117,225,220,.018), 0 0 0 142px rgba(117,225,220,.012);
       pointer-events: none;
     }
-    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--cyan); font: 700 .72rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .17em; text-transform: uppercase; }
-    .eyebrow::before { content: ""; width: 24px; height: 1px; background: currentColor; }
-    h1 { max-width: 790px; margin: 24px 0 20px; font-size: clamp(3rem, 8vw, 6.2rem); line-height: .99; letter-spacing: -.065em; font-weight: 780; }
-    .gradient { color: transparent; background: linear-gradient(100deg, var(--cyan), #9ab6ff 55%, var(--violet)); background-clip: text; -webkit-background-clip: text; }
-    .hero-copy { max-width: 590px; color: var(--muted); font-size: clamp(1rem, 2vw, 1.13rem); }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
-    .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 0 18px; border-radius: 9px; font-size: .9rem; font-weight: 700; transition: transform .2s, border-color .2s, background .2s; }
+    .hero-content { position: relative; z-index: 1; max-width: 790px; }
+    .eyebrow, .section-label {
+      color: var(--accent); font: 700 .7rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: .18em; text-transform: uppercase;
+    }
+    .eyebrow { display: inline-flex; align-items: center; gap: 11px; }
+    .eyebrow::before { content: ""; width: 25px; height: 1px; background: currentColor; }
+    h1 { margin: 25px 0 22px; font-size: clamp(3.2rem, 8vw, 6.4rem); line-height: .99; letter-spacing: -.075em; font-weight: 780; }
+    .gradient { color: transparent; background: linear-gradient(105deg, var(--accent), #a6c0ff 72%, #c0a8f4); background-clip: text; -webkit-background-clip: text; }
+    .hero-copy { max-width: 620px; margin: 0; color: var(--muted); font-size: clamp(1rem, 2vw, 1.14rem); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 35px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 47px; padding: 0 19px; border-radius: 9px; font-size: .88rem; font-weight: 750; transition: transform .2s, border-color .2s, background .2s; }
     .button:hover { transform: translateY(-2px); }
-    .button-primary { color: #071116; background: var(--cyan); box-shadow: 0 8px 28px rgba(105,229,238,.16); }
+    .button-primary { color: #071516; background: var(--accent); box-shadow: 0 9px 28px rgba(117,225,220,.13); }
     .button-secondary { border: 1px solid var(--line); background: rgba(255,255,255,.025); }
+    .button-secondary:hover { border-color: rgba(117,225,220,.4); }
+    .hero-note { margin-top: 27px; color: var(--subtle); font-size: .78rem; letter-spacing: .025em; }
     .section { padding: 76px 0; }
-    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 30px; }
-    .section-kicker { color: var(--cyan); font: 700 .7rem/1.4 ui-monospace, monospace; letter-spacing: .16em; text-transform: uppercase; }
-    h2 { margin: 9px 0 0; font-size: clamp(1.8rem, 4vw, 2.65rem); letter-spacing: -.045em; line-height: 1.1; }
-    .section-intro { max-width: 430px; color: var(--muted); margin: 0; font-size: .94rem; }
-    .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 31px; }
+    h2 { margin: 10px 0 0; font-size: clamp(1.9rem, 4vw, 2.7rem); line-height: 1.12; letter-spacing: -.055em; }
+    .section-intro { max-width: 440px; margin: 0; color: var(--muted); font-size: .92rem; }
+    .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
     .project {
-      position: relative; min-height: 228px; padding: 25px; overflow: hidden;
-      border: 1px solid var(--line); border-radius: 15px;
-      background: linear-gradient(145deg, rgba(20,30,47,.9), rgba(12,17,28,.8));
-      transition: border-color .2s, transform .2s;
+      position: relative; min-height: 246px; padding: 27px; overflow: hidden;
+      border: 1px solid var(--line); border-radius: 16px;
+      background: linear-gradient(145deg, rgba(22,31,46,.94), rgba(15,21,32,.92));
+      transition: border-color .2s, transform .2s, background .2s;
     }
-    .project:hover { transform: translateY(-3px); border-color: rgba(105,229,238,.42); }
-    .project::after { content: ""; position: absolute; width: 150px; height: 150px; right: -62px; bottom: -82px; border: 1px solid rgba(105,229,238,.13); border-radius: 50%; box-shadow: 0 0 0 18px rgba(105,229,238,.025), 0 0 0 38px rgba(105,229,238,.018); }
-    .project-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-    .project-icon { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid rgba(105,229,238,.22); border-radius: 11px; color: var(--cyan); background: rgba(105,229,238,.07); font: 700 1rem ui-monospace, monospace; }
-    .status { color: var(--muted); font: 700 .65rem ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; }
-    .project h3 { margin: 22px 0 7px; font-size: 1.16rem; letter-spacing: -.02em; }
+    .project:hover { border-color: rgba(117,225,220,.32); transform: translateY(-3px); }
+    .project.featured { background: linear-gradient(145deg, rgba(24,49,56,.78), rgba(16,25,37,.96) 72%); }
+    .project-top { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+    .project-icon { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgba(117,225,220,.23); border-radius: 12px; color: var(--accent); background: rgba(117,225,220,.07); font: 700 1.1rem ui-monospace, monospace; }
+    .project-status { color: var(--muted); font: 700 .64rem ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .project h3 { margin: 23px 0 8px; font-size: 1.2rem; letter-spacing: -.025em; }
     .project p { max-width: 470px; margin: 0; color: var(--muted); font-size: .88rem; }
-    .project-link { display: inline-flex; margin-top: 20px; color: var(--cyan); font-size: .83rem; font-weight: 700; }
-    .project-link span { margin-left: 7px; transition: transform .2s; }
-    .project-link:hover span { transform: translate(3px,-3px); }
-    .about-panel {
-      display: grid; grid-template-columns: 1.1fr .9fr; gap: 42px; align-items: center;
-      padding: clamp(25px, 5vw, 48px); border: 1px solid var(--line); border-radius: 17px;
-      background: linear-gradient(120deg, rgba(17,27,42,.9), rgba(17,19,34,.72));
+    .project-action { display: inline-flex; align-items: center; gap: 8px; margin-top: 21px; color: var(--accent); font-size: .83rem; font-weight: 750; }
+    .project-action span { transition: transform .2s; }
+    .project-action:hover span { transform: translate(3px,-3px); }
+    .project-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 19px; }
+    .tag { padding: 4px 9px; border: 1px solid var(--line); border-radius: 999px; color: #aab8ca; font-size: .68rem; }
+    .project-note { display: inline-block; margin-top: 21px; color: var(--subtle); font-size: .78rem; }
+    .focus-section { padding: 18px 0 84px; }
+    .focus-panel {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: center;
+      padding: clamp(27px, 5vw, 48px); border: 1px solid var(--line); border-radius: 18px;
+      background: linear-gradient(120deg, rgba(19,29,44,.94), rgba(16,22,34,.82));
     }
-    .about-panel p { color: var(--muted); margin: 16px 0 0; }
-    .principles { display: grid; gap: 13px; }
-    .principle { display: flex; align-items: center; gap: 13px; color: #c9d5e8; font-size: .9rem; }
-    .principle-mark { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 13px var(--cyan); }
-    .contact { padding: 68px 0 84px; text-align: center; }
-    .contact h2 { max-width: 650px; margin: 12px auto; }
-    .contact p { color: var(--muted); margin: 0 auto 25px; max-width: 500px; }
-    footer { border-top: 1px solid var(--line); padding: 22px 0; color: #738199; font-size: .78rem; }
-    .footer-inner { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
-    .footer-mark { color: var(--cyan); font-family: ui-monospace, monospace; }
-    @media (max-width: 700px) {
-      .shell { width: min(var(--max), calc(100% - 32px)); }
-      .nav { min-height: 66px; }
-      .nav-links { gap: 15px; font-size: .8rem; }
+    .focus-panel p { margin: 16px 0 0; color: var(--muted); font-size: .92rem; }
+    .focus-list { display: grid; gap: 15px; }
+    .focus-item { display: flex; align-items: center; gap: 13px; color: #d4deeb; font-size: .9rem; }
+    .focus-dot { flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 13px rgba(117,225,220,.7); }
+    .contact { padding: 55px 0 96px; text-align: center; }
+    .contact h2 { max-width: 680px; margin: 12px auto 14px; }
+    .contact p { max-width: 520px; margin: 0 auto 27px; color: var(--muted); font-size: .93rem; }
+    footer { border-top: 1px solid var(--line); padding: 23px 0; color: var(--subtle); font-size: .77rem; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .footer-mark { color: var(--accent); font: 700 .68rem ui-monospace, monospace; letter-spacing: .13em; }
+    @media (max-width: 720px) {
+      .container { width: min(var(--max), calc(100% - 34px)); }
+      .nav { min-height: 68px; }
+      .nav-links { gap: 17px; font-size: .8rem; }
       .nav-links a:nth-child(2) { display: none; }
-      .nav-cta { padding: 8px 10px; }
-      .hero { padding: 86px 0 70px; }
-      .hero::after { right: -300px; opacity: .6; }
-      .section { padding: 58px 0; }
-      .section-head { display: block; }
+      .nav-links .nav-contact { padding: 8px 11px; }
+      .hero { padding: 88px 0 76px; }
+      .hero::before { right: -315px; top: 15px; opacity: .7; }
+      .section { padding: 59px 0; }
+      .section-heading { display: block; }
       .section-intro { margin-top: 14px; }
-      .project-grid, .about-panel { grid-template-columns: 1fr; }
-      .project { min-height: 210px; }
-      .about-panel { gap: 28px; }
-      .contact { padding: 55px 0 66px; }
+      .project-grid, .focus-panel { grid-template-columns: 1fr; }
+      .project { min-height: 220px; }
+      .focus-panel { gap: 28px; }
+      .contact { padding: 38px 0 72px; }
+    }
+    @media (max-width: 390px) {
+      .brand { gap: 8px; font-size: .78rem; }
+      .nav-links { gap: 12px; }
+      .nav-links a:first-child { display: none; }
+      h1 { font-size: clamp(2.8rem, 14vw, 3.5rem); }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
@@ -130,96 +151,106 @@
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <nav class="nav shell" aria-label="Main navigation">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main navigation">
       <a class="brand" href="#home" aria-label="MazBayID home">
         <span class="brand-mark">M/</span><span>MAZBAYID</span>
       </a>
       <div class="nav-links">
         <a href="#projects">Projects</a>
         <a href="#about">About</a>
-        <a class="nav-cta" href="https://github.com/MazBayID" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a class="nav-contact" href="#contact">Get in touch</a>
       </div>
     </nav>
   </header>
 
-  <main>
-    <section class="hero shell" id="home">
-      <div class="eyebrow">Independent digital workshop</div>
-      <h1>Ideas into<br><span class="gradient">working systems.</span></h1>
-      <p class="hero-copy">A space for building software, exploring technology, and connecting the digital world with the physical one. Experiments start here; useful things grow from them.</p>
-      <div class="hero-actions">
-        <a class="button button-primary" href="#projects">Explore projects <span aria-hidden="true">↓</span></a>
-        <a class="button button-secondary" href="https://github.com/MazBayID" target="_blank" rel="noreferrer">View GitHub ↗</a>
+  <main id="main">
+    <section class="hero container" id="home">
+      <div class="hero-content">
+        <div class="eyebrow">Independent technology portfolio</div>
+        <h1>Ideas into<br><span class="gradient">working systems.</span></h1>
+        <p class="hero-copy">MazBayID is an independent space for building software, exploring embedded technology, and connecting digital ideas with the physical world.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#projects">Explore selected work <span aria-hidden="true">↓</span></a>
+          <a class="button button-secondary" href="#about">About the workshop</a>
+        </div>
+        <div class="hero-note">SOFTWARE · EMBEDDED SYSTEMS · CREATIVE TECHNOLOGY</div>
       </div>
     </section>
 
-    <section class="section shell" id="projects">
-      <div class="section-head">
+    <section class="section container" id="projects">
+      <div class="section-heading">
         <div>
-          <div class="section-kicker">01 / Selected work</div>
-          <h2>Projects & explorations</h2>
+          <div class="section-label">01 / Selected work</div>
+          <h2>Projects in progress<br>and in practice.</h2>
         </div>
-        <p class="section-intro">A growing collection of tools, applications, firmware, and experiments. Each project has its own journey.</p>
+        <p class="section-intro">A selection of tools and experiments shaped by curiosity, practical problem-solving, and continuous development.</p>
       </div>
 
       <div class="project-grid">
-        <article class="project">
-          <div class="project-top"><div class="project-icon">◷</div><span class="status">Web application</span></div>
-          <h3>Clock Icon</h3>
-          <p>ChronoGlyph Studio: create smartwatch numerals, pixel-perfect clock assets, UI graphics, and export-ready bitmap files.</p>
-          <a class="project-link" href="https://mazbayid.github.io/clock_icon/" target="_blank" rel="noreferrer">Open Studio <span>↗</span></a>
-          <a class="project-link" href="https://github.com/MazBayID/clock_icon" target="_blank" rel="noreferrer" style="margin-left:18px">Source Code <span>↗</span></a>
+        <article class="project featured">
+          <div class="project-top"><div class="project-icon">◷</div><span class="project-status">Interactive web tool</span></div>
+          <h3>ChronoGlyph Studio</h3>
+          <p>A visual workspace for creating smartwatch numerals, pixel-precise clock assets, interface graphics, and export-ready bitmap files.</p>
+          <div class="project-meta"><span class="tag">Creative tools</span><span class="tag">Pixel graphics</span><span class="tag">Web application</span></div>
+          <a class="project-action" href="https://mazbayid.github.io/clock_icon/" target="_blank" rel="noopener noreferrer">Open the studio <span aria-hidden="true">↗</span></a>
         </article>
+
         <article class="project">
-          <div class="project-top"><div class="project-icon">▦</div><span class="status">Android · Kotlin</span></div>
+          <div class="project-top"><div class="project-icon">▦</div><span class="project-status">In development</span></div>
           <h3>Neo Launcher</h3>
-          <p>An Android launcher project focused on a customizable interface, useful tools, and a distinct visual identity.</p>
-          <a class="project-link" href="https://github.com/MazBayID/Neo-Launcher" target="_blank" rel="noreferrer">View repository <span>↗</span></a>
+          <p>An Android launcher concept focused on a distinctive interface, flexible personalization, and practical everyday tools.</p>
+          <div class="project-meta"><span class="tag">Android</span><span class="tag">Kotlin</span><span class="tag">User experience</span></div>
+          <span class="project-note">Currently under active development</span>
         </article>
+
         <article class="project">
-          <div class="project-top"><div class="project-icon">⌘</div><span class="status">Web · Python</span></div>
+          <div class="project-top"><div class="project-icon">⌘</div><span class="project-status">In development</span></div>
           <h3>Neo Hub</h3>
-          <p>A personal dashboard project bringing tools, data, and experiments together in one place.</p>
-          <a class="project-link" href="https://github.com/MazBayID/neo_hub" target="_blank" rel="noreferrer">View repository <span>↗</span></a>
+          <p>A personal digital dashboard bringing useful tools, live data, and independent experiments into one coherent workspace.</p>
+          <div class="project-meta"><span class="tag">Python</span><span class="tag">Web</span><span class="tag">Data interfaces</span></div>
+          <span class="project-note">Currently under active development</span>
         </article>
+
         <article class="project">
-          <div class="project-top"><div class="project-icon">⌁</div><span class="status">Embedded · ESP32</span></div>
+          <div class="project-top"><div class="project-icon">⌁</div><span class="project-status">Firmware research</span></div>
           <h3>Xiaozhi Mod</h3>
-          <p>Firmware exploration for a compact ESP32-C3 device, including connectivity and voice interaction.</p>
-          <a class="project-link" href="https://github.com/MazBayID/Xiaozhi_mod" target="_blank" rel="noreferrer">View repository <span>↗</span></a>
+          <p>Embedded firmware exploration for compact ESP32-C3 hardware, with a focus on reliable connectivity and voice interaction.</p>
+          <div class="project-meta"><span class="tag">ESP32-C3</span><span class="tag">Embedded systems</span><span class="tag">Voice interface</span></div>
+          <span class="project-note">Research, testing, and refinement</span>
         </article>
       </div>
     </section>
 
-    <section class="section shell" id="about">
-      <div class="about-panel">
+    <section class="focus-section container" id="about">
+      <div class="focus-panel">
         <div>
-          <div class="section-kicker">02 / The workshop</div>
-          <h2>Curiosity is the starting point.</h2>
-          <p>MazBayID is a home for ongoing development: learning by building, testing ideas, solving practical problems, and gradually turning experiments into complete projects.</p>
+          <div class="section-label">02 / The approach</div>
+          <h2>Built through<br><span class="gradient">curiosity and iteration.</span></h2>
+          <p>MazBayID is a growing technology portfolio. The goal is not simply to make things look interesting, but to understand how they work, make them useful, and improve them through real testing.</p>
         </div>
-        <div class="principles" aria-label="Development principles">
-          <div class="principle"><span class="principle-mark"></span>Build with purpose</div>
-          <div class="principle"><span class="principle-mark"></span>Understand how things work</div>
-          <div class="principle"><span class="principle-mark"></span>Test, refine, and improve</div>
-          <div class="principle"><span class="principle-mark"></span>Keep exploring what is possible</div>
+        <div class="focus-list" aria-label="Development principles">
+          <div class="focus-item"><span class="focus-dot"></span>Build with a clear purpose</div>
+          <div class="focus-item"><span class="focus-dot"></span>Understand systems from the inside out</div>
+          <div class="focus-item"><span class="focus-dot"></span>Connect software with the physical world</div>
+          <div class="focus-item"><span class="focus-dot"></span>Test, refine, and keep learning</div>
         </div>
       </div>
     </section>
 
-    <section class="contact shell">
-      <div class="section-kicker">03 / Connect</div>
-      <h2>Follow the work.<br><span class="gradient">See what comes next.</span></h2>
-      <p>Explore the source, follow development, and discover what is being built.</p>
-      <a class="button button-primary" href="https://github.com/MazBayID" target="_blank" rel="noreferrer">Visit MazBayID on GitHub ↗</a>
+    <section class="contact container" id="contact">
+      <div class="section-label">03 / Stay connected</div>
+      <h2>Good work starts with<br><span class="gradient">a curious mind.</span></h2>
+      <p>Follow the journey and discover new tools, experiments, and projects as they take shape.</p>
+      <a class="button button-primary" href="https://github.com/MazBayID" target="_blank" rel="noopener noreferrer">Connect with MazBayID <span aria-hidden="true">↗</span></a>
     </section>
   </main>
 
   <footer>
-    <div class="footer-inner shell">
-      <span>© <span id="year">2026</span> MazBayID. Built with curiosity.</span>
-      <span class="footer-mark">DIGITAL WORKSHOP / 001</span>
+    <div class="footer-inner container">
+      <span>© <span id="year">2026</span> MazBayID. Independent technology portfolio.</span>
+      <span class="footer-mark">MAZBAYID / DIGITAL WORKSHOP</span>
     </div>
   </footer>
   <script>
