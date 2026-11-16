@@ -146,6 +146,48 @@
     footer { border-top: 1px solid var(--line); padding: 22px 0; color: var(--dim); font-size: .76rem; background: rgba(3,7,16,.22); }
     .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
     .footer-mark { color: var(--cyan); font: 750 .67rem ui-monospace, monospace; letter-spacing: .14em; }
+
+    .secret-terminal-trigger {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 24px; padding: 0; border: 0;
+      background: transparent; color: rgba(139,154,181,.42);
+      font: 700 .72rem ui-monospace, monospace; cursor: pointer;
+      transition: color .2s, text-shadow .2s;
+    }
+    .secret-terminal-trigger:hover, .secret-terminal-trigger:focus-visible {
+      color: var(--cyan); text-shadow: 0 0 12px rgba(81,243,229,.55);
+      outline: none;
+    }
+    .secret-terminal-trigger:focus-visible { box-shadow: 0 0 0 1px rgba(81,243,229,.45); border-radius: 4px; }
+    .secret-terminal[hidden] { display: none; }
+    .secret-terminal {
+      position: fixed; inset: 0; z-index: 100;
+      display: grid; place-items: center; padding: 20px;
+      background: rgba(1,4,12,.78); backdrop-filter: blur(12px);
+    }
+    .secret-terminal-panel {
+      width: min(100%, 460px); padding: 22px;
+      border: 1px solid rgba(81,243,229,.4); border-radius: 12px;
+      background: linear-gradient(145deg, rgba(5,17,29,.98), rgba(12,12,29,.98));
+      box-shadow: 0 20px 80px rgba(0,0,0,.55), 0 0 34px rgba(81,243,229,.1);
+      font: .82rem/1.65 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .secret-terminal-head { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 18px; color: var(--cyan); letter-spacing: .12em; font-size: .7rem; }
+    .secret-terminal-close { border: 0; background: none; color: #91a1bb; font: inherit; cursor: pointer; }
+    .secret-terminal-output { min-height: 82px; color: #c2cee2; white-space: pre-line; }
+    .secret-terminal-form { display: flex; align-items: center; gap: 9px; margin-top: 12px; }
+    .secret-terminal-prompt { color: var(--cyan); }
+    .secret-terminal-input {
+      flex: 1; min-width: 0; border: 0; border-bottom: 1px solid rgba(81,243,229,.4);
+      border-radius: 0; padding: 8px 2px; outline: none; background: transparent;
+      color: #f4f7ff; font: inherit; text-transform: uppercase;
+    }
+    .secret-terminal-input:focus { border-color: var(--cyan); box-shadow: 0 1px 0 var(--cyan); }
+    .secret-terminal-hint { margin-top: 13px; color: #71819d; font-size: .68rem; }
+    .secret-terminal-access { color: var(--cyan); text-shadow: 0 0 12px rgba(81,243,229,.45); animation: cp-access .65s ease-in-out infinite alternate; }
+    @keyframes cp-access { from { opacity: .55; } to { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .secret-terminal-access { animation: none; } }
+
     @media (max-width: 720px) {
       .container { width: min(var(--max), calc(100% - 34px)); }
       body::before { background-position: 52% center; }
@@ -263,8 +305,26 @@
     <div class="footer-inner container">
       <span>© <span id="year">2026</span> Bayu Dirgantara. Independent digital workshop.</span>
       <span class="footer-mark">MAZBAYID / DIGITAL WORKSHOP</span>
+      <button class="secret-terminal-trigger" id="secret-terminal-open" type="button" aria-label="Open terminal" title=" "> &gt;_ </button>
     </div>
   </footer>
+
+  <div class="secret-terminal" id="secret-terminal" hidden>
+    <section class="secret-terminal-panel" role="dialog" aria-modal="true" aria-labelledby="secret-terminal-title">
+      <div class="secret-terminal-head">
+        <span id="secret-terminal-title">MAZBAYID // SYSTEM TERMINAL</span>
+        <button class="secret-terminal-close" id="secret-terminal-close" type="button" aria-label="Close terminal">[ ESC ]</button>
+      </div>
+      <div class="secret-terminal-output" id="secret-terminal-output" aria-live="polite">NEURAL LINK ESTABLISHED
+UNKNOWN DIRECTORY FOUND</div>
+      <form class="secret-terminal-form" id="secret-terminal-form">
+        <label class="secret-terminal-prompt" for="secret-terminal-input">&gt;</label>
+        <input class="secret-terminal-input" id="secret-terminal-input" name="command" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Terminal command">
+      </form>
+      <div class="secret-terminal-hint">ENTER COMMAND TO CONTINUE</div>
+    </section>
+  </div>
+
   <script>
     document.getElementById("year").textContent = String(new Date().getFullYear());
 
@@ -281,6 +341,48 @@
 
     updateLiveClock();
     setInterval(updateLiveClock, 1000);
+
+    const terminal = document.getElementById("secret-terminal");
+    const terminalOpen = document.getElementById("secret-terminal-open");
+    const terminalClose = document.getElementById("secret-terminal-close");
+    const terminalForm = document.getElementById("secret-terminal-form");
+    const terminalInput = document.getElementById("secret-terminal-input");
+    const terminalOutput = document.getElementById("secret-terminal-output");
+
+    function openSecretTerminal() {
+      terminal.hidden = false;
+      terminalInput.value = "";
+      terminalInput.focus();
+    }
+
+    function closeSecretTerminal() {
+      terminal.hidden = true;
+      terminalOpen.focus();
+    }
+
+    terminalOpen.addEventListener("click", openSecretTerminal);
+    terminalClose.addEventListener("click", closeSecretTerminal);
+    terminal.addEventListener("click", event => {
+      if (event.target === terminal) closeSecretTerminal();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !terminal.hidden) closeSecretTerminal();
+    });
+
+    terminalForm.addEventListener("submit", event => {
+      event.preventDefault();
+      if (terminalInput.value.trim().toUpperCase() !== "CP") {
+        terminalOutput.textContent = "UNKNOWN COMMAND.\nACCESS DENIED.";
+        terminalInput.select();
+        return;
+      }
+
+      terminalInput.disabled = true;
+      terminalOutput.innerHTML = '<span class="secret-terminal-access">ACCESS GRANTED.</span>\nROUTING TO CP ASSET LIBRARY...';
+      window.setTimeout(() => {
+        window.location.href = "https://mazbayid.github.io/cpassets/";
+      }, 1400);
+    });
   </script>
 </body>
 </html>
