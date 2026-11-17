@@ -295,8 +295,9 @@
     @media (max-width: 720px) {
       .container { width: min(var(--max), calc(100% - 34px)); }
       body::before { background-position: 52% center; }
-      .nav { min-height: 67px; }
-      .nav-links { gap: 15px; font-size: .79rem; }
+      .nav { min-height: 67px; flex-wrap: wrap; padding-block: 10px; gap: 8px; }
+      .nav-links { width: 100%; justify-content: flex-end; gap: clamp(8px, 3vw, 15px); font-size: .79rem; }
+      .nav-links .nav-email { padding: 6px 9px; }
       .hero { min-height: 540px; padding: 82px 0 88px; }
       .section { padding: 55px 0 65px; }
       .section-heading { display: block; }
@@ -581,7 +582,7 @@ PLEASE INPUT THE RIGHT COMMAND TO ENTER</div>
       document.querySelectorAll(".about-point").forEach((el,i)=>{ const dot=el.querySelector(".point-dot"); el.textContent=""; if(dot) el.appendChild(dot); el.append(" "+t.principles[i]); });
       setText(".contact .section-label",t.contactLabel); setHtml(".contact h2",t.contactHeading); setText(".contact p",t.contactCopy); setText(".contact a",t.connect);
       setText(".kofi-popup p",t.kofiCopy); setText(".kofi-link",t.support);
-      const footer=document.querySelector(".footer-inner .container, .footer-inner span:first-child"); if(footer) { const year=document.getElementById("year"); footer.textContent="© "+(year?year.textContent:new Date().getFullYear())+" "+t.footer; }
+      const footer=document.querySelector(".footer-inner span:first-child"); if(footer) { const year=document.getElementById("year"); footer.innerHTML="© <span id='year'>"+(year?year.textContent:new Date().getFullYear())+"</span> "+t.footer; }
       languageMenu.querySelectorAll("[data-language]").forEach(button=>button.setAttribute("aria-checked",String(button.dataset.language===code)));
       try { localStorage.setItem("mazbayid-language",code); } catch (_) {}
     }
