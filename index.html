@@ -78,7 +78,9 @@
     .button-secondary{border:1.5px solid var(--lav);background:rgba(255,255,255,.62);color:#4d3a70;box-shadow:none}
     html[data-theme="dark"] .button-secondary{background:rgba(255,255,255,.07);color:var(--ink)}
     .hero-art{position:relative;z-index:1;display:grid;place-items:center;min-width:0}
-    .hero-art img{display:block;width:min(100%,410px);height:auto;filter:drop-shadow(0 16px 12px rgba(75,50,111,.12))}
+    /* Cropped directly from the approved assets.png sheet. The white artwork background is intentionally preserved. */
+    .asset-mascot{display:block;width:min(100%,410px);aspect-ratio:220 / 145;background-color:#fff;background-image:url("./assets/assets.png");background-repeat:no-repeat;background-size:697% auto;background-position:63.1% 14.7%;border-radius:22px;filter:drop-shadow(0 16px 12px rgba(75,50,111,.12))}
+    .puzzle{display:inline-block;width:42px;height:42px;flex:0 0 42px;font-size:0;background-image:url("./assets/assets.png");background-repeat:no-repeat;background-size:2560% auto;background-position:2.4% 49.6%}
     .hero-spark{position:absolute;right:13%;top:6%;color:#e8b64e;font-size:2rem;transform:rotate(12deg)}
     .section{padding:62px 0 12px}
     .section-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:22px}
@@ -210,14 +212,14 @@
       </div>
       <div class="hero-art">
         <span class="hero-spark" aria-hidden="true">✦</span>
-        <img src="./assets/mascot/octocat-hero.svg" alt="Octo-cat mascot working on a laptop" width="440" height="340">
+        <div class="asset-mascot" role="img" aria-label="Octo-cat mascot using a laptop beside books and a code bubble"></div>
       </div>
     </section>
 
     <section class="section container" id="projects">
       <div class="section-heading">
         <div>
-          <div class="section-kicker"><span class="puzzle" aria-hidden="true">✿</span><span data-i18n="projectKicker">Open source projects</span></div>
+          <div class="section-kicker"><span class="puzzle" aria-hidden="true"></span><span data-i18n="projectKicker">Open source projects</span></div>
           <h2 data-i18n="projectHeading">Little things I've built</h2>
           <p class="section-intro" data-i18n="projectIntro">Projects made with curiosity, patience, and a little bit of code.</p>
         </div>
