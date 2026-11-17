@@ -86,6 +86,36 @@
     }
     .nav-links { display: flex; align-items: center; gap: 28px; color: var(--muted); font-size: .9rem; }
     .nav-links a:hover { color: #fff; }
+
+    .language-picker { position: relative; display: flex; align-items: center; }
+    .language-toggle {
+      display: grid; place-items: center; width: 34px; height: 34px; padding: 7px;
+      border: 1px solid rgba(190,205,235,.28); border-radius: 8px;
+      color: var(--muted); background: rgba(8,14,29,.38); cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s;
+    }
+    .language-toggle:hover, .language-toggle[aria-expanded="true"] { color: var(--cyan); border-color: rgba(81,243,229,.6); background: rgba(81,243,229,.08); }
+    .language-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+    .language-menu {
+      position: absolute; top: calc(100% + 11px); left: 0; z-index: 40;
+      min-width: 190px; padding: 6px; border: 1px solid rgba(157,190,235,.25);
+      border-radius: 10px; background: rgba(5,12,26,.96); backdrop-filter: blur(18px);
+      box-shadow: 0 16px 44px rgba(0,0,0,.42);
+    }
+    .language-menu[hidden] { display: none; }
+    .language-menu button {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      width: 100%; padding: 9px 10px; border: 0; border-radius: 6px;
+      color: #cbd6e8; background: transparent; text-align: left; font: inherit; font-size: .78rem; cursor: pointer;
+    }
+    .language-menu button:hover, .language-menu button[aria-checked="true"] { color: #fff; background: rgba(81,243,229,.12); }
+    .language-menu small { color: #8191aa; font-size: .66rem; }
+    .nav-links .nav-email {
+      padding: 7px 11px; border: 1px solid rgba(81,243,229,.45); border-radius: 8px;
+      color: var(--cyan); white-space: nowrap;
+    }
+    .nav-links .nav-email:hover { border-color: var(--cyan); background: rgba(81,243,229,.08); box-shadow: 0 0 18px rgba(81,243,229,.12); }
+
     .nav-links .nav-contact { padding: 8px 14px; border: 1px solid rgba(180,154,255,.45); border-radius: 8px; color: #fff; }
     .nav-links .nav-contact:hover { border-color: var(--pink); box-shadow: 0 0 20px rgba(255,112,216,.18); }
     .hero { min-height: 590px; display: flex; align-items: center; padding: 105px 0 112px; }
@@ -297,9 +327,22 @@
         <span class="brand-tagline">DIGITAL ENGINEERING &amp; TECHNOLOGY</span>
       </a>
       <div class="nav-links">
+        <div class="language-picker">
+          <button class="language-toggle" id="language-toggle" type="button" aria-label="Choose language" aria-haspopup="menu" aria-expanded="false" title="Choose language">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg>
+          </button>
+          <div class="language-menu" id="language-menu" role="menu" aria-label="Language" hidden>
+            <button type="button" role="menuitemradio" data-language="en" aria-checked="true"><span>English</span><small>English</small></button>
+            <button type="button" role="menuitemradio" data-language="id" aria-checked="false"><span>Bahasa Indonesia</span><small>Indonesian</small></button>
+            <button type="button" role="menuitemradio" data-language="fil" aria-checked="false"><span>Filipino</span><small>Filipino</small></button>
+            <button type="button" role="menuitemradio" data-language="zh" aria-checked="false"><span>中文</span><small>Chinese</small></button>
+            <button type="button" role="menuitemradio" data-language="ja" aria-checked="false"><span>日本語</span><small>Japanese</small></button>
+          </div>
+        </div>
         <a href="#home">Home</a>
         <a href="#projects">Projects</a>
         <a href="#about">About</a>
+        <a class="nav-email" href="mailto:baydirgaid@gmail.com">Email me <span aria-hidden="true">↗</span></a>
       </div>
     </nav>
   </header>
@@ -423,6 +466,139 @@ PLEASE INPUT THE RIGHT COMMAND TO ENTER</div>
   </div>
 
   <script>
+
+    const siteLanguages = {
+      en: {
+        skip:"Skip to content", home:"Home", projects:"Projects", about:"About", email:"Email me",
+        eyebrow:"Independent digital workshop", heroTitle:"Exploring beyond<br><span class='gradient'>the interface.</span>",
+        heroCopy:"A small independent workshop for ideas, software, and connected technology. I build, experiment, and learn by turning concepts into things that work.",
+        explore:"Explore the project ↓", discover:"Discover the approach", heroNote:"SOFTWARE · CREATIVE TOOLS · CONNECTED TECHNOLOGY",
+        projectLabel:"01 / Available project", projectHeading:"One project.<br>Built with purpose.",
+        projectIntro:"The public portfolio will grow as more projects are ready. For now, this is the project available to explore.",
+        live:"Live · Ready to explore", clockDesc:"A pixel-precise creative workspace for designing digital watch numerals and smartwatch graphics. Create, refine, and export clock assets through a focused visual interface.",
+        tags:["Creative tool","Pixel graphics","Smartwatch assets","Web application"], launch:"Launch Neo Clock Studio ↗",
+        workshopLabel:"02 / The workshop", aboutHeading:"Curiosity first.<br><span class='gradient'>Progress through practice.</span>",
+        aboutCopy:"MazBayID is a growing personal technology space. The focus is understanding how systems work, making useful tools, and improving each project through hands-on development and testing. New projects will appear here when they are ready.",
+        principles:["Build with a clear purpose","Learn how systems work inside out","Connect digital ideas with the real world","Test, refine, and keep moving forward"],
+        contactLabel:"03 / Stay connected", contactHeading:"More ideas are<br><span class='gradient'>taking shape.</span>",
+        contactCopy:"Follow MazBayID to see new tools and experiments as they become ready to share.", connect:"Connect with MazBayID ↗",
+        kofiCopy:"Enjoying the projects at MazBayID? Your support helps keep new ideas, tools, and experiments growing.", support:"Support on Ko-fi ↗",
+        footer:"Zero Gates • Independent digital workshop."
+      },
+      id: {
+        skip:"Lewati ke konten", home:"Beranda", projects:"Proyek", about:"Tentang", email:"Kirim email",
+        eyebrow:"Workshop digital independen", heroTitle:"Menjelajah melampaui<br><span class='gradient'>antarmuka.</span>",
+        heroCopy:"Workshop independen untuk ide, perangkat lunak, dan teknologi terhubung. Saya membangun, bereksperimen, dan belajar dengan mengubah konsep menjadi sesuatu yang berfungsi.",
+        explore:"Jelajahi proyek ↓", discover:"Kenali pendekatannya", heroNote:"PERANGKAT LUNAK · ALAT KREATIF · TEKNOLOGI TERHUBUNG",
+        projectLabel:"01 / Proyek tersedia", projectHeading:"Satu proyek.<br>Dibangun dengan tujuan.",
+        projectIntro:"Portofolio publik akan berkembang seiring kesiapan proyek lainnya. Untuk saat ini, inilah proyek yang dapat dijelajahi.",
+        live:"Aktif · Siap dijelajahi", clockDesc:"Ruang kerja kreatif presisi piksel untuk merancang angka jam digital dan grafis smartwatch. Buat, sempurnakan, dan ekspor aset jam melalui antarmuka visual yang terarah.",
+        tags:["Alat kreatif","Grafis piksel","Aset smartwatch","Aplikasi web"], launch:"Buka Neo Clock Studio ↗",
+        workshopLabel:"02 / Workshop", aboutHeading:"Utamakan rasa ingin tahu.<br><span class='gradient'>Berkembang lewat praktik.</span>",
+        aboutCopy:"MazBayID adalah ruang teknologi personal yang terus berkembang. Fokusnya adalah memahami cara kerja sistem, membuat alat yang berguna, serta meningkatkan setiap proyek melalui pengembangan dan pengujian langsung. Proyek baru akan ditampilkan saat siap.",
+        principles:["Membangun dengan tujuan yang jelas","Memahami cara kerja sistem dari dalam","Menghubungkan ide digital dengan dunia nyata","Menguji, menyempurnakan, dan terus maju"],
+        contactLabel:"03 / Tetap terhubung", contactHeading:"Lebih banyak ide sedang<br><span class='gradient'>mulai terwujud.</span>",
+        contactCopy:"Ikuti MazBayID untuk melihat alat dan eksperimen baru saat siap dibagikan.", connect:"Terhubung dengan MazBayID ↗",
+        kofiCopy:"Menyukai proyek-proyek MazBayID? Dukungan Anda membantu mengembangkan ide, alat, dan eksperimen baru.", support:"Dukung melalui Ko-fi ↗",
+        footer:"Zero Gates • Workshop digital independen."
+      },
+      fil: {
+        skip:"Lumaktaw sa nilalaman", home:"Home", projects:"Mga Proyekto", about:"Tungkol", email:"Mag-email",
+        eyebrow:"Independiyenteng digital workshop", heroTitle:"Tuklasin ang lampas<br><span class='gradient'>sa interface.</span>",
+        heroCopy:"Isang maliit at independiyenteng workshop para sa mga ideya, software, at konektadong teknolohiya. Gumagawa ako, nag-eeksperimento, at natututo sa pamamagitan ng paggawa ng mga konsepto na gumagana.",
+        explore:"Tuklasin ang proyekto ↓", discover:"Alamin ang aming paraan", heroNote:"SOFTWARE · MGA CREATIVE TOOL · CONNECTED TECHNOLOGY",
+        projectLabel:"01 / Available na proyekto", projectHeading:"Isang proyekto.<br>May malinaw na layunin.",
+        projectIntro:"Lalaki ang pampublikong portfolio habang handa na ang iba pang proyekto. Sa ngayon, ito ang proyektong maaari mong tuklasin.",
+        live:"Live · Handa nang tuklasin", clockDesc:"Isang pixel-precise na creative workspace para sa pagdidisenyo ng digital watch numerals at smartwatch graphics. Gumawa, pagandahin, at i-export ang mga clock asset sa isang visual interface.",
+        tags:["Creative tool","Pixel graphics","Smartwatch assets","Web application"], launch:"Buksan ang Neo Clock Studio ↗",
+        workshopLabel:"02 / Ang workshop", aboutHeading:"Unahin ang pagkamausisa.<br><span class='gradient'>Umunlad sa pagsasanay.</span>",
+        aboutCopy:"Ang MazBayID ay isang personal na espasyo ng teknolohiya na patuloy na lumalago. Nakatuon ito sa pag-unawa kung paano gumagana ang mga sistema, paggawa ng kapaki-pakinabang na tool, at pagpapahusay ng bawat proyekto sa pamamagitan ng aktuwal na pagbuo at pagsubok. Ilalathala ang mga bagong proyekto kapag handa na.",
+        principles:["Bumuo nang may malinaw na layunin","Unawain kung paano gumagana ang mga sistema","Ikonekta ang digital na ideya sa totoong mundo","Subukan, pagbutihin, at magpatuloy"],
+        contactLabel:"03 / Manatiling konektado", contactHeading:"Mas marami pang ideya ang<br><span class='gradient'>nabubuo.</span>",
+        contactCopy:"Sundan ang MazBayID para makita ang mga bagong tool at eksperimento kapag handa nang ibahagi.", connect:"Kumonekta sa MazBayID ↗",
+        kofiCopy:"Nagustuhan mo ba ang mga proyekto ng MazBayID? Nakakatulong ang iyong suporta upang mapalago ang mga bagong ideya, tool, at eksperimento.", support:"Suportahan sa Ko-fi ↗",
+        footer:"Zero Gates • Independiyenteng digital workshop."
+      },
+      zh: {
+        skip:"跳转到内容", home:"首页", projects:"项目", about:"关于", email:"发送邮件",
+        eyebrow:"独立数字工作室", heroTitle:"探索界面<br><span class='gradient'>之外的世界。</span>",
+        heroCopy:"一个专注于创意、软件和互联技术的独立工作室。我通过构建、实验和实践，把想法变成真正可用的成果。",
+        explore:"探索项目 ↓", discover:"了解我们的方式", heroNote:"软件 · 创意工具 · 互联技术",
+        projectLabel:"01 / 当前项目", projectHeading:"一个项目。<br>为目标而打造。",
+        projectIntro:"随着更多项目准备就绪，公开作品集也会不断扩展。目前可以先体验这个项目。",
+        live:"已上线 · 可以体验", clockDesc:"用于设计数字手表数字和智能手表图形的像素级创作工作区。通过专注的可视化界面创建、优化并导出时钟素材。",
+        tags:["创意工具","像素图形","智能手表素材","网页应用"], launch:"启动 Neo Clock Studio ↗",
+        workshopLabel:"02 / 工作室", aboutHeading:"好奇心至上。<br><span class='gradient'>在实践中不断进步。</span>",
+        aboutCopy:"MazBayID 是一个持续成长的个人技术空间。我们专注于理解系统的工作原理、制作实用工具，并通过实际开发和测试不断改进项目。新项目准备好后将在这里发布。",
+        principles:["带着明确目标进行构建","深入理解系统的工作方式","将数字创意与现实世界连接","测试、改进并持续前进"],
+        contactLabel:"03 / 保持联系", contactHeading:"更多创意正在<br><span class='gradient'>逐渐成形。</span>",
+        contactCopy:"关注 MazBayID，了解即将分享的新工具和实验项目。", connect:"联系 MazBayID ↗",
+        kofiCopy:"喜欢 MazBayID 的项目吗？您的支持将帮助我们继续发展新的创意、工具和实验。", support:"通过 Ko-fi 支持 ↗",
+        footer:"Zero Gates • 独立数字工作室。"
+      },
+      ja: {
+        skip:"コンテンツへ移動", home:"ホーム", projects:"プロジェクト", about:"概要", email:"メールする",
+        eyebrow:"独立系デジタルワークショップ", heroTitle:"インターフェースの<br><span class='gradient'>その先を探る。</span>",
+        heroCopy:"アイデア、ソフトウェア、そしてつながるテクノロジーのための小さな独立ワークショップです。構築と実験を重ね、アイデアを実際に動くものへと変えながら学んでいます。",
+        explore:"プロジェクトを見る ↓", discover:"取り組み方を見る", heroNote:"ソフトウェア · クリエイティブツール · コネクテッドテクノロジー",
+        projectLabel:"01 / 公開中のプロジェクト", projectHeading:"ひとつのプロジェクト。<br>目的を持って開発。",
+        projectIntro:"公開ポートフォリオは、ほかのプロジェクトの準備が整うにつれて拡大します。現在はこちらのプロジェクトをお試しいただけます。",
+        live:"公開中 · 体験できます", clockDesc:"デジタル時計の数字やスマートウォッチ用グラフィックを設計する、ピクセル精度のクリエイティブワークスペースです。視覚的なインターフェースで時計アセットを作成、調整、書き出しできます。",
+        tags:["クリエイティブツール","ピクセルグラフィック","スマートウォッチ素材","Webアプリ"], launch:"Neo Clock Studio を開く ↗",
+        workshopLabel:"02 / ワークショップ", aboutHeading:"好奇心を大切に。<br><span class='gradient'>実践を通じて前進する。</span>",
+        aboutCopy:"MazBayID は成長を続ける個人向けテクノロジースペースです。システムの仕組みを理解し、便利なツールを作り、実際の開発とテストを通じて各プロジェクトを改善することを重視しています。新しいプロジェクトは準備が整い次第ここに掲載します。",
+        principles:["明確な目的を持って作る","システムの内部の仕組みを学ぶ","デジタルのアイデアを現実世界につなぐ","テスト、改善を重ね、前進し続ける"],
+        contactLabel:"03 / つながる", contactHeading:"新しいアイデアが<br><span class='gradient'>形になりつつあります。</span>",
+        contactCopy:"MazBayID をフォローして、新しいツールや実験が公開されるのをチェックしてください。", connect:"MazBayID とつながる ↗",
+        kofiCopy:"MazBayID のプロジェクトを気に入っていただけましたか？ご支援は新しいアイデア、ツール、実験の成長につながります。", support:"Ko-fi で支援する ↗",
+        footer:"Zero Gates • 独立系デジタルワークショップ。"
+      }
+    };
+    const languageToggle = document.getElementById("language-toggle");
+    const languageMenu = document.getElementById("language-menu");
+    let currentLanguage = "en";
+    try {
+      const savedLanguage = localStorage.getItem("mazbayid-language");
+      if (savedLanguage && siteLanguages[savedLanguage]) currentLanguage = savedLanguage;
+    } catch (_) {}
+    function applySiteLanguage(code) {
+      const t = siteLanguages[code] || siteLanguages.en;
+      currentLanguage = code;
+      document.documentElement.lang = code === "zh" ? "zh-CN" : code;
+      const setText = (selector, value) => { const el = document.querySelector(selector); if (el) el.textContent = value; };
+      const setHtml = (selector, value) => { const el = document.querySelector(selector); if (el) el.innerHTML = value; };
+      setText(".skip-link",t.skip);
+      setText('.nav-links a[href="#home"]',t.home); setText('.nav-links a[href="#projects"]',t.projects);
+      setText('.nav-links a[href="#about"]',t.about); setText(".nav-email",t.email+" ↗");
+      setText(".eyebrow",t.eyebrow); setHtml(".hero h1",t.heroTitle); setText(".hero-copy",t.heroCopy);
+      setText(".hero-actions .button-primary",t.explore); setText(".hero-actions .button-secondary",t.discover); setText(".hero-note",t.heroNote);
+      setText(".section-heading .section-label",t.projectLabel); setHtml(".section-heading h2",t.projectHeading); setText(".section-intro",t.projectIntro);
+      setText(".project-status",t.live); setText(".project-card p",t.clockDesc);
+      document.querySelectorAll(".project-tags .tag").forEach((el,i)=>{ if(t.tags[i]) el.textContent=t.tags[i]; });
+      setText(".project-cta a",t.launch);
+      const aboutLabels=document.querySelectorAll(".about .section-label"); if(aboutLabels[0]) aboutLabels[0].textContent=t.workshopLabel;
+      setHtml(".about h2",t.aboutHeading); setText(".about-panel p",t.aboutCopy);
+      document.querySelectorAll(".about-point").forEach((el,i)=>{ const dot=el.querySelector(".point-dot"); el.textContent=""; if(dot) el.appendChild(dot); el.append(" "+t.principles[i]); });
+      setText(".contact .section-label",t.contactLabel); setHtml(".contact h2",t.contactHeading); setText(".contact p",t.contactCopy); setText(".contact a",t.connect);
+      setText(".kofi-popup p",t.kofiCopy); setText(".kofi-link",t.support);
+      const footer=document.querySelector(".footer-inner .container, .footer-inner span:first-child"); if(footer) { const year=document.getElementById("year"); footer.textContent="© "+(year?year.textContent:new Date().getFullYear())+" "+t.footer; }
+      languageMenu.querySelectorAll("[data-language]").forEach(button=>button.setAttribute("aria-checked",String(button.dataset.language===code)));
+      try { localStorage.setItem("mazbayid-language",code); } catch (_) {}
+    }
+    languageToggle.addEventListener("click",()=>{
+      const open=languageMenu.hidden; languageMenu.hidden=!open; languageToggle.setAttribute("aria-expanded",String(open));
+    });
+    languageMenu.querySelectorAll("[data-language]").forEach(button=>button.addEventListener("click",()=>{
+      applySiteLanguage(button.dataset.language); languageMenu.hidden=true; languageToggle.setAttribute("aria-expanded","false");
+    }));
+    document.addEventListener("click",event=>{
+      if(!event.target.closest(".language-picker")) { languageMenu.hidden=true; languageToggle.setAttribute("aria-expanded","false"); }
+    });
+    document.addEventListener("keydown",event=>{
+      if(event.key==="Escape"&&!languageMenu.hidden) { languageMenu.hidden=true; languageToggle.setAttribute("aria-expanded","false"); languageToggle.focus(); }
+    });
+    applySiteLanguage(currentLanguage);
+
     document.getElementById("year").textContent = String(new Date().getFullYear());
 
     const clockTime = document.getElementById("live-clock-time");
