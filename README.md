@@ -1,4 +1,4 @@
-# MazBayID — Digital Workshop
+# MazBayID — Cozy Cute Tech Workshop
 
 The official portfolio and project landing page for **MazBayID**.
 
@@ -6,41 +6,45 @@ The official portfolio and project landing page for **MazBayID**.
 
 ## About
 
-MazBayID is an independent digital workshop focused on software, creative tools, embedded technology, and practical experimentation.
+MazBayID is an independent open-source workshop exploring software, electronics, IoT, creative tools, and practical experimentation. The site is designed around a friendly Cozy Cute Tech identity and a simple Octo-cat mascot.
 
-The homepage intentionally highlights only projects that are ready to be explored. Additional projects will be introduced as they reach a suitable release stage.
+The homepage is built to work on mobile devices, including Android phones, and includes Light and Dark themes.
 
-☕ **Ko-Fi** https://ko-fi.com/mazbayid
+## Featured projects
 
-## Featured project
+- **Neo Clock Studio** — creative workspace for digital clock graphics. [Open project](https://mazbayid.github.io/clock_icon/)
+- **ESP Clock** — connected clock built with ESP32. [Repository](https://github.com/MazBayID/esp_clock)
+- **Cyber Protocol** — game project inspired by systems and automation. [Repository](https://github.com/MazBayID/firstGame)
+- **Experiments** — small ideas and prototypes.
 
-### ChronoGlyph Studio
+Projects still in development are identified as such on the homepage.
 
-A pixel-precise creative workspace for designing digital watch numerals and smartwatch graphics.
+## Features
 
-- **Live application:** https://mazbayid.github.io/clock_icon/
-- **Project focus:** pixel graphics, smartwatch assets, and creative web tooling
+- Responsive, mobile-first layout
+- Light and Dark themes with saved preference
+- Language selector: English, Bahasa Indonesia, Filipino, Chinese and Japanese
+- Octo-cat mascot and SVG favicon
+- Email contact and Ko-fi support popup
+- Existing CP terminal easter egg
 
-## Website
+## Main files
 
-This site is a lightweight static website published with GitHub Pages.
+- `index.html` — homepage structure, styling, translations and interactions
+- `assets/mascot/octocat-hero.svg` — main mascot illustration
+- `assets/mascot/octocat-icon.svg` — favicon and compact mascot icon
+- `assets/assets.png` — visual reference sheet
+- `assets/ASSETS_MANIFEST.json` and `.md` — asset inventory and implementation notes
 
-### Main files
+The old `background_earth.jpg` is no longer used.
 
-- `index.html` — homepage structure, styling, and content
-- `background_earth.jpg` — Earth background image used by the homepage
-
-### Local preview
+## Local preview
 
 No build step or package installation is required. Open `index.html` in a browser, or serve the repository directory with any simple static HTTP server.
 
 ## Publishing
 
-The site is deployed automatically through GitHub Pages when changes are pushed to the configured publishing branch.
-
-## Project policy
-
-Only projects considered ready for public exploration are listed on the homepage. Projects still being developed remain off the public project list until they are ready.
+The site is deployed through GitHub Pages from the configured publishing branch.
 
 ---
 
