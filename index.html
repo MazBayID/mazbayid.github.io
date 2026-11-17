@@ -194,6 +194,70 @@
     @keyframes cp-access { from { opacity: .55; } to { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) { .secret-terminal-access { animation: none; } }
 
+
+    /* Floating Ko-fi button */
+    .kofi-widget {
+      position: fixed; right: 24px; bottom: 24px; z-index: 80;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+    .kofi-trigger {
+      display: grid; place-items: center; width: 58px; height: 58px;
+      padding: 0; border: 1px solid rgba(255,255,255,.72); border-radius: 50%;
+      color: #fff; background: #ff5e5b; cursor: pointer;
+      box-shadow: 0 8px 28px rgba(0,0,0,.38), 0 0 0 5px rgba(255,94,91,.16);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .kofi-trigger:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 12px 34px rgba(0,0,0,.42), 0 0 0 7px rgba(255,94,91,.2);
+    }
+    .kofi-trigger:focus-visible, .kofi-close:focus-visible, .kofi-link:focus-visible {
+      outline: 2px solid var(--cyan); outline-offset: 4px;
+    }
+    .kofi-trigger svg { width: 29px; height: 29px; }
+    .kofi-popup[hidden] { display: none; }
+    .kofi-popup {
+      width: min(310px, calc(100vw - 36px)); padding: 20px;
+      border: 1px solid rgba(255,94,91,.48); border-radius: 16px;
+      background: linear-gradient(145deg, rgba(17,20,34,.98), rgba(35,18,31,.98));
+      box-shadow: 0 18px 60px rgba(0,0,0,.48), 0 0 30px rgba(255,94,91,.12);
+      backdrop-filter: blur(18px);
+      animation: kofi-pop .18s ease-out;
+    }
+    @keyframes kofi-pop {
+      from { opacity: 0; transform: translateY(8px) scale(.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .kofi-popup-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .kofi-brand { display: flex; align-items: center; gap: 9px; color: #fff; font-weight: 800; letter-spacing: -.02em; }
+    .kofi-brand-mark {
+      display: grid; place-items: center; width: 34px; height: 34px;
+      border-radius: 10px; color: #fff; background: #ff5e5b;
+    }
+    .kofi-brand-mark svg { width: 21px; height: 21px; }
+    .kofi-close {
+      display: grid; place-items: center; width: 30px; height: 30px;
+      border: 0; border-radius: 8px; color: #aebbd2;
+      background: rgba(255,255,255,.07); font-size: 1.15rem; cursor: pointer;
+    }
+    .kofi-popup p { margin: 13px 0 17px; color: #c2cde0; font-size: .85rem; line-height: 1.55; }
+    .kofi-link {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 43px; padding: 0 15px; border-radius: 9px;
+      color: #fff; background: #ff5e5b; font-size: .83rem; font-weight: 800;
+      transition: background .2s, transform .2s;
+    }
+    .kofi-link:hover { background: #ff7471; transform: translateY(-1px); }
+    @media (max-width: 720px) {
+      .kofi-widget { right: 17px; bottom: 18px; }
+      .kofi-trigger { width: 54px; height: 54px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .kofi-popup { animation: none; }
+      .kofi-trigger, .kofi-link { transition: none; }
+    }
+
     @media (max-width: 720px) {
       .container { width: min(var(--max), calc(100% - 34px)); }
       body::before { background-position: 52% center; }
@@ -307,6 +371,35 @@
     </section>
   </main>
 
+  <aside class="kofi-widget" aria-label="Support MazBayID">
+    <section class="kofi-popup" id="kofi-popup" aria-labelledby="kofi-title" hidden>
+      <div class="kofi-popup-head">
+        <div class="kofi-brand">
+          <span class="kofi-brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 8h13v7.2A4.8 4.8 0 0 1 12.2 20h-3.4A4.8 4.8 0 0 1 4 15.2V8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M17 10h1.2a2.8 2.8 0 1 1 0 5.6H17M8 4.5c1.2 1 1.2 2 0 3M12 4.5c1.2 1 1.2 2 0 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M10.5 11.2c-.8-1.1-2.5-.5-2.5.8 0 1.1 1.5 2.1 2.5 2.8 1-.7 2.5-1.7 2.5-2.8 0-1.3-1.7-1.9-2.5-.8Z" fill="currentColor"/>
+            </svg>
+          </span>
+          <span id="kofi-title">Ko-fi</span>
+        </div>
+        <button class="kofi-close" id="kofi-close" type="button" aria-label="Close Ko-fi popup">×</button>
+      </div>
+      <p>Enjoying the projects at MazBayID? Your support helps keep new ideas, tools, and experiments growing.</p>
+      <a class="kofi-link" href="https://ko-fi.com/mazbayid" target="_blank" rel="noopener noreferrer">
+        Support on Ko-fi <span aria-hidden="true">↗</span>
+      </a>
+    </section>
+    <button class="kofi-trigger" id="kofi-trigger" type="button" aria-label="Open Ko-fi support popup" aria-expanded="false" aria-controls="kofi-popup">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M4 8h13v7.2A4.8 4.8 0 0 1 12.2 20h-3.4A4.8 4.8 0 0 1 4 15.2V8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M17 10h1.2a2.8 2.8 0 1 1 0 5.6H17M8 4.5c1.2 1 1.2 2 0 3M12 4.5c1.2 1 1.2 2 0 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M10.5 11.2c-.8-1.1-2.5-.5-2.5.8 0 1.1 1.5 2.1 2.5 2.8 1-.7 2.5-1.7 2.5-2.8 0-1.3-1.7-1.9-2.5-.8Z" fill="currentColor"/>
+      </svg>
+    </button>
+  </aside>
+
   <footer>
     <div class="footer-inner container">
         <span>© <span id="year">2026</span> Zero Gates • Independent digital workshop.</span>
@@ -349,6 +442,33 @@ PLEASE INPUT THE RIGHT COMMAND TO ENTER</div>
 
     updateLiveClock();
     setInterval(updateLiveClock, 1000);
+
+    const kofiPopup = document.getElementById("kofi-popup");
+    const kofiTrigger = document.getElementById("kofi-trigger");
+    const kofiClose = document.getElementById("kofi-close");
+
+    function toggleKofiPopup(forceOpen) {
+      const shouldOpen = typeof forceOpen === "boolean"
+        ? forceOpen
+        : kofiPopup.hidden;
+      kofiPopup.hidden = !shouldOpen;
+      kofiTrigger.setAttribute("aria-expanded", String(shouldOpen));
+    }
+
+    kofiTrigger.addEventListener("click", () => toggleKofiPopup());
+    kofiClose.addEventListener("click", () => {
+      toggleKofiPopup(false);
+      kofiTrigger.focus();
+    });
+    document.addEventListener("click", event => {
+      if (!event.target.closest(".kofi-widget")) toggleKofiPopup(false);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !kofiPopup.hidden) {
+        toggleKofiPopup(false);
+        kofiTrigger.focus();
+      }
+    });
 
     const terminal = document.getElementById("secret-terminal");
     const terminalOpen = document.getElementById("secret-terminal-open");
