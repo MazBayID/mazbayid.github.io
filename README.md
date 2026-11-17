@@ -10,6 +10,8 @@ MazBayID is an independent digital workshop focused on software, creative tools,
 
 The homepage intentionally highlights only projects that are ready to be explored. Additional projects will be introduced as they reach a suitable release stage.
 
+☕ **Ko-Fi** https://ko-fi.com/mazbayid
+
 ## Featured project
 
 ### ChronoGlyph Studio
