@@ -642,7 +642,8 @@
     "extraction": "If individual artwork is cropped from the sheet, preserve its original colors and white background unless the user explicitly approves background removal or transparency work.",
     "generated_svg_policy": "Previously generated SVG mascot files are derived implementation assets, not the original source artwork in assets.png. Keep them classified as derived/legacy until visual comparison confirms they are faithful and approved.",
     "dark_theme": "The reference sheet shows the light theme. Dark-theme colors and contrast behavior must be designed as a complementary adaptation; they are not directly specified by this image.",
-    "mobile": "Reflow navigation, project cards, and lower information panels into a readable single-column or compact layout on phone screens."
+    "mobile": "Reflow navigation, project cards, and lower information panels into a readable single-column or compact layout on phone screens.",
+    "current_homepage_usage": "index.html references assets/assets.png directly as a CSS sprite sheet for the Octo-cat hero and project section puzzle-piece decoration. The Octo-cat hero SVG is no longer used by the homepage. The compact favicon SVG remains in use."
   },
   "repository_files": {
     "source_sheet": "assets/assets.png",
@@ -652,11 +653,11 @@
     "derived_mascot_files": [
       {
         "file": "assets/mascot/octocat-hero.svg",
-        "classification": "derived SVG; current homepage references it"
+        "classification": "legacy derived SVG; no longer referenced by index.html"
       },
       {
         "file": "assets/mascot/octocat-icon.svg",
-        "classification": "derived SVG; current homepage references it"
+        "classification": "derived SVG used only as the favicon"
       }
     ]
   },
@@ -665,14 +666,19 @@
     "The screenshot is a light-theme visual reference; dark-theme styling must be inferred and separately reviewed.",
     "The screenshot does not specify exact behavior or destination URLs for every icon and floating cup button.",
     "The source sheet is a flattened PNG, so individual artwork is not independently addressable as separate files yet.",
-    "The visual sheet does not itself prove which components are currently implemented in index.html."
+    "The visual sheet does not itself prove which components are currently implemented in index.html.",
+    "The CSS sprite crop preserves the white background of assets.png by design; review the mascot tile against the dark theme to ensure the white tile is visually acceptable."
   ],
   "validation_status": {
     "source_image_inspected": true,
     "dimensions_verified": true,
-    "homepage_currently_references_source_sheet": false,
-    "homepage_currently_references_derived_mascot_svgs": true,
+    "homepage_currently_references_source_sheet": true,
+    "homepage_currently_references_derived_mascot_svgs": false,
     "old_earth_background_reference_in_homepage": false,
-    "note": "This manifest documents the source image and design specification. It does not claim the homepage has already been rebuilt to match every region."
+    "note": "This manifest documents the source image and design specification. It does not claim the homepage has already been rebuilt to match every region.",
+    "homepage_uses_source_sheet_for": [
+      "Octo-cat hero crop (CSS background sprite)",
+      "Project section puzzle-piece decoration (CSS background sprite)"
+    ]
   }
 }
