@@ -46,12 +46,14 @@
     .brand-dot{color:var(--lav)}
     .nav-links{display:flex;align-items:center;gap:6px;padding:5px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
     .nav-links a{padding:9px 16px;border-radius:999px;font-size:.9rem;font-weight:800;color:var(--muted);transition:background .2s,color .2s}
-    .nav-links a:hover,.nav-links a.active{background:var(--lav-soft);color:var(--ink)}
+    .nav-links a:hover{background:var(--lav-soft);color:var(--ink)}
+    .nav-links a.active{background:var(--lav-soft);color:var(--ink);box-shadow:inset 0 -3px 0 var(--lav)}
     .nav-tools{display:flex;align-items:center;gap:8px}
     .icon-button{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);cursor:pointer}
     .icon-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     .email-button,.button{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:999px;padding:11px 19px;background:var(--lav);color:#fff;font-weight:900;box-shadow:0 7px 16px rgba(140,105,200,.18);transition:transform .2s,box-shadow .2s}
     .email-button{padding:10px 16px;font-size:.86rem;white-space:nowrap}
+    .email-button .gmail-icon{display:block;width:22px;height:22px;flex:0 0 22px}
     .email-button:hover,.button:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(140,105,200,.25)}
     .menu-toggle{display:none}
     .language-picker{position:relative}
@@ -197,7 +199,7 @@
         <button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="nav-links">
           <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
-        <a class="email-button" href="mailto:baydirgaid@gmail.com"><span aria-hidden="true">✉</span> <span data-i18n="email">Email me</span></a>
+        <a class="email-button" href="mailto:baydirgaid@gmail.com"><svg class="gmail-icon" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="100%" height="100%" aria-hidden="true" focusable="false"><path d="M34.9 448h81.5V250.2L0 163v250.2C0 432.5 15.7 448 34.9 448" style="fill:#806f6f"/><path d="M395.6 448h81.5c19.3 0 34.9-15.7 34.9-34.9V163l-116.4 87.3" style="fill:#040b05"/><path d="M395.6 99v151.3L512 163v-46.5c0-43.2-49.3-67.8-83.8-41.9" style="fill:#817e7e"/><path d="M116.4 250.2V99L256 203.7 395.6 99v151.3L256 355" style="fill:#514948"/><path d="M0 116.4V163l116.4 87.3V99L83.8 74.5C49.2 48.6 0 73.2 0 116.4" style="fill:#080707"/></svg> <span data-i18n="email">Email me</span></a>
       </div>
     </nav>
   </header>
@@ -357,7 +359,32 @@
 
     const menuToggle=document.getElementById("menu-toggle"),navLinks=document.getElementById("nav-links");
     menuToggle.addEventListener("click",()=>{const open=navLinks.classList.toggle("open");menuToggle.setAttribute("aria-expanded",String(open));menuToggle.setAttribute("aria-label",open?"Close navigation":"Open navigation")});
-    navLinks.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{navLinks.classList.remove("open");menuToggle.setAttribute("aria-expanded","false")}));
+    const navAnchors=[...navLinks.querySelectorAll("a")];
+    function setActiveNav(id){
+      navAnchors.forEach(a=>{
+        const active=a.getAttribute("href")==="#"+id;
+        a.classList.toggle("active",active);
+        if(active)a.setAttribute("aria-current","location");else a.removeAttribute("aria-current");
+      });
+    }
+    navAnchors.forEach(a=>a.addEventListener("click",()=>{
+      const targetId=a.getAttribute("href").slice(1);
+      setActiveNav(targetId);
+      navLinks.classList.remove("open");menuToggle.setAttribute("aria-expanded","false");
+    }));
+    window.addEventListener("hashchange",()=>{
+      const id=location.hash.slice(1);
+      if(navAnchors.some(a=>a.getAttribute("href")==="#"+id))setActiveNav(id);
+    });
+    const navSections=navAnchors.map(a=>document.getElementById(a.getAttribute("href").slice(1))).filter(Boolean);
+    if("IntersectionObserver" in window){
+      const navObserver=new IntersectionObserver(entries=>{
+        const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+        if(visible)setActiveNav(visible.target.id);
+      },{rootMargin:"-28% 0px -58% 0px",threshold:[0,.15,.3,.5,.75]});
+      navSections.forEach(section=>navObserver.observe(section));
+    }
+    setActiveNav(location.hash.slice(1)||"home");
     document.getElementById("year").textContent=String(new Date().getFullYear());
 
     const kofiPopup=document.getElementById("kofi-popup"),kofiTrigger=document.getElementById("kofi-trigger"),kofiClose=document.getElementById("kofi-close"),kofiWidget=document.querySelector(".kofi-widget");
