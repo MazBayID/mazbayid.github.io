@@ -2,14 +2,10 @@
   "project": "MazBayID Cozy Cute Tech",
   "manifest_version": "1.0",
   "reference": {
-    "file": "1000097880.png",
-    "dimensions_px": [
-      2042,
-      1365
-    ],
-    "purpose": "Visual reference sheet; not a production-ready bundle of separate assets"
+    "file": "assets/assets.png",
+    "purpose": "Repository asset sheet used as the visual reference"
   },
-  "status": "planning",
+  "status": "implemented",
   "notes": [
     "The reference sheet combines multiple visual elements in one image.",
     "Use it as the visual source of truth; export or recreate required elements as separate files.",
@@ -17,306 +13,75 @@
   ],
   "assets": [
     {
-      "id": "BRAND-01",
-      "filename": "mazbayid-mark.svg",
-      "use": "Header code-window brand mark",
-      "format": "SVG",
-      "target_size": "64x64 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "BRAND-02",
-      "filename": "mazbayid-wordmark.svg",
-      "use": "MazBayID header wordmark, if retained as artwork",
-      "format": "SVG",
-      "target_size": "responsive",
-      "priority": "medium",
-      "production_status": "to_export_or_recreate"
-    },
-    {
       "id": "MASCOT-01",
-      "filename": "octocat-hero.webp",
-      "use": "Main Octo-cat beside homepage hero text",
-      "format": "WebP with transparency",
-      "target_size": "640x640 px",
-      "priority": "critical",
-      "production_status": "to_export_or_recreate"
+      "filename": "assets/mascot/octocat-hero.svg",
+      "use": "Hero mascot illustration with laptop, books, and code bubble",
+      "format": "SVG",
+      "status": "created_and_used",
+      "priority": "critical"
     },
     {
       "id": "MASCOT-02",
-      "filename": "octocat-icon.svg",
-      "use": "Compact mascot mark and favicon source",
+      "filename": "assets/mascot/octocat-icon.svg",
+      "use": "Favicon and compact mascot mark",
       "format": "SVG",
-      "target_size": "64x64 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "MASCOT-03",
-      "filename": "octocat-small.webp",
-      "use": "Small mascot decoration in About or other sections",
-      "format": "WebP with transparency",
-      "target_size": "256x256 px",
-      "priority": "medium",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "MASCOT-04",
-      "filename": "octocat-expression-*.webp",
-      "use": "Optional alternate expressions for empty states or future pages",
-      "format": "WebP with transparency",
-      "target_size": "256x256 px each",
-      "priority": "low",
-      "production_status": "optional_future"
+      "status": "created_and_used",
+      "priority": "high"
     },
     {
       "id": "ICON-01",
-      "filename": "icon-home.svg",
-      "use": "Home navigation",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-02",
-      "filename": "icon-projects.svg",
-      "use": "Projects navigation",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-03",
-      "filename": "icon-about.svg",
-      "use": "About navigation",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-04",
-      "filename": "icon-language.svg",
-      "use": "Language selector",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-05",
-      "filename": "icon-theme-dark.svg",
-      "use": "Dark-theme control",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-06",
-      "filename": "icon-menu.svg",
-      "use": "Mobile menu control",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-07",
-      "filename": "icon-email.svg",
-      "use": "Email action",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-08",
-      "filename": "icon-badge.svg",
-      "use": "Developer badge decoration",
-      "format": "SVG",
-      "target_size": "48x48 viewBox",
-      "priority": "medium",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-09",
-      "filename": "icon-clock.svg",
-      "use": "Neo Clock Studio project card",
-      "format": "SVG",
-      "target_size": "48x48 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-10",
-      "filename": "icon-chip.svg",
-      "use": "ESP Clock project card",
-      "format": "SVG",
-      "target_size": "48x48 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-11",
-      "filename": "icon-gamepad.svg",
-      "use": "Cyber Protocol project card",
-      "format": "SVG",
-      "target_size": "48x48 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-12",
-      "filename": "icon-flask.svg",
-      "use": "Experiments project card",
-      "format": "SVG",
-      "target_size": "48x48 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-13",
-      "filename": "icon-external-link.svg",
-      "use": "Project-card external link",
-      "format": "SVG",
-      "target_size": "20x20 viewBox",
-      "priority": "medium",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-14",
-      "filename": "icon-cloud.svg",
-      "use": "About/workshop decoration",
-      "format": "SVG",
-      "target_size": "48x48 viewBox",
-      "priority": "low",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-15",
-      "filename": "icon-telegram.svg",
-      "use": "Social/contact link, only if used",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "medium",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-16",
-      "filename": "icon-github.svg",
-      "use": "GitHub link",
-      "format": "SVG",
-      "target_size": "24x24 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "ICON-17",
-      "filename": "icon-coffee.svg",
-      "use": "Floating Ko-fi/support control",
-      "format": "SVG",
-      "target_size": "32x32 viewBox",
-      "priority": "high",
-      "production_status": "to_export_or_recreate"
+      "filename": "Inline SVG icons in index.html",
+      "use": "Brand mark, navigation, project cards, theme control, and GitHub",
+      "format": "Inline SVG",
+      "status": "implemented_in_html",
+      "priority": "high"
     },
     {
       "id": "DECOR-01",
-      "filename": "circuit-corners.svg",
-      "use": "Subtle technology lines around hero",
-      "format": "SVG",
-      "target_size": "responsive",
-      "priority": "medium",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "DECOR-02",
-      "filename": "pixel-sparkles.svg",
-      "use": "Small decorative pixels and sparkles",
-      "format": "SVG",
-      "target_size": "responsive",
-      "priority": "low",
-      "production_status": "to_export_or_recreate"
-    },
-    {
-      "id": "DECOR-03",
-      "filename": "puzzle-decoration.svg",
-      "use": "Projects-section decoration, if retained",
-      "format": "SVG",
-      "target_size": "64x64 viewBox",
-      "priority": "low",
-      "production_status": "to_export_or_recreate"
+      "filename": "CSS decorations in index.html",
+      "use": "Pastel hero gradients, sparkles, borders, and surfaces",
+      "format": "CSS",
+      "status": "implemented_in_css",
+      "priority": "medium"
     }
   ],
   "css_html_elements": [
-    "Navigation tabs and buttons",
-    "Project cards, borders, shadows, and rounded corners",
-    "Light/dark theme backgrounds and gradients",
-    "Text, headings, descriptions, and status labels",
-    "Technology tags and toolbox layout",
-    "Responsive spacing and separators"
+    "Navigation, buttons, project cards, borders, shadows, and rounded corners",
+    "Light and dark theme colors, gradients, and responsive backgrounds",
+    "All text, headings, project descriptions, status labels, and technology tags",
+    "Responsive layout for desktop and Android-sized screens",
+    "Language picker and mobile navigation"
   ],
   "suggested_directory_structure": {
-    "assets/brand/": [
-      "mazbayid-mark.svg",
-      "mazbayid-wordmark.svg"
-    ],
     "assets/mascot/": [
-      "octocat-hero.webp",
-      "octocat-icon.svg",
-      "octocat-small.webp",
-      "expressions/"
+      "octocat-hero.svg",
+      "octocat-icon.svg"
     ],
-    "assets/icons/navigation/": [
-      "icon-home.svg",
-      "icon-projects.svg",
-      "icon-about.svg",
-      "icon-language.svg",
-      "icon-theme-dark.svg",
-      "icon-menu.svg"
-    ],
-    "assets/icons/projects/": [
-      "icon-clock.svg",
-      "icon-chip.svg",
-      "icon-gamepad.svg",
-      "icon-flask.svg",
-      "icon-external-link.svg"
-    ],
-    "assets/icons/social/": [
-      "icon-email.svg",
-      "icon-telegram.svg",
-      "icon-github.svg",
-      "icon-coffee.svg"
-    ],
-    "assets/decorations/": [
-      "circuit-corners.svg",
-      "pixel-sparkles.svg",
-      "puzzle-decoration.svg"
+    "assets/": [
+      "assets.png",
+      "ASSETS_MANIFEST.json",
+      "ASSETS_MANIFEST.md",
+      "hexadecimal_dictionary_bitmap.pdf"
     ]
   },
   "production_rules": [
-    "Keep the approved Octo-cat silhouette, face, proportions, and lavender/cream palette consistent.",
-    "Export illustrations with transparent backgrounds; do not include the black preview background.",
-    "Prefer SVG for simple icons and marks; use optimized WebP for detailed mascot illustrations.",
-    "Center icon artwork in its viewBox with consistent visual weight and padding.",
-    "Do not bake labels or website text into images.",
-    "Use currentColor or CSS-controlled color for icons where practical.",
-    "Optimize dimensions and file sizes for mobile screens.",
-    "Use descriptive lowercase hyphenated filenames."
+    "Keep the approved simple Octo-cat silhouette, cream face, rounded tentacles, and lavender palette.",
+    "Use the standalone SVG files on transparent backgrounds; do not place the black asset-sheet background on the website.",
+    "Keep navigation and project icons as inline SVG so they remain crisp and lightweight.",
+    "Keep text and interactive UI in HTML/CSS, not baked into images.",
+    "Test both themes and mobile layouts before publishing."
   ],
   "production_order": [
-    "Octo-cat hero illustration and compact Octo-cat icon",
-    "Brand mark and essential navigation icons",
-    "Four project icons and GitHub/email/Ko-fi icons",
-    "Hero circuit decoration and small decorative elements",
-    "Optional alternate Octo-cat expressions"
+    "Review Octo-cat SVG on light and dark backgrounds",
+    "Review responsive layout on Android-sized screens",
+    "Verify language, theme, Ko-fi, email, project links, and terminal easter egg"
   ],
   "acceptance_checks": [
-    "Preview each individual asset on both light and dark backgrounds.",
-    "Check assets at phone-sized dimensions.",
-    "Verify transparent backgrounds and consistent Octo-cat appearance before repository integration."
+    "No CSS or HTML reference to background_earth.jpg",
+    "Octo-cat hero and favicon load from repository SVG files",
+    "Light and dark theme toggle works and persists",
+    "Language selection works for English, Indonesian, Filipino, Chinese, and Japanese",
+    "Mobile navigation and Ko-fi popup work",
+    "Project links and email link point to intended destinations"
   ]
 }
