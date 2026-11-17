@@ -201,6 +201,8 @@
       display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
       font-family: Inter, ui-sans-serif, system-ui, sans-serif;
     }
+    .kofi-trigger { touch-action: none; user-select: none; cursor: grab; }
+    .kofi-trigger.is-dragging { cursor: grabbing; transition: none; }
     .kofi-trigger {
       display: grid; place-items: center; width: 58px; height: 58px;
       padding: 0; border: 1px solid rgba(255,255,255,.72); border-radius: 50%;
@@ -455,7 +457,46 @@ PLEASE INPUT THE RIGHT COMMAND TO ENTER</div>
       kofiTrigger.setAttribute("aria-expanded", String(shouldOpen));
     }
 
-    kofiTrigger.addEventListener("click", () => toggleKofiPopup());
+    let kofiDrag = null;
+    let kofiWasDragged = false;
+
+    kofiTrigger.addEventListener("pointerdown", event => {
+      if (event.button !== 0) return;
+      const rect = kofiTrigger.getBoundingClientRect();
+      kofiDrag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, left: rect.left, top: rect.top, moved: false };
+      kofiTrigger.setPointerCapture(event.pointerId);
+    });
+    kofiTrigger.addEventListener("pointermove", event => {
+      if (!kofiDrag || event.pointerId !== kofiDrag.pointerId) return;
+      const dx = event.clientX - kofiDrag.startX;
+      const dy = event.clientY - kofiDrag.startY;
+      if (!kofiDrag.moved && Math.hypot(dx, dy) < 7) return;
+      kofiDrag.moved = true;
+      kofiTrigger.classList.add("is-dragging");
+      const left = Math.max(8, Math.min(window.innerWidth - kofiTrigger.offsetWidth - 8, kofiDrag.left + dx));
+      const top = Math.max(8, Math.min(window.innerHeight - kofiTrigger.offsetHeight - 8, kofiDrag.top + dy));
+      const widget = kofiTrigger.closest(".kofi-widget");
+      widget.style.left = left + "px";
+      widget.style.top = top + "px";
+      widget.style.right = "auto";
+      widget.style.bottom = "auto";
+    });
+    function finishKofiDrag(event) {
+      if (!kofiDrag || event.pointerId !== kofiDrag.pointerId) return;
+      kofiWasDragged = kofiDrag.moved;
+      kofiDrag = null;
+      kofiTrigger.classList.remove("is-dragging");
+    }
+    kofiTrigger.addEventListener("pointerup", finishKofiDrag);
+    kofiTrigger.addEventListener("pointercancel", finishKofiDrag);
+    kofiTrigger.addEventListener("click", event => {
+      if (kofiWasDragged) {
+        event.preventDefault();
+        kofiWasDragged = false;
+        return;
+      }
+      toggleKofiPopup();
+    });
     kofiClose.addEventListener("click", () => {
       toggleKofiPopup(false);
       kofiTrigger.focus();
