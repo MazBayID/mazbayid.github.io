@@ -1,87 +1,678 @@
 {
   "project": "MazBayID Cozy Cute Tech",
-  "manifest_version": "1.0",
-  "reference": {
+  "manifest_version": "2.0",
+  "updated_for": "assets/assets.png",
+  "source_of_truth": {
     "file": "assets/assets.png",
-    "purpose": "Repository asset sheet used as the visual reference"
+    "role": "Primary visual source sheet and approved design reference for the Cozy Cute Tech website",
+    "dimensions_px": {
+      "width": 1536,
+      "height": 1027
+    },
+    "format": "PNG",
+    "background": {
+      "color": "white",
+      "hex": "#FFFFFF",
+      "preserve": true
+    },
+    "notes": [
+      "The image is a composed visual sheet containing a homepage design reference, icon examples, decorative elements, project cards, and UI component samples.",
+      "It is not a transparent sprite atlas: many elements sit on a white canvas and some are shown in context with text or surrounding UI.",
+      "Do not remove, replace, or assume transparency for the white background.",
+      "Do not treat every visible label or sample as a separate exported asset file.",
+      "Use this sheet as the visual source of truth when recreating or extracting individual components."
+    ]
   },
-  "status": "implemented",
-  "notes": [
-    "The reference sheet combines multiple visual elements in one image.",
-    "Use it as the visual source of truth; export or recreate required elements as separate files.",
-    "The whole sheet should not be used as a single website image."
+  "design_system": {
+    "direction": "Cozy Cute Tech",
+    "mood": [
+      "cute",
+      "friendly",
+      "soft",
+      "playful",
+      "technology-oriented",
+      "open-source"
+    ],
+    "mascot": {
+      "name": "Octo-cat",
+      "style": "Simple, rounded, friendly cartoon cat with octopus-like tentacles",
+      "visible_features": [
+        "lavender/dark-purple body",
+        "cream face and muzzle",
+        "pointed cat ears",
+        "small facial features",
+        "curled tentacle",
+        "laptop",
+        "two stacked books",
+        "code speech bubble"
+      ],
+      "placement": "Hero illustration, upper-right side of the main hero content"
+    },
+    "palette": {
+      "ink": "#241743",
+      "purple": "#8060C4",
+      "lavender": "#EDE5FA",
+      "mint": "#BDEFE4",
+      "blue": "#DDE6FF",
+      "peach": "#FBE9D9",
+      "yellow": "#F7C85A",
+      "white": "#FFFFFF",
+      "muted_gray": "#D8D4E2",
+      "note": "Hex values are visual estimates sampled from the displayed design, not formal color tokens extracted from a source file."
+    },
+    "typography": {
+      "style": "Rounded, friendly sans-serif",
+      "hierarchy": [
+        "large bold two-line hero heading",
+        "bold section headings",
+        "medium project titles",
+        "regular descriptive text",
+        "small status and footer text"
+      ],
+      "note": "The screenshot does not identify the exact font family."
+    },
+    "layout": {
+      "reference": "Desktop composition with centered max-width content and multi-column cards",
+      "responsive_intent": "Must be adapted to narrow Android/mobile screens; the reference image itself shows a desktop layout.",
+      "major_regions": [
+        "top navigation",
+        "hero",
+        "project showcase",
+        "about/workshop and toolbox panels",
+        "footer"
+      ]
+    }
+  },
+  "atlas_regions": [
+    {
+      "id": "REGION-01",
+      "name": "Brand identity",
+      "approx_bounds_px": {
+        "x": 55,
+        "y": 18,
+        "width": 285,
+        "height": 85
+      },
+      "contains": [
+        "code-bracket logo tile",
+        "MazBayID wordmark",
+        "small lavender dot",
+        "Mascot Illustration caption"
+      ],
+      "role": "Brand header and identity reference"
+    },
+    {
+      "id": "REGION-02",
+      "name": "Primary navigation",
+      "approx_bounds_px": {
+        "x": 535,
+        "y": 16,
+        "width": 435,
+        "height": 95
+      },
+      "contains": [
+        "Home tab with house icon",
+        "Projects tab with grid icon",
+        "About tab with person icon"
+      ],
+      "role": "Desktop navigation component reference"
+    },
+    {
+      "id": "REGION-03",
+      "name": "Utility navigation",
+      "approx_bounds_px": {
+        "x": 1125,
+        "y": 15,
+        "width": 340,
+        "height": 95
+      },
+      "contains": [
+        "language globe button",
+        "dark-mode moon button",
+        "menu button",
+        "Email me button"
+      ],
+      "role": "Utility controls and contact action reference"
+    },
+    {
+      "id": "REGION-04",
+      "name": "Hero text and actions",
+      "approx_bounds_px": {
+        "x": 103,
+        "y": 112,
+        "width": 665,
+        "height": 330
+      },
+      "contains": [
+        "Independent Open Source Developer pill",
+        "Hello, world! heading with waving-hand graphic",
+        "Let's build something. heading",
+        "two-line introductory description",
+        "Explore projects button",
+        "A little about me button"
+      ],
+      "role": "Hero copy and CTA layout reference"
+    },
+    {
+      "id": "REGION-05",
+      "name": "Octo-cat mascot illustration",
+      "approx_bounds_px": {
+        "x": 830,
+        "y": 130,
+        "width": 220,
+        "height": 145
+      },
+      "contains": [
+        "Octo-cat character",
+        "laptop",
+        "stacked books",
+        "code speech bubble",
+        "small yellow accent marks"
+      ],
+      "role": "Primary mascot illustration"
+    },
+    {
+      "id": "REGION-06",
+      "name": "Badge and decorative marks",
+      "approx_bounds_px": {
+        "x": 25,
+        "y": 128,
+        "width": 1170,
+        "height": 230
+      },
+      "contains": [
+        "left-side lavender square",
+        "curved line ornament",
+        "star badge and Badge caption"
+      ],
+      "role": "Small decorative elements and badge reference"
+    },
+    {
+      "id": "REGION-07",
+      "name": "Navigation and feature icon samples",
+      "approx_bounds_px": {
+        "x": 800,
+        "y": 300,
+        "width": 670,
+        "height": 125
+      },
+      "contains": [
+        "Home",
+        "Projects",
+        "Outline Style star",
+        "Clock",
+        "Project chip",
+        "Project flask",
+        "external-link icon"
+      ],
+      "role": "Reusable navigation and feature icon references"
+    },
+    {
+      "id": "REGION-08",
+      "name": "Color and social utility samples",
+      "approx_bounds_px": {
+        "x": 815,
+        "y": 445,
+        "width": 660,
+        "height": 100
+      },
+      "contains": [
+        "mint/purple/blue/yellow color dots",
+        "small cloud outline",
+        "large mint cloud button",
+        "Telegram and GitHub social pill"
+      ],
+      "role": "Palette, cloud and social icon references"
+    },
+    {
+      "id": "REGION-09",
+      "name": "Project showcase heading",
+      "approx_bounds_px": {
+        "x": 30,
+        "y": 450,
+        "width": 500,
+        "height": 100
+      },
+      "contains": [
+        "purple puzzle-piece graphic",
+        "Little things I've built heading",
+        "Open source projects, made with curiosity subtitle"
+      ],
+      "role": "Project section heading reference"
+    },
+    {
+      "id": "REGION-10",
+      "name": "Project card: Neo Clock Studio",
+      "approx_bounds_px": {
+        "x": 35,
+        "y": 552,
+        "width": 353,
+        "height": 175
+      },
+      "contains": [
+        "clock icon",
+        "project title",
+        "creative workspace description",
+        "Active project status",
+        "external-link icon"
+      ],
+      "role": "Project card reference; lavender surface"
+    },
+    {
+      "id": "REGION-11",
+      "name": "Project card: ESP Clock",
+      "approx_bounds_px": {
+        "x": 398,
+        "y": 552,
+        "width": 347,
+        "height": 175
+      },
+      "contains": [
+        "microchip icon",
+        "project title",
+        "ESP32 clock description",
+        "In development status",
+        "external-link icon"
+      ],
+      "role": "Project card reference; mint surface"
+    },
+    {
+      "id": "REGION-12",
+      "name": "Project card: Cyber Protocol",
+      "approx_bounds_px": {
+        "x": 755,
+        "y": 552,
+        "width": 350,
+        "height": 175
+      },
+      "contains": [
+        "gamepad icon",
+        "project title",
+        "game project description",
+        "In development status",
+        "external-link icon"
+      ],
+      "role": "Project card reference; peach surface"
+    },
+    {
+      "id": "REGION-13",
+      "name": "Project card: Experiments",
+      "approx_bounds_px": {
+        "x": 1115,
+        "y": 552,
+        "width": 355,
+        "height": 175
+      },
+      "contains": [
+        "laboratory flask icon",
+        "project title",
+        "small ideas and prototypes description",
+        "Always exploring status",
+        "external-link icon"
+      ],
+      "role": "Project card reference; pale blue surface"
+    },
+    {
+      "id": "REGION-14",
+      "name": "Workshop/about panel",
+      "approx_bounds_px": {
+        "x": 33,
+        "y": 742,
+        "width": 510,
+        "height": 195
+      },
+      "contains": [
+        "cloud outline icon",
+        "A little about this workshop heading",
+        "Small setup. Big curiosity subtitle",
+        "paragraph describing independent open-source development with Android and AI"
+      ],
+      "role": "About/workshop content panel; mint surface"
+    },
+    {
+      "id": "REGION-15",
+      "name": "Toolbox panel",
+      "approx_bounds_px": {
+        "x": 550,
+        "y": 742,
+        "width": 405,
+        "height": 195
+      },
+      "contains": [
+        "Inside my toolbox heading",
+        "Python",
+        "C++",
+        "Arduino",
+        "ESP32",
+        "GitHub",
+        "Linux",
+        "AI tools technology pills"
+      ],
+      "role": "Technology/toolbox panel; light lavender surface"
+    },
+    {
+      "id": "REGION-16",
+      "name": "Technology tag sample panel",
+      "approx_bounds_px": {
+        "x": 965,
+        "y": 742,
+        "width": 505,
+        "height": 195
+      },
+      "contains": [
+        "Python",
+        "C++",
+        "Arduino",
+        "GitHub",
+        "Linux tags with colored outlines",
+        "horizontal divider"
+      ],
+      "role": "Alternate technology tag and panel styling reference"
+    },
+    {
+      "id": "REGION-17",
+      "name": "Floating support controls",
+      "approx_bounds_px": {
+        "x": 1385,
+        "y": 775,
+        "width": 90,
+        "height": 215
+      },
+      "contains": [
+        "two mint circular cup/mug buttons"
+      ],
+      "role": "Floating support/Ko-fi-style control reference; exact action is not established by the image"
+    },
+    {
+      "id": "REGION-18",
+      "name": "Footer",
+      "approx_bounds_px": {
+        "x": 30,
+        "y": 955,
+        "width": 1385,
+        "height": 50
+      },
+      "contains": [
+        "© 2026 MazBayID - Made with curiosity heart",
+        "Open source, always.",
+        "GitHub icon"
+      ],
+      "role": "Footer and repository link reference"
+    }
   ],
-  "assets": [
+  "asset_inventory": [
+    {
+      "id": "BRAND-01",
+      "name": "Code-bracket brand mark",
+      "source_region": "REGION-01",
+      "kind": "illustration/icon",
+      "standalone_file": "not_present_in_this_manifest",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "BRAND-02",
+      "name": "MazBayID wordmark",
+      "source_region": "REGION-01",
+      "kind": "text/logo lettering",
+      "status": "visible_in_source_sheet"
+    },
     {
       "id": "MASCOT-01",
-      "filename": "assets/mascot/octocat-hero.svg",
-      "use": "Hero mascot illustration with laptop, books, and code bubble",
-      "format": "SVG",
-      "status": "created_and_used",
+      "name": "Octo-cat hero",
+      "source_region": "REGION-05",
+      "kind": "mascot illustration",
+      "status": "visible_in_source_sheet",
       "priority": "critical"
     },
     {
-      "id": "MASCOT-02",
-      "filename": "assets/mascot/octocat-icon.svg",
-      "use": "Favicon and compact mascot mark",
-      "format": "SVG",
-      "status": "created_and_used",
-      "priority": "high"
+      "id": "ICON-01",
+      "name": "Waving hand",
+      "source_region": "REGION-04",
+      "kind": "emoji/graphic accent",
+      "status": "visible_in_source_sheet"
     },
     {
-      "id": "ICON-01",
-      "filename": "Inline SVG icons in index.html",
-      "use": "Brand mark, navigation, project cards, theme control, and GitHub",
-      "format": "Inline SVG",
-      "status": "implemented_in_html",
-      "priority": "high"
+      "id": "ICON-02",
+      "name": "Star badge",
+      "source_region": "REGION-06",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-03",
+      "name": "Home",
+      "source_region": "REGION-02 and REGION-07",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-04",
+      "name": "Projects/grid",
+      "source_region": "REGION-02 and REGION-07",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-05",
+      "name": "About/person",
+      "source_region": "REGION-02",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-06",
+      "name": "Globe/language",
+      "source_region": "REGION-03",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-07",
+      "name": "Moon/dark mode",
+      "source_region": "REGION-03",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-08",
+      "name": "Menu",
+      "source_region": "REGION-03",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-09",
+      "name": "Email/envelope",
+      "source_region": "REGION-03",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-10",
+      "name": "Outline style/star",
+      "source_region": "REGION-07",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-11",
+      "name": "Clock",
+      "source_region": "REGION-07 and REGION-10",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-12",
+      "name": "Microchip",
+      "source_region": "REGION-07 and REGION-11",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-13",
+      "name": "Flask",
+      "source_region": "REGION-07 and REGION-13",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-14",
+      "name": "External link",
+      "source_region": "REGION-07 and REGION-10 through REGION-13",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-15",
+      "name": "Cloud",
+      "source_region": "REGION-08 and REGION-14",
+      "kind": "icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-16",
+      "name": "Telegram paper plane",
+      "source_region": "REGION-08",
+      "kind": "social icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-17",
+      "name": "GitHub mark",
+      "source_region": "REGION-08 and REGION-18",
+      "kind": "social/repository icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-18",
+      "name": "Puzzle piece",
+      "source_region": "REGION-09",
+      "kind": "section illustration",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-19",
+      "name": "Gamepad",
+      "source_region": "REGION-12",
+      "kind": "project icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "ICON-20",
+      "name": "Cup/mug support symbol",
+      "source_region": "REGION-17",
+      "kind": "floating action icon",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "CARD-01",
+      "name": "Neo Clock Studio card",
+      "source_region": "REGION-10",
+      "kind": "project card composition",
+      "status": "design_reference"
+    },
+    {
+      "id": "CARD-02",
+      "name": "ESP Clock card",
+      "source_region": "REGION-11",
+      "kind": "project card composition",
+      "status": "design_reference"
+    },
+    {
+      "id": "CARD-03",
+      "name": "Cyber Protocol card",
+      "source_region": "REGION-12",
+      "kind": "project card composition",
+      "status": "design_reference"
+    },
+    {
+      "id": "CARD-04",
+      "name": "Experiments card",
+      "source_region": "REGION-13",
+      "kind": "project card composition",
+      "status": "design_reference"
+    },
+    {
+      "id": "PANEL-01",
+      "name": "Workshop/about panel",
+      "source_region": "REGION-14",
+      "kind": "content panel",
+      "status": "design_reference"
+    },
+    {
+      "id": "PANEL-02",
+      "name": "Toolbox panel",
+      "source_region": "REGION-15",
+      "kind": "content panel",
+      "status": "design_reference"
+    },
+    {
+      "id": "PANEL-03",
+      "name": "Technology tags panel",
+      "source_region": "REGION-16",
+      "kind": "content panel",
+      "status": "design_reference"
     },
     {
       "id": "DECOR-01",
-      "filename": "CSS decorations in index.html",
-      "use": "Pastel hero gradients, sparkles, borders, and surfaces",
-      "format": "CSS",
-      "status": "implemented_in_css",
-      "priority": "medium"
+      "name": "Pastel palette dots",
+      "source_region": "REGION-08",
+      "kind": "color samples",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "DECOR-02",
+      "name": "Left-side line and square",
+      "source_region": "REGION-06",
+      "kind": "decorative shapes",
+      "status": "visible_in_source_sheet"
+    },
+    {
+      "id": "DECOR-03",
+      "name": "Yellow accent marks",
+      "source_region": "REGION-05",
+      "kind": "decorative shapes",
+      "status": "visible_in_source_sheet"
     }
   ],
-  "css_html_elements": [
-    "Navigation, buttons, project cards, borders, shadows, and rounded corners",
-    "Light and dark theme colors, gradients, and responsive backgrounds",
-    "All text, headings, project descriptions, status labels, and technology tags",
-    "Responsive layout for desktop and Android-sized screens",
-    "Language picker and mobile navigation"
-  ],
-  "suggested_directory_structure": {
-    "assets/mascot/": [
-      "octocat-hero.svg",
-      "octocat-icon.svg"
-    ],
-    "assets/": [
-      "assets.png",
-      "ASSETS_MANIFEST.json",
-      "ASSETS_MANIFEST.md",
-      "hexadecimal_dictionary_bitmap.pdf"
+  "implementation_guidance": {
+    "use_source_sheet_as": "visual master reference; extract only when an individual bitmap asset is genuinely needed",
+    "preferred_implementation": "Rebuild layout, text, buttons, cards, and responsive behavior in HTML/CSS; use original source-sheet artwork for distinctive illustrations and icon art where practical.",
+    "image_usage": "Do not display the entire assets.png as a page background or full-page hero image.",
+    "extraction": "If individual artwork is cropped from the sheet, preserve its original colors and white background unless the user explicitly approves background removal or transparency work.",
+    "generated_svg_policy": "Previously generated SVG mascot files are derived implementation assets, not the original source artwork in assets.png. Keep them classified as derived/legacy until visual comparison confirms they are faithful and approved.",
+    "dark_theme": "The reference sheet shows the light theme. Dark-theme colors and contrast behavior must be designed as a complementary adaptation; they are not directly specified by this image.",
+    "mobile": "Reflow navigation, project cards, and lower information panels into a readable single-column or compact layout on phone screens."
+  },
+  "repository_files": {
+    "source_sheet": "assets/assets.png",
+    "manifest_json": "assets/ASSETS_MANIFEST.json",
+    "manifest_markdown": "assets/ASSETS_MANIFEST.md",
+    "related_document": "assets/hexadecimal_dictionary_bitmap.pdf",
+    "derived_mascot_files": [
+      {
+        "file": "assets/mascot/octocat-hero.svg",
+        "classification": "derived SVG; current homepage references it"
+      },
+      {
+        "file": "assets/mascot/octocat-icon.svg",
+        "classification": "derived SVG; current homepage references it"
+      }
     ]
   },
-  "production_rules": [
-    "Keep the approved simple Octo-cat silhouette, cream face, rounded tentacles, and lavender palette.",
-    "Use the standalone SVG files on transparent backgrounds; do not place the black asset-sheet background on the website.",
-    "Keep navigation and project icons as inline SVG so they remain crisp and lightweight.",
-    "Keep text and interactive UI in HTML/CSS, not baked into images.",
-    "Test both themes and mobile layouts before publishing."
+  "known_gaps": [
+    "The screenshot does not provide exact font family names.",
+    "The screenshot is a light-theme visual reference; dark-theme styling must be inferred and separately reviewed.",
+    "The screenshot does not specify exact behavior or destination URLs for every icon and floating cup button.",
+    "The source sheet is a flattened PNG, so individual artwork is not independently addressable as separate files yet.",
+    "The visual sheet does not itself prove which components are currently implemented in index.html."
   ],
-  "production_order": [
-    "Review Octo-cat SVG on light and dark backgrounds",
-    "Review responsive layout on Android-sized screens",
-    "Verify language, theme, Ko-fi, email, project links, and terminal easter egg"
-  ],
-  "acceptance_checks": [
-    "No CSS or HTML reference to background_earth.jpg",
-    "Octo-cat hero and favicon load from repository SVG files",
-    "Light and dark theme toggle works and persists",
-    "Language selection works for English, Indonesian, Filipino, Chinese, and Japanese",
-    "Mobile navigation and Ko-fi popup work",
-    "Project links and email link point to intended destinations"
-  ]
+  "validation_status": {
+    "source_image_inspected": true,
+    "dimensions_verified": true,
+    "homepage_currently_references_source_sheet": false,
+    "homepage_currently_references_derived_mascot_svgs": true,
+    "old_earth_background_reference_in_homepage": false,
+    "note": "This manifest documents the source image and design specification. It does not claim the homepage has already been rebuilt to match every region."
+  }
 }
