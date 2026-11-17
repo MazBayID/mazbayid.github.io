@@ -65,7 +65,7 @@
     .hero:before,.hero:after{content:"";position:absolute;pointer-events:none;border:2px solid rgba(166,139,220,.25);border-radius:18px}
     .hero:before{width:150px;height:90px;right:3%;top:-42px;transform:rotate(-12deg)}
     .hero:after{width:100px;height:100px;left:-68px;bottom:-45px;transform:rotate(25deg)}
-    .hero-copy{position:relative;z-index:1}
+    .hero-copy{position:relative;z-index:2;min-width:0}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border:1px solid #cdb9ef;border-radius:999px;background:rgba(255,255,255,.5);font-size:.78rem;font-weight:900;color:#4b3a70}
     html[data-theme="dark"] .eyebrow{background:rgba(255,255,255,.06);color:#e6d8ff;border-color:#665386}
     .eyebrow-star{color:#f3bd4f}
@@ -77,9 +77,9 @@
     .hero-actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:24px}
     .button-secondary{border:1.5px solid var(--lav);background:rgba(255,255,255,.62);color:#4d3a70;box-shadow:none}
     html[data-theme="dark"] .button-secondary{background:rgba(255,255,255,.07);color:var(--ink)}
-    .hero-art{position:relative;z-index:1;display:grid;place-items:center;min-width:0}
+    .hero-art{position:relative;z-index:0;display:grid;place-items:center;min-width:0;max-width:100%}
     /* Cropped directly from the approved assets.png sheet. The white artwork background is intentionally preserved. */
-    .asset-mascot{display:block;width:min(100%,410px);aspect-ratio:220 / 145;background-color:#fff;background-image:url("./assets/assets.png");background-repeat:no-repeat;background-size:697% auto;background-position:63.1% 14.7%;border-radius:22px;filter:drop-shadow(0 16px 12px rgba(75,50,111,.12))}
+    .asset-mascot{display:block;width:min(100%,340px);max-width:100%;aspect-ratio:220 / 145;background-color:#fff;background-image:url("./assets/assets.png");background-repeat:no-repeat;background-size:697% auto;background-position:63.1% 14.7%;border-radius:22px;filter:drop-shadow(0 16px 12px rgba(75,50,111,.12))}
     .puzzle{display:inline-block;width:42px;height:42px;flex:0 0 42px;font-size:0;background-image:url("./assets/assets.png");background-repeat:no-repeat;background-size:2560% auto;background-position:2.4% 49.6%}
     .hero-spark{position:absolute;right:13%;top:6%;color:#e8b64e;font-size:2rem;transform:rotate(12deg)}
     .section{padding:62px 0 12px}
@@ -123,9 +123,11 @@
     .footer-inner{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
     .footer-github{display:inline-flex;align-items:center;gap:7px;font-weight:900}
     .footer-github svg{width:18px;height:18px;fill:currentColor}
-    .kofi-widget{position:fixed;right:22px;bottom:22px;z-index:70}
+    .kofi-widget{position:fixed;right:22px;bottom:22px;z-index:70;touch-action:none}
+    .kofi-trigger{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+    .kofi-trigger:active{cursor:grabbing}
     .kofi-trigger{width:62px;height:62px;display:grid;place-items:center;border:0;border-radius:50%;background:#7de0d1;color:#103d3a;box-shadow:0 9px 24px rgba(39,128,119,.24);cursor:pointer}
-    .kofi-trigger svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+    .kofi-trigger img{display:block;width:34px;height:34px;object-fit:contain}
     .kofi-popup[hidden]{display:none}
     .kofi-popup{position:absolute;right:0;bottom:76px;width:min(300px,calc(100vw - 36px));padding:19px;border:1px solid rgba(24,92,85,.18);border-radius:20px;background:#b8f0e5;color:#173d3a;box-shadow:0 15px 42px rgba(24,77,72,.22)}
     .kofi-popup-head{display:flex;align-items:center;justify-content:space-between;font-weight:1000}
@@ -150,8 +152,9 @@
       .nav-links{display:none;position:absolute;left:14px;right:14px;top:72px;flex-direction:column;align-items:stretch;border-radius:18px;padding:8px;box-shadow:var(--shadow)}
       .nav-links.open{display:flex}.nav-links a{text-align:center}
       .nav-tools{gap:6px}.icon-button{width:38px;height:38px}.email-button{display:none}.menu-toggle{display:grid}
-      .hero{grid-template-columns:1fr;gap:0;margin-top:13px;padding:27px 23px 15px;border-radius:25px}
-      .hero-art{margin-top:-5px}.hero-art img{width:min(78%,330px)}
+      .hero{grid-template-columns:minmax(0,1fr);gap:16px;margin-top:13px;padding:27px 23px 22px;border-radius:25px}
+      .hero-copy{width:100%}.hero-actions{position:relative;z-index:3}
+      .hero-art{width:100%;margin-top:0}.asset-mascot{width:min(100%,300px);}
       h1{font-size:clamp(2.45rem,10vw,3.8rem)}
       .section{padding-top:45px}.section-heading{align-items:flex-start;flex-direction:column}
       .project-grid{grid-template-columns:1fr 1fr;gap:10px}.project-card{padding:16px 14px;min-height:168px}
@@ -290,7 +293,7 @@
       <a class="kofi-link" href="https://ko-fi.com/mazbayid" target="_blank" rel="noopener noreferrer" data-i18n="support">Support on Ko-fi ↗</a>
     </section>
     <button class="kofi-trigger" id="kofi-trigger" type="button" aria-label="Open Ko-fi support popup" aria-expanded="false" aria-controls="kofi-popup">
-      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 16h29v14a12 12 0 0 1-12 12h-5A12 12 0 0 1 8 30z"/><path d="M37 20h3a6 6 0 0 1 0 12h-4M14 10h20M18 6h12"/></svg>
+      <img src="https://cdn.simpleicons.org/kofi/000000" alt="" width="34" height="34" draggable="false">
     </button>
   </aside>
 
@@ -357,9 +360,55 @@
     navLinks.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{navLinks.classList.remove("open");menuToggle.setAttribute("aria-expanded","false")}));
     document.getElementById("year").textContent=String(new Date().getFullYear());
 
-    const kofiPopup=document.getElementById("kofi-popup"),kofiTrigger=document.getElementById("kofi-trigger"),kofiClose=document.getElementById("kofi-close");
+    const kofiPopup=document.getElementById("kofi-popup"),kofiTrigger=document.getElementById("kofi-trigger"),kofiClose=document.getElementById("kofi-close"),kofiWidget=document.querySelector(".kofi-widget");
     function toggleKofi(force){const open=typeof force==="boolean"?force:kofiPopup.hidden;kofiPopup.hidden=!open;kofiTrigger.setAttribute("aria-expanded",String(open))}
-    kofiTrigger.addEventListener("click",()=>toggleKofi());
+    let kofiPointerStart=null,kofiMoved=false;
+    try{
+      const savedPosition=JSON.parse(localStorage.getItem("mazbayid-kofi-position")||"null");
+      if(savedPosition&&Number.isFinite(savedPosition.left)&&Number.isFinite(savedPosition.top)){
+        const maxLeft=Math.max(0,window.innerWidth-kofiTrigger.offsetWidth),maxTop=Math.max(0,window.innerHeight-kofiTrigger.offsetHeight);
+        kofiWidgetPosition(savedPosition.left,savedPosition.top,maxLeft,maxTop);
+      }
+    }catch(e){}
+    function kofiWidgetPosition(left,top,maxLeft,maxTop){
+      const x=Math.min(Math.max(0,left),maxLeft??Math.max(0,window.innerWidth-kofiTrigger.offsetWidth));
+      const y=Math.min(Math.max(0,top),maxTop??Math.max(0,window.innerHeight-kofiTrigger.offsetHeight));
+      const widget=document.querySelector(".kofi-widget");
+      widget.style.left=x+"px";widget.style.top=y+"px";widget.style.right="auto";widget.style.bottom="auto";
+    }
+    kofiTrigger.addEventListener("pointerdown",e=>{
+      if(e.button!==undefined&&e.button!==0)return;
+      const rect=document.querySelector(".kofi-widget").getBoundingClientRect();
+      kofiPointerStart={x:e.clientX,y:e.clientY,left:rect.left,top:rect.top,pointerId:e.pointerId};
+      kofiMoved=false;
+      kofiTrigger.setPointerCapture(e.pointerId);
+    });
+    kofiTrigger.addEventListener("pointermove",e=>{
+      if(!kofiPointerStart||e.pointerId!==kofiPointerStart.pointerId)return;
+      const dx=e.clientX-kofiPointerStart.x,dy=e.clientY-kofiPointerStart.y;
+      if(!kofiMoved&&Math.hypot(dx,dy)<6)return;
+      kofiMoved=true;
+      e.preventDefault();
+      kofiWidgetPosition(kofiPointerStart.left+dx,kofiPointerStart.top+dy);
+    });
+    function finishKofiPointer(e){
+      if(!kofiPointerStart||e.pointerId!==kofiPointerStart.pointerId)return;
+      if(kofiMoved){
+        const rect=document.querySelector(".kofi-widget").getBoundingClientRect();
+        try{localStorage.setItem("mazbayid-kofi-position",JSON.stringify({left:rect.left,top:rect.top}))}catch(err){}
+      }
+      kofiPointerStart=null;
+    }
+    kofiTrigger.addEventListener("pointerup",finishKofiPointer);
+    kofiTrigger.addEventListener("pointercancel",finishKofiPointer);
+    kofiTrigger.addEventListener("click",e=>{
+      if(kofiMoved){e.preventDefault();e.stopPropagation();kofiMoved=false;return}
+      toggleKofi();
+    });
+    window.addEventListener("resize",()=>{
+      const rect=document.querySelector(".kofi-widget").getBoundingClientRect();
+      kofiWidgetPosition(rect.left,rect.top);
+    });
     kofiClose.addEventListener("click",()=>{toggleKofi(false);kofiTrigger.focus()});
     document.addEventListener("click",e=>{if(!e.target.closest(".kofi-widget"))toggleKofi(false)});
     document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!kofiPopup.hidden){toggleKofi(false);kofiTrigger.focus()}});
