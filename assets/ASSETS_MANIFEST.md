@@ -88,11 +88,12 @@ Colors are visual estimates from the image, not extracted design tokens. The exa
 - `assets/ASSETS_MANIFEST.json` — structured manifest.
 - `assets/ASSETS_MANIFEST.md` — human-readable inventory.
 - `assets/hexadecimal_dictionary_bitmap.pdf` — related reference document.
-- `assets/mascot/octocat-hero.svg` and `octocat-icon.svg` — derived SVGs; homepage currently references both.
-- The current `index.html` does **not** directly reference `assets/assets.png`.
+- `assets/mascot/octocat-hero.svg` — legacy derived SVG; no longer used by the homepage.
+- `assets/mascot/octocat-icon.svg` — derived SVG still used as the favicon.
+- The current `index.html` references `assets/assets.png` as a CSS sprite sheet for the Octo-cat hero and project-section puzzle-piece decoration.
 - The current `index.html` does not reference `background_earth.jpg`.
 
-This manifest describes the source sheet accurately; it does not claim that every component in the reference has already been implemented in the live homepage.
+The homepage now uses CSS sprite crops from the source sheet for the hero Octo-cat and puzzle-piece decoration. This does not mean every icon or component in the reference sheet has been individually extracted or implemented.
 
 ## 8. Known gaps
 
