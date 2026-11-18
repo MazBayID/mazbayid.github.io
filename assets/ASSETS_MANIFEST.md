@@ -34,7 +34,7 @@ It is a flattened PNG, **not** a transparent sprite atlas. Do not remove its whi
 | Floating support controls | 2265, 1268, 147, 352 | Two mint circular cup/mug buttons |
 | Footer | 49, 1562, 2265, 82 | Copyright, “Open source, always.” and GitHub |
 
-*Coordinates are approximate visual bounds in the 1536 × 1027 reference image, not pixel-perfect crop instructions.*
+*Coordinates are approximate visual bounds in the 2512 × 1680 reference image, not pixel-perfect crop instructions.*
 
 ## 3. Octo-cat specification
 
