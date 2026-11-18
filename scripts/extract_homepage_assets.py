@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export the two homepage images from the approved 1536x1027 source sheet.
+"""Export the two homepage images from the approved 2512x1680 source sheet.
 
 The crop coordinates reproduce the existing CSS sprite positions exactly.
 The source sheet and its white background are preserved unchanged.
@@ -11,14 +11,14 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets" / "assets.png"
 
 CROPS = {
-    ROOT / "assets" / "mascot" / "octocat-hero.webp": (830, 129, 1050, 274),
-    ROOT / "assets" / "icons" / "puzzle-piece.webp": (35, 479, 95, 539),
+    ROOT / "assets" / "mascot" / "octocat-hero.webp": (1357, 212, 1717, 450),
+    ROOT / "assets" / "icons" / "puzzle-piece.webp": (58, 784, 156, 882),
 }
 
 def main() -> None:
     with Image.open(SOURCE) as source:
-        if source.size != (1536, 1027):
-            raise SystemExit(f"Unexpected source dimensions: {source.size}; expected 1536x1027")
+        if source.size != (2512, 1680):
+            raise SystemExit(f"Unexpected source dimensions: {source.size}; expected 2512x1680")
         source = source.convert("RGB")
         for destination, bounds in CROPS.items():
             destination.parent.mkdir(parents=True, exist_ok=True)

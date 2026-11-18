@@ -6,8 +6,8 @@
     "file": "assets/assets.png",
     "role": "Primary visual source sheet and approved design reference for the Cozy Cute Tech website",
     "dimensions_px": {
-      "width": 1536,
-      "height": 1027
+      "width": 2512,
+      "height": 1680
     },
     "format": "PNG",
     "background": {
@@ -21,7 +21,8 @@
       "Do not remove, replace, or assume transparency for the white background.",
       "Do not treat every visible label or sample as a separate exported asset file.",
       "Use this sheet as the visual source of truth when recreating or extracting individual components."
-    ]
+    ],
+    "file_size_bytes": 4486716
   },
   "design_system": {
     "direction": "Cozy Cute Tech",
@@ -88,10 +89,10 @@
       "id": "REGION-01",
       "name": "Brand identity",
       "approx_bounds_px": {
-        "x": 55,
-        "y": 18,
-        "width": 285,
-        "height": 85
+        "x": 90,
+        "y": 29,
+        "width": 466,
+        "height": 139
       },
       "contains": [
         "code-bracket logo tile",
@@ -105,10 +106,10 @@
       "id": "REGION-02",
       "name": "Primary navigation",
       "approx_bounds_px": {
-        "x": 535,
-        "y": 16,
-        "width": 435,
-        "height": 95
+        "x": 875,
+        "y": 26,
+        "width": 711,
+        "height": 155
       },
       "contains": [
         "Home tab with house icon",
@@ -121,10 +122,10 @@
       "id": "REGION-03",
       "name": "Utility navigation",
       "approx_bounds_px": {
-        "x": 1125,
-        "y": 15,
-        "width": 340,
-        "height": 95
+        "x": 1840,
+        "y": 25,
+        "width": 556,
+        "height": 155
       },
       "contains": [
         "language globe button",
@@ -138,10 +139,10 @@
       "id": "REGION-04",
       "name": "Hero text and actions",
       "approx_bounds_px": {
-        "x": 103,
-        "y": 112,
-        "width": 665,
-        "height": 330
+        "x": 168,
+        "y": 183,
+        "width": 1088,
+        "height": 540
       },
       "contains": [
         "Independent Open Source Developer pill",
@@ -157,10 +158,10 @@
       "id": "REGION-05",
       "name": "Octo-cat mascot illustration",
       "approx_bounds_px": {
-        "x": 830,
-        "y": 130,
-        "width": 220,
-        "height": 145
+        "x": 1357,
+        "y": 213,
+        "width": 360,
+        "height": 237
       },
       "contains": [
         "Octo-cat character",
@@ -175,10 +176,10 @@
       "id": "REGION-06",
       "name": "Badge and decorative marks",
       "approx_bounds_px": {
-        "x": 25,
-        "y": 128,
-        "width": 1170,
-        "height": 230
+        "x": 41,
+        "y": 209,
+        "width": 1913,
+        "height": 376
       },
       "contains": [
         "left-side lavender square",
@@ -191,10 +192,10 @@
       "id": "REGION-07",
       "name": "Navigation and feature icon samples",
       "approx_bounds_px": {
-        "x": 800,
-        "y": 300,
-        "width": 670,
-        "height": 125
+        "x": 1308,
+        "y": 491,
+        "width": 1096,
+        "height": 204
       },
       "contains": [
         "Home",
@@ -211,10 +212,10 @@
       "id": "REGION-08",
       "name": "Color and social utility samples",
       "approx_bounds_px": {
-        "x": 815,
-        "y": 445,
-        "width": 660,
-        "height": 100
+        "x": 1333,
+        "y": 728,
+        "width": 1079,
+        "height": 164
       },
       "contains": [
         "mint/purple/blue/yellow color dots",
@@ -228,10 +229,10 @@
       "id": "REGION-09",
       "name": "Project showcase heading",
       "approx_bounds_px": {
-        "x": 30,
-        "y": 450,
-        "width": 500,
-        "height": 100
+        "x": 49,
+        "y": 736,
+        "width": 818,
+        "height": 164
       },
       "contains": [
         "purple puzzle-piece graphic",
@@ -244,10 +245,10 @@
       "id": "REGION-10",
       "name": "Project card: Neo Clock Studio",
       "approx_bounds_px": {
-        "x": 35,
-        "y": 552,
-        "width": 353,
-        "height": 175
+        "x": 57,
+        "y": 903,
+        "width": 577,
+        "height": 286
       },
       "contains": [
         "clock icon",
@@ -262,10 +263,10 @@
       "id": "REGION-11",
       "name": "Project card: ESP Clock",
       "approx_bounds_px": {
-        "x": 398,
-        "y": 552,
-        "width": 347,
-        "height": 175
+        "x": 651,
+        "y": 903,
+        "width": 567,
+        "height": 286
       },
       "contains": [
         "microchip icon",
@@ -280,10 +281,10 @@
       "id": "REGION-12",
       "name": "Project card: Cyber Protocol",
       "approx_bounds_px": {
-        "x": 755,
-        "y": 552,
-        "width": 350,
-        "height": 175
+        "x": 1235,
+        "y": 903,
+        "width": 572,
+        "height": 286
       },
       "contains": [
         "gamepad icon",
@@ -298,10 +299,10 @@
       "id": "REGION-13",
       "name": "Project card: Experiments",
       "approx_bounds_px": {
-        "x": 1115,
-        "y": 552,
-        "width": 355,
-        "height": 175
+        "x": 1823,
+        "y": 903,
+        "width": 581,
+        "height": 286
       },
       "contains": [
         "laboratory flask icon",
@@ -316,10 +317,10 @@
       "id": "REGION-14",
       "name": "Workshop/about panel",
       "approx_bounds_px": {
-        "x": 33,
-        "y": 742,
-        "width": 510,
-        "height": 195
+        "x": 54,
+        "y": 1214,
+        "width": 834,
+        "height": 319
       },
       "contains": [
         "cloud outline icon",
@@ -333,10 +334,10 @@
       "id": "REGION-15",
       "name": "Toolbox panel",
       "approx_bounds_px": {
-        "x": 550,
-        "y": 742,
-        "width": 405,
-        "height": 195
+        "x": 899,
+        "y": 1214,
+        "width": 662,
+        "height": 319
       },
       "contains": [
         "Inside my toolbox heading",
@@ -354,10 +355,10 @@
       "id": "REGION-16",
       "name": "Technology tag sample panel",
       "approx_bounds_px": {
-        "x": 965,
-        "y": 742,
-        "width": 505,
-        "height": 195
+        "x": 1578,
+        "y": 1214,
+        "width": 826,
+        "height": 319
       },
       "contains": [
         "Python",
@@ -373,10 +374,10 @@
       "id": "REGION-17",
       "name": "Floating support controls",
       "approx_bounds_px": {
-        "x": 1385,
-        "y": 775,
-        "width": 90,
-        "height": 215
+        "x": 2265,
+        "y": 1268,
+        "width": 147,
+        "height": 352
       },
       "contains": [
         "two mint circular cup/mug buttons"
@@ -387,10 +388,10 @@
       "id": "REGION-18",
       "name": "Footer",
       "approx_bounds_px": {
-        "x": 30,
-        "y": 955,
-        "width": 1385,
-        "height": 50
+        "x": 49,
+        "y": 1562,
+        "width": 2265,
+        "height": 82
       },
       "contains": [
         "© 2026 MazBayID - Made with curiosity heart",
@@ -665,10 +666,10 @@
         "file": "assets/mascot/octocat-hero.webp",
         "source": "assets/assets.png",
         "source_bounds_px": {
-          "x": 830,
-          "y": 129,
-          "width": 220,
-          "height": 145
+          "x": 1357,
+          "y": 212,
+          "width": 360,
+          "height": 238
         },
         "format": "WebP lossless",
         "background": "white preserved"
@@ -677,10 +678,10 @@
         "file": "assets/icons/puzzle-piece.webp",
         "source": "assets/assets.png",
         "source_bounds_px": {
-          "x": 35,
-          "y": 479,
-          "width": 60,
-          "height": 60
+          "x": 58,
+          "y": 784,
+          "width": 98,
+          "height": 98
         },
         "format": "WebP lossless",
         "background": "white preserved"

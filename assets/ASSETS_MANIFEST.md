@@ -2,7 +2,7 @@
 
 **Manifest version:** 2.0  
 **Source of truth:** `assets/assets.png`  
-**Image size:** 1536 × 1027 px  
+**Image size:** 2512 × 1680 px  
 **Background:** White — preserve it.
 
 ## 1. What this file is
@@ -15,24 +15,24 @@ It is a flattened PNG, **not** a transparent sprite atlas. Do not remove its whi
 
 | Region | Approximate bounds (x, y, width, height) | Contents |
 |---|---:|---|
-| Brand identity | 55, 18, 285, 85 | Code logo tile, MazBayID wordmark, lavender dot, mascot caption |
-| Primary navigation | 535, 16, 435, 95 | Home, Projects, About |
-| Utility navigation | 1125, 15, 340, 95 | Language, dark mode, menu, Email me |
-| Hero text and actions | 103, 112, 665, 330 | Developer label, two-line heading, description, two CTA buttons |
-| Octo-cat mascot | 830, 130, 220, 145 | Cat/octopus mascot, laptop, books, code bubble, yellow accents |
-| Badge/decorations | 25, 128, 1170, 230 | Star badge, left-side line and square |
-| Feature icon samples | 800, 300, 670, 125 | Home, Projects, star, clock, chip, flask, external link |
-| Color/social samples | 815, 445, 660, 100 | Four palette dots, cloud, Telegram, GitHub |
-| Project heading | 30, 450, 500, 100 | Puzzle piece, section title and subtitle |
-| Neo Clock Studio | 35, 552, 353, 175 | Clock icon, description, active status |
-| ESP Clock | 398, 552, 347, 175 | Chip icon, description, development status |
-| Cyber Protocol | 755, 552, 350, 175 | Gamepad, description, development status |
-| Experiments | 1115, 552, 355, 175 | Flask, description, exploring status |
-| Workshop/about | 33, 742, 510, 195 | Cloud icon, workshop heading, description |
-| Toolbox | 550, 742, 405, 195 | Python, C++, Arduino, ESP32, GitHub, Linux, AI tools |
-| Technology tag sample | 965, 742, 505, 195 | Colored technology tags and divider |
-| Floating support controls | 1385, 775, 90, 215 | Two mint circular cup/mug buttons |
-| Footer | 30, 955, 1385, 50 | Copyright, “Open source, always.” and GitHub |
+| Brand identity | 90, 29, 466, 139 | Code logo tile, MazBayID wordmark, lavender dot, mascot caption |
+| Primary navigation | 875, 26, 711, 155 | Home, Projects, About |
+| Utility navigation | 1840, 25, 556, 155 | Language, dark mode, menu, Email me |
+| Hero text and actions | 168, 183, 1088, 540 | Developer label, two-line heading, description, two CTA buttons |
+| Octo-cat mascot | 1357, 213, 360, 237 | Cat/octopus mascot, laptop, books, code bubble, yellow accents |
+| Badge/decorations | 41, 209, 1913, 376 | Star badge, left-side line and square |
+| Feature icon samples | 1308, 491, 1096, 204 | Home, Projects, star, clock, chip, flask, external link |
+| Color/social samples | 1333, 728, 1079, 164 | Four palette dots, cloud, Telegram, GitHub |
+| Project heading | 49, 736, 818, 164 | Puzzle piece, section title and subtitle |
+| Neo Clock Studio | 57, 903, 577, 286 | Clock icon, description, active status |
+| ESP Clock | 651, 903, 567, 286 | Chip icon, description, development status |
+| Cyber Protocol | 1235, 903, 572, 286 | Gamepad, description, development status |
+| Experiments | 1823, 903, 581, 286 | Flask, description, exploring status |
+| Workshop/about | 54, 1214, 834, 319 | Cloud icon, workshop heading, description |
+| Toolbox | 899, 1214, 662, 319 | Python, C++, Arduino, ESP32, GitHub, Linux, AI tools |
+| Technology tag sample | 1578, 1214, 826, 319 | Colored technology tags and divider |
+| Floating support controls | 2265, 1268, 147, 352 | Two mint circular cup/mug buttons |
+| Footer | 49, 1562, 2265, 82 | Copyright, “Open source, always.” and GitHub |
 
 *Coordinates are approximate visual bounds in the 1536 × 1027 reference image, not pixel-perfect crop instructions.*
 
@@ -110,7 +110,7 @@ Only the Octo-cat and puzzle-piece artwork have been exported as standalone imag
 
 The homepage crop script uses the existing CSS sprite crop positions from the source sheet:
 
-- Octo-cat: x=830, y=129, width=220, height=145 px.
-- Puzzle piece: x=35, y=479, width=60, height=60 px.
+- Octo-cat: x=1357, y=212, width=360, height=238 px.
+- Puzzle piece: x=58, y=784, width=98, height=98 px.
 
 The script exports lossless WebP files and preserves the original white background. The original PNG remains unchanged as the design master. GitHub Actions regenerates the crops when the source PNG or extraction script changes.
