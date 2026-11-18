@@ -446,7 +446,23 @@
     terminalClose.addEventListener("click",closeTerminal);
     terminal.addEventListener("click",e=>{if(e.target===terminal)closeTerminal()});
     document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!terminal.hidden)closeTerminal()});
-    terminalForm.addEventListener("submit",e=>{e.preventDefault();if(terminalInput.value.trim().toUpperCase()!=="CP"){terminalOutput.textContent="UNKNOWN COMMAND.\nACCESS DENIED.";terminalInput.select();return}terminalInput.disabled=true;terminalOutput.textContent="ACCESS GRANTED.\nROUTING TO CP ASSET LIBRARY...";setTimeout(()=>{window.location.href="https://mazbayid.github.io/cpassets/"},1200)});
+    terminalForm.addEventListener("submit",e=>{
+      e.preventDefault();
+      const command=terminalInput.value.trim().toUpperCase();
+      const routes={
+        CP:{url:"https://mazbayid.github.io/cpassets/",message:"ROUTING TO CP ASSET LIBRARY..."},
+        CPPREVIEW:{url:"https://mazbayid.github.io/preview-cpassets/",message:"ROUTING TO CYBER PROTOCOL ASSET PREVIEW..."}
+      };
+      const route=routes[command];
+      if(!route){
+        terminalOutput.textContent="UNKNOWN COMMAND.\\nACCESS DENIED.";
+        terminalInput.select();
+        return;
+      }
+      terminalInput.disabled=true;
+      terminalOutput.textContent="ACCESS GRANTED.\\n"+route.message;
+      setTimeout(()=>{window.location.href=route.url},900);
+    });
   </script>
 </body>
 </html>
