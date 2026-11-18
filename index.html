@@ -442,26 +442,29 @@
 
     const terminal=document.getElementById("secret-terminal"),terminalOpen=document.getElementById("secret-terminal-open"),terminalClose=document.getElementById("secret-terminal-close"),terminalForm=document.getElementById("secret-terminal-form"),terminalInput=document.getElementById("secret-terminal-input"),terminalOutput=document.getElementById("secret-terminal-output");
     function closeTerminal(){terminal.hidden=true;terminalOpen.focus()}
-    terminalOpen.addEventListener("click",()=>{terminal.hidden=false;terminalInput.value="";terminalInput.focus()});
+    function resetTerminal(){terminalInput.disabled=false;terminalInput.value="";terminalOutput.textContent="NEURAL LINK ESTABLISHED"}
+    terminalOpen.addEventListener("click",()=>{resetTerminal();terminal.hidden=false;terminalInput.focus()});
+    window.addEventListener("pageshow",resetTerminal);
     terminalClose.addEventListener("click",closeTerminal);
     terminal.addEventListener("click",e=>{if(e.target===terminal)closeTerminal()});
     document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!terminal.hidden)closeTerminal()});
     terminalForm.addEventListener("submit",e=>{
       e.preventDefault();
-      const command=terminalInput.value.trim().toUpperCase();
+      const command=terminalInput.value.trim().toUpperCase().replace(/\\s+/g,"");
       const routes={
         CP:{url:"https://mazbayid.github.io/cpassets/",message:"ROUTING TO CP ASSET LIBRARY..."},
         CPPREVIEW:{url:"https://mazbayid.github.io/preview-cpassets/",message:"ROUTING TO CYBER PROTOCOL ASSET PREVIEW..."}
       };
       const route=routes[command];
       if(!route){
-        terminalOutput.textContent="UNKNOWN COMMAND.\\nACCESS DENIED.";
+        terminalOutput.textContent="UNKNOWN COMMAND.\nAVAILABLE: CP, CPPREVIEW\nACCESS DENIED.";
         terminalInput.select();
         return;
       }
-      terminalInput.disabled=true;
-      terminalOutput.textContent="ACCESS GRANTED.\\n"+route.message;
-      setTimeout(()=>{window.location.href=route.url},900);
+      terminalOutput.textContent="ACCESS GRANTED.\n"+route.message;
+      terminalInput.value="";
+      terminalInput.disabled=false;
+      setTimeout(()=>{window.location.assign(route.url)},650);
     });
   </script>
 </body>
