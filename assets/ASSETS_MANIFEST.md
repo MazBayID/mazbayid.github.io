@@ -78,7 +78,7 @@ Colors are visual estimates from the image, not extracted design tokens. The exa
 4. Rebuild text, layout, cards, buttons, and responsive behavior in HTML/CSS.
 5. Use the original sheet as the reference when recreating or cropping distinctive artwork and icons.
 6. Do not silently substitute newly generated SVG artwork for the source mascot.
-7. Previously generated `octocat-hero.svg` and `octocat-icon.svg` are derived implementation files, not original source artwork. They remain in the repository and are currently referenced by `index.html`; compare them with the PNG before deciding whether to keep, replace, or remove them.
+7. The homepage uses `assets/mascot/octocat-hero.webp` and `assets/icons/puzzle-piece.webp`, both lossless crops exported from the original sheet. `assets/mascot/octocat-icon.svg` remains the favicon. The older `octocat-hero.svg` is a legacy derived file and is not used by the homepage.
 8. The image shows the light theme. Dark theme styling is a complementary adaptation and must be reviewed separately.
 9. On mobile, reflow navigation, project cards, and information panels for narrow screens.
 
@@ -88,17 +88,29 @@ Colors are visual estimates from the image, not extracted design tokens. The exa
 - `assets/ASSETS_MANIFEST.json` — structured manifest.
 - `assets/ASSETS_MANIFEST.md` — human-readable inventory.
 - `assets/hexadecimal_dictionary_bitmap.pdf` — related reference document.
-- `assets/mascot/octocat-hero.svg` — legacy derived SVG; no longer used by the homepage.
-- `assets/mascot/octocat-icon.svg` — derived SVG still used as the favicon.
-- The current `index.html` references `assets/assets.png` as a CSS sprite sheet for the Octo-cat hero and project-section puzzle-piece decoration.
+- `assets/mascot/octocat-hero.webp` — lossless 220 × 145 px crop used by the homepage.
+- `assets/icons/puzzle-piece.webp` — lossless 60 × 60 px crop used by the homepage.
+- `assets/mascot/octocat-hero.svg` — legacy derived SVG; not used by the homepage.
+- `assets/mascot/octocat-icon.svg` — derived SVG used as the favicon.
+- `scripts/extract_homepage_assets.py` and `.github/workflows/extract-homepage-assets.yml` regenerate the two crops from the unchanged source sheet.
+- The homepage references the two small WebP crops, not the 4.49 MB source sheet.
 - The current `index.html` does not reference `background_earth.jpg`.
 
-The homepage now uses CSS sprite crops from the source sheet for the hero Octo-cat and puzzle-piece decoration. This does not mean every icon or component in the reference sheet has been individually extracted or implemented.
+Only the Octo-cat and puzzle-piece artwork have been exported as standalone image files. Other visual elements in the source sheet remain design references and have not all been individually extracted or implemented.
 
 ## 8. Known gaps
 
 - Exact font family is not identified by the reference.
 - Dark theme colors are not shown.
 - Exact behavior/URLs for every icon and floating support control are not specified.
-- Individual source illustrations have not yet been exported as separate image files.
+- Only the two artwork crops currently used by the homepage have been exported; other source-sheet illustrations remain unextracted.
 - A visual comparison of the current homepage against every region remains necessary.
+
+## 9. Optimized crop generation
+
+The homepage crop script uses the existing CSS sprite crop positions from the source sheet:
+
+- Octo-cat: x=830, y=129, width=220, height=145 px.
+- Puzzle piece: x=35, y=479, width=60, height=60 px.
+
+The script exports lossless WebP files and preserves the original white background. The original PNG remains unchanged as the design master. GitHub Actions regenerates the crops when the source PNG or extraction script changes.

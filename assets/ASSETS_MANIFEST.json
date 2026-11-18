@@ -1,7 +1,7 @@
 {
   "project": "MazBayID Cozy Cute Tech",
-  "manifest_version": "2.0",
-  "updated_for": "assets/assets.png",
+  "manifest_version": "2.1",
+  "updated_for": "Homepage asset extraction, accessibility and documentation audit",
   "source_of_truth": {
     "file": "assets/assets.png",
     "role": "Primary visual source sheet and approved design reference for the Cozy Cute Tech website",
@@ -643,7 +643,7 @@
     "generated_svg_policy": "Previously generated SVG mascot files are derived implementation assets, not the original source artwork in assets.png. Keep them classified as derived/legacy until visual comparison confirms they are faithful and approved.",
     "dark_theme": "The reference sheet shows the light theme. Dark-theme colors and contrast behavior must be designed as a complementary adaptation; they are not directly specified by this image.",
     "mobile": "Reflow navigation, project cards, and lower information panels into a readable single-column or compact layout on phone screens.",
-    "current_homepage_usage": "index.html references assets/assets.png directly as a CSS sprite sheet for the Octo-cat hero and project section puzzle-piece decoration. The Octo-cat hero SVG is no longer used by the homepage. The compact favicon SVG remains in use."
+    "current_homepage_usage": "index.html uses two standalone lossless WebP crops exported from assets/assets.png: assets/mascot/octocat-hero.webp for the Octo-cat hero and assets/icons/puzzle-piece.webp for the Projects heading. The original PNG remains the unchanged visual master and is not loaded by the homepage. The compact favicon SVG remains in use."
   },
   "repository_files": {
     "source_sheet": "assets/assets.png",
@@ -659,26 +659,54 @@
         "file": "assets/mascot/octocat-icon.svg",
         "classification": "derived SVG used only as the favicon"
       }
-    ]
+    ],
+    "optimized_homepage_crops": [
+      {
+        "file": "assets/mascot/octocat-hero.webp",
+        "source": "assets/assets.png",
+        "source_bounds_px": {
+          "x": 830,
+          "y": 129,
+          "width": 220,
+          "height": 145
+        },
+        "format": "WebP lossless",
+        "background": "white preserved"
+      },
+      {
+        "file": "assets/icons/puzzle-piece.webp",
+        "source": "assets/assets.png",
+        "source_bounds_px": {
+          "x": 35,
+          "y": 479,
+          "width": 60,
+          "height": 60
+        },
+        "format": "WebP lossless",
+        "background": "white preserved"
+      }
+    ],
+    "crop_generator": "scripts/extract_homepage_assets.py",
+    "crop_workflow": ".github/workflows/extract-homepage-assets.yml"
   },
   "known_gaps": [
     "The screenshot does not provide exact font family names.",
     "The screenshot is a light-theme visual reference; dark-theme styling must be inferred and separately reviewed.",
     "The screenshot does not specify exact behavior or destination URLs for every icon and floating cup button.",
-    "The source sheet is a flattened PNG, so individual artwork is not independently addressable as separate files yet.",
     "The visual sheet does not itself prove which components are currently implemented in index.html.",
-    "The CSS sprite crop preserves the white background of assets.png by design; review the mascot tile against the dark theme to ensure the white tile is visually acceptable."
+    "Only the Octo-cat hero and puzzle-piece artwork are exported as standalone homepage crops; other source-sheet elements remain design references."
   ],
   "validation_status": {
     "source_image_inspected": true,
     "dimensions_verified": true,
-    "homepage_currently_references_source_sheet": true,
+    "homepage_currently_references_source_sheet": false,
     "homepage_currently_references_derived_mascot_svgs": false,
     "old_earth_background_reference_in_homepage": false,
     "note": "This manifest documents the source image and design specification. It does not claim the homepage has already been rebuilt to match every region.",
-    "homepage_uses_source_sheet_for": [
-      "Octo-cat hero crop (CSS background sprite)",
-      "Project section puzzle-piece decoration (CSS background sprite)"
+    "homepage_uses_source_sheet_for": [],
+    "homepage_uses_optimized_crops_for": [
+      "Octo-cat hero (assets/mascot/octocat-hero.webp)",
+      "Projects heading puzzle-piece decoration (assets/icons/puzzle-piece.webp)"
     ]
   }
 }
