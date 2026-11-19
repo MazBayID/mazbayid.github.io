@@ -228,13 +228,37 @@ Deno.serve(async (req: Request) => {
   if (artifactMeta.expired
       || Number(workflowRun.id) !== runId
       || Number(workflowRun.repository_id) !== EXPECTED_REPOSITORY_ID
-      || Number(workflowRun.workflow_id) !== EXPECTED_WORKFLOW_IDS[build.variant]
       || workflowRun.head_sha !== sourceSha
       || !Number.isSafeInteger(Number(artifactMeta.size_in_bytes))
       || Number(artifactMeta.size_in_bytes) < 1
       || Number(artifactMeta.size_in_bytes) > MAX_ARTIFACT_ARCHIVE_BYTES) {
     await failBuild(buildId, "github_artifact_metadata_mismatch");
     return json({ error: "github_artifact_metadata_mismatch" }, 403);
+  }
+
+  const workflowRunResponse = await fetch(
+    "https://api.github.com/repos/MazBayID/esp_clock/actions/runs/" + runId,
+    {
+      headers: {
+        "Authorization": "Bearer " + GITHUB_TOKEN,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "NEO-CLOCK-Firmware-Builder",
+      },
+    },
+  );
+  if (!workflowRunResponse.ok) {
+    await failBuild(buildId, "github_workflow_metadata_failed");
+    return json({ error: "github_workflow_metadata_failed" }, 502);
+  }
+  const runMeta = await workflowRunResponse.json();
+  if (Number(runMeta.id) !== runId
+      || Number(runMeta.repository?.id) !== EXPECTED_REPOSITORY_ID
+      || Number(runMeta.workflow_id) !== EXPECTED_WORKFLOW_IDS[build.variant]
+      || runMeta.head_sha !== sourceSha
+      || Number(runMeta.run_attempt) !== runAttempt) {
+    await failBuild(buildId, "github_workflow_identity_mismatch");
+    return json({ error: "github_workflow_identity_mismatch" }, 403);
   }
 
   const artifactResponse = await fetch(
