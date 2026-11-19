@@ -82,6 +82,34 @@ Expected pipeline:
 
 No arbitrary source code, shell commands, workflow names, or build paths may be accepted from the browser.
 
+## Backend functions and required secrets
+
+Two Edge Functions are deployed in the isolated Supabase project:
+
+- `firmware-build`: validates firmware/GPIO requests, enforces the per-client build quota, creates a private build record, and dispatches the matching GitHub Actions workflow.
+- `firmware-build-callback`: accepts authenticated workflow lifecycle callbacks, verifies that the artifact belongs to the expected GitHub run, checks the 4 MB merged image and SHA-256, and stores the three output files in the private bucket.
+
+Both functions are deployed with JWT verification disabled because they use their own request controls. The public build function enforces the GitHub Pages origin, server-side allow-lists, a random status token, and a quota of three requests per client per hour. The callback requires a separate high-entropy shared secret.
+
+Before accepting public builds, configure these secrets:
+
+### Supabase Edge Function secrets
+
+Dashboard: [Edge Function Secrets](https://supabase.com/dashboard/project/ymjhfaplponxbjhpvhuq/functions/secrets)
+
+- `GITHUB_TOKEN`: GitHub fine-grained personal access token restricted to repository `MazBayID/esp_clock`, with Actions read/write permission. The token is used only by the backend to dispatch workflows and download their artifacts.
+- `BUILDER_CALLBACK_SECRET`: a random 32-byte-or-longer secret used to authenticate GitHub Actions callbacks.
+
+### GitHub Actions repository secret
+
+In `MazBayID/esp_clock`, open Settings → Secrets and variables → Actions and add:
+
+- `FIRMWARE_BUILDER_CALLBACK_SECRET`: exactly the same value as Supabase's `BUILDER_CALLBACK_SECRET`.
+
+Generate the callback secret locally (for example, in Termux with `openssl rand -hex 32`). Never paste either secret into chat, source files, commits, or the website frontend.
+
+The deployed build endpoint intentionally returns `503 builder_backend_not_configured` until both Supabase secrets are present. The GitHub workflow callbacks are non-blocking while the shared secret is absent.
+
 ## Direct browser flasher
 
 Use Espressif's `esptool-js` as the flashing engine, with a NEO_CLOCK-owned interface.
