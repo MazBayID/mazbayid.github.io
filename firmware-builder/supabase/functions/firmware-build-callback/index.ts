@@ -105,7 +105,7 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, status: finalStatus });
   }
 
-  if (!Number.isSafeInteger(runId) || runId <= 0 || build.github_run_id !== runId) {
+  if (!Number.isSafeInteger(runId) || runId <= 0 || Number(build.github_run_id) !== runId) {
     await failBuild(buildId, "github_run_identity_mismatch");
     return json({ error: "github_run_identity_mismatch" }, 403);
   }
