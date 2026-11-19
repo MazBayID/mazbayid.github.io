@@ -31,6 +31,18 @@ const json = (body: unknown, status = 200, origin = "") =>
     },
   });
 
+function preflight(origin: string) {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": origin,
+      "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Vary": "Origin",
+    },
+  });
+}
+
 function validateGPIO(input: unknown) {
   if (input === undefined || input === null) input = {};
   if (typeof input !== "object" || Array.isArray(input)) {
@@ -88,7 +100,7 @@ function newStatusToken() {
 
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin") ?? "";
-  if (req.method === "OPTIONS") return json({}, 204, ALLOWED_ORIGINS.has(origin) ? origin : "");
+  if (req.method === "OPTIONS") return ALLOWED_ORIGINS.has(origin) ? preflight(origin) : new Response(null, { status: 403 });
   if (!ALLOWED_ORIGINS.has(origin)) return json({ error: "origin_not_allowed" }, 403, "");
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405, origin);
 
