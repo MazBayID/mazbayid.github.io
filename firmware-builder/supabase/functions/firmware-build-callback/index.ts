@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.1";
-import { unzipSync } from "npm:fflate@0.8.2";
+import { Unzip, UnzipInflate, UnzipPassThrough } from "npm:fflate@0.8.2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -98,6 +98,88 @@ const MAX_ARTIFACT_ARCHIVE_BYTES = 20 * 1024 * 1024;
 const MAX_EXPANDED_ARTIFACT_BYTES = 16 * 1024 * 1024;
 const MAX_ADVANCED_ZIP_BYTES = 10 * 1024 * 1024;
 const MAX_BUILD_INFO_BYTES = 128 * 1024;
+
+function unzipBounded(bytes: Uint8Array): Promise<Record<string, Uint8Array>> {
+  return new Promise((resolve, reject) => {
+    const caps: Record<string, number> = {
+      "merged.bin": 4 * 1024 * 1024,
+      "advanced-bin.zip": MAX_ADVANCED_ZIP_BYTES,
+      "build-info.json": MAX_BUILD_INFO_BYTES,
+    };
+    const files: Record<string, Uint8Array> = {};
+    let totalBytes = 0;
+    let fileCount = 0;
+    let completed = 0;
+    let settled = false;
+
+    const fail = (reason: string) => {
+      if (settled) return;
+      settled = true;
+      reject(new Error(reason));
+    };
+
+    const unzip = new Unzip((file) => {
+      fileCount += 1;
+      if (fileCount > 3 || !Object.hasOwn(caps, file.name) || Object.hasOwn(files, file.name)) {
+        file.terminate();
+        fail("unexpected_artifact_entry");
+        return;
+      }
+      const limit = caps[file.name];
+      if (file.originalSize !== undefined && file.originalSize > limit) {
+        file.terminate();
+        fail("artifact_entry_too_large");
+        return;
+      }
+      const chunks: Uint8Array[] = [];
+      let fileBytes = 0;
+      file.ondata = (error, chunk, final) => {
+        if (error) {
+          fail("artifact_entry_invalid");
+          return;
+        }
+        if (chunk) {
+          fileBytes += chunk.byteLength;
+          totalBytes += chunk.byteLength;
+          if (fileBytes > limit || totalBytes > MAX_EXPANDED_ARTIFACT_BYTES) {
+            file.terminate();
+            fail("artifact_expanded_size_invalid");
+            return;
+          }
+          chunks.push(chunk);
+        }
+        if (final && !settled) {
+          const output = new Uint8Array(fileBytes);
+          let offset = 0;
+          for (const part of chunks) {
+            output.set(part, offset);
+            offset += part.byteLength;
+          }
+          files[file.name] = output;
+          completed += 1;
+          if (completed === 3) {
+            settled = true;
+            resolve(files);
+          }
+        }
+      };
+      try {
+        file.start();
+      } catch {
+        file.terminate();
+        fail("artifact_compression_unsupported");
+      }
+    });
+    unzip.register(UnzipInflate);
+    unzip.register(UnzipPassThrough);
+    try {
+      unzip.push(bytes, true);
+      if (!settled && completed !== 3) fail("artifact_archive_incomplete");
+    } catch {
+      fail("artifact_archive_invalid");
+    }
+  });
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -290,7 +372,7 @@ Deno.serve(async (req: Request) => {
   }
   let files: Record<string, Uint8Array>;
   try {
-    files = unzipSync(archiveBytes);
+    files = await unzipBounded(archiveBytes);
   } catch {
     await failBuild(buildId, "artifact_archive_invalid");
     return json({ error: "artifact_archive_invalid" }, 422);
