@@ -157,10 +157,6 @@ function unzipBounded(bytes: Uint8Array): Promise<Record<string, Uint8Array>> {
           }
           files[file.name] = output;
           completed += 1;
-          if (completed === 3) {
-            settled = true;
-            resolve(files);
-          }
         }
       };
       try {
@@ -174,7 +170,15 @@ function unzipBounded(bytes: Uint8Array): Promise<Record<string, Uint8Array>> {
     unzip.register(UnzipPassThrough);
     try {
       unzip.push(bytes, true);
-      if (!settled && completed !== 3) fail("artifact_archive_incomplete");
+      if (!settled) {
+        if (fileCount === 3 && completed === 3
+            && Object.keys(files).length === 3) {
+          settled = true;
+          resolve(files);
+        } else {
+          fail("artifact_archive_incomplete");
+        }
+      }
     } catch {
       fail("artifact_archive_invalid");
     }
