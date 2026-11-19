@@ -171,24 +171,31 @@ Deno.serve(async (req: Request) => {
   }
 
   const fingerprint = await fingerprintHash(req);
-  const { data: allowed, error: quotaError } = await supabase.rpc(
-    "consume_firmware_build_quota",
-    { p_fingerprint_hash: fingerprint, p_window_seconds: 3600, p_max_requests: 3 },
-  );
-  if (quotaError) return json({ error: "rate_limit_check_failed" }, 503, origin);
-  if (!allowed) return json({ error: "build_rate_limit_exceeded", retry_after_seconds: 3600 }, 429, origin);
-
   const statusToken = newStatusToken();
   const statusTokenHash = await sha256Hex(statusToken);
-  const { data: build, error: insertError } = await supabase
-    .from("firmware_builds")
-    .insert({
-      variant, gpio_config: gpio.config, status_token_hash: statusTokenHash,
-      request_fingerprint_hash: fingerprint,
-    })
-    .select("id,status,variant,created_at,expires_at")
-    .single();
-  if (insertError || !build) return json({ error: "build_request_failed" }, 500, origin);
+  const { data: reservationData, error: reservationError } = await supabase.rpc(
+    "reserve_firmware_build_request",
+    {
+      p_variant: variant,
+      p_gpio_config: gpio.config,
+      p_status_token_hash: statusTokenHash,
+      p_request_fingerprint_hash: fingerprint,
+      p_max_active: 5,
+    },
+  );
+  if (reservationError) return json({ error: "build_queue_reservation_failed" }, 503, origin);
+  const reservation = Array.isArray(reservationData) ? reservationData[0] : reservationData;
+  if (!reservation || reservation.result === "invalid_request") {
+    return json({ error: "build_request_invalid" }, 400, origin);
+  }
+  if (reservation.result === "rate_limited") {
+    return json({ error: "build_rate_limit_exceeded", retry_after_seconds: 3600 }, 429, origin);
+  }
+  if (reservation.result === "capacity_full") {
+    return json({ error: "build_queue_full", retry_after_seconds: 60 }, 503, origin);
+  }
+  const buildId = reservation.build_id;
+  if (typeof buildId !== "string") return json({ error: "build_request_failed" }, 500, origin);
 
   const repo = "MazBayID/esp_clock";
   const ref = Deno.env.get("FIRMWARE_REF") ?? "main";
@@ -204,7 +211,7 @@ Deno.serve(async (req: Request) => {
     },
     body: JSON.stringify({
       ref,
-      inputs: { gpio_config: JSON.stringify(gpio.config), build_id: build.id },
+      inputs: { gpio_config: JSON.stringify(gpio.config), build_id: buildId },
     }),
   });
 
@@ -213,12 +220,12 @@ Deno.serve(async (req: Request) => {
       status: "failed", finished_at: new Date().toISOString(),
       error_code: "workflow_dispatch_failed",
       error_message_safe: "The firmware build could not be queued. Please try again later.",
-    }).eq("id", build.id);
-    return json({ error: "workflow_dispatch_failed", build_id: build.id }, 502, origin);
+    }).eq("id", buildId);
+    return json({ error: "workflow_dispatch_failed", build_id: buildId }, 502, origin);
   }
 
   return json({
-    build_id: build.id, status_token: statusToken, status: "queued",
+    build_id: buildId, status_token: statusToken, status: "queued",
     variant, gpio_config: gpio.config, warnings: gpio.warnings,
   }, 202, origin);
 });
