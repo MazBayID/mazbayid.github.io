@@ -197,7 +197,7 @@
     async function api(body) {
       const response = await fetch(API,{
         method:"POST",
-        headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY},
+        headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY},
         body:JSON.stringify(body)
       });
       const data = await response.json().catch(()=>({error:"invalid_server_response"}));
