@@ -48,7 +48,6 @@
     .nav-links a{padding:9px 16px;border-radius:999px;font-size:.9rem;font-weight:800;color:var(--muted);transition:background .2s,color .2s}
     .nav-links a:hover{background:var(--lav-soft);color:var(--ink)}
     .nav-links a.active{background:var(--lav-soft);color:var(--ink);box-shadow:inset 0 -3px 0 var(--lav)}
-    .nav-links .mobile-comment-link{display:none}
     .nav-tools{display:flex;align-items:center;gap:8px}
     .icon-button{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);cursor:pointer}
     .icon-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -121,7 +120,8 @@
     .tool-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
     .tool-tag{padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:.78rem;font-weight:800}
     .contact-card{display:flex;flex-direction:column;justify-content:center;background:linear-gradient(135deg,var(--mint),var(--surface))}
-    .contact-card .button{align-self:flex-start;margin-top:15px}
+    .contact-card .contact-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+    .contact-card .contact-actions .button{align-self:flex-start;margin-top:0}
     .site-footer{margin-top:38px;padding:17px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem}
     .footer-inner{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
     .footer-github{display:inline-flex;align-items:center;gap:7px;font-weight:900}
@@ -154,7 +154,6 @@
       .nav{gap:8px}.brand-name{font-size:1.12rem}.brand-mark{width:40px;height:40px}
       .nav-links{display:none;position:absolute;left:14px;right:14px;top:72px;flex-direction:column;align-items:stretch;border-radius:18px;padding:8px;box-shadow:var(--shadow)}
       .nav-links.open{display:flex}.nav-links a{text-align:center}
-      .nav-links.open .mobile-comment-link{display:block;background:var(--lav-soft);color:var(--ink)}
       .nav-tools{gap:6px}.icon-button{width:38px;height:38px}.email-button{display:none}.menu-toggle{display:grid}
       .hero{grid-template-columns:minmax(0,1fr);gap:16px;margin-top:13px;padding:27px 23px 22px;border-radius:25px}
       .hero-copy{width:100%}.hero-actions{position:relative;z-index:3}
@@ -181,7 +180,6 @@
         <a class="active" href="#home" data-i18n="home">Home</a>
         <a href="#projects" data-i18n="projects">Projects</a>
         <a href="#about" data-i18n="about">About</a>
-        <a class="mobile-comment-link" href="https://pestbook.net/view-guestbook?Name=mazbayid" target="_blank" rel="noopener noreferrer" data-i18n="comment">Leave a comment</a>
       </div>
       <div class="nav-tools">
         <div class="language-picker">
@@ -203,7 +201,6 @@
           <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
         <a class="email-button" href="mailto:baydirgaid@gmail.com"><svg class="gmail-icon" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="100%" height="100%" aria-hidden="true" focusable="false"><path d="M34.9 448h81.5V250.2L0 163v250.2C0 432.5 15.7 448 34.9 448" style="fill:#806f6f"/><path d="M395.6 448h81.5c19.3 0 34.9-15.7 34.9-34.9V163l-116.4 87.3" style="fill:#040b05"/><path d="M395.6 99v151.3L512 163v-46.5c0-43.2-49.3-67.8-83.8-41.9" style="fill:#817e7e"/><path d="M116.4 250.2V99L256 203.7 395.6 99v151.3L256 355" style="fill:#514948"/><path d="M0 116.4V163l116.4 87.3V99L83.8 74.5C49.2 48.6 0 73.2 0 116.4" style="fill:#080707"/></svg> <span data-i18n="email">Email me</span></a>
-        <a class="email-button comment-button" href="https://pestbook.net/view-guestbook?Name=mazbayid" target="_blank" rel="noopener noreferrer" data-i18n="comment">Leave a comment</a>
       </div>
     </nav>
   </header>
@@ -287,7 +284,10 @@
       <article class="info-card contact-card" id="contact">
         <h3 data-i18n="contactHeading">Have an idea? Say hello! 💌</h3>
         <p data-i18n="contactCopy">Open to feedback, collaboration, and friendly conversations.</p>
-        <a class="button" href="mailto:baydirgaid@gmail.com"><span data-i18n="email">Email me</span> →</a>
+        <div class="contact-actions">
+          <a class="button" href="mailto:baydirgaid@gmail.com"><span data-i18n="email">Email me</span> →</a>
+          <a class="button button-secondary" href="https://pestbook.net/view-guestbook?Name=mazbayid" target="_blank" rel="noopener noreferrer"><span data-i18n="comment">Leave a comment</span> ↗</a>
+        </div>
       </article>
     </section>
   </main>
