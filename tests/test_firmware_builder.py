@@ -91,6 +91,23 @@ class FirmwareBuilderTests(unittest.TestCase):
         self.assertIn('.eq("github_run_id", runId)', source)
         self.assertIn('invalid_workflow_identity', source)
 
+    def test_callback_uses_single_processing_claim(self) -> None:
+        callback = Path("firmware-builder/supabase/functions/firmware-build-callback/index.ts").read_text(encoding="utf-8")
+        self.assertIn('"claim_firmware_build_callback"', callback)
+        self.assertIn("callback_claimed_at: null", callback)
+        self.assertIn("callback_already_processing", callback)
+
+    def test_callback_validates_artifact_provenance_and_sizes(self) -> None:
+        callback = Path("firmware-builder/supabase/functions/firmware-build-callback/index.ts").read_text(encoding="utf-8")
+        for marker in (
+            "EXPECTED_REPOSITORY_ID", "EXPECTED_WORKFLOW_IDS",
+            "workflowRun.head_sha !== sourceSha", "MAX_ARTIFACT_ARCHIVE_BYTES",
+            "MAX_EXPANDED_ARTIFACT_BYTES", "MAX_ADVANCED_ZIP_BYTES",
+            "MAX_BUILD_INFO_BYTES", "artifact_file_set_invalid",
+            "readResponseBounded", "readBodyBounded",
+        ):
+            self.assertIn(marker, callback)
+
     def test_module_javascript_syntax(self) -> None:
         self.assertTrue(self.parser.module_scripts, "No JavaScript module found")
         source = "\n".join(self.parser.module_scripts)
