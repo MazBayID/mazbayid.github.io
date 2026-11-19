@@ -26,7 +26,7 @@
     .gpio-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.gpio-field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px}.gpio-field label{font-weight:800;font-size:.9rem}.gpio-field select{min-width:100px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--ink)}
     .notice{margin-top:14px;padding:12px 14px;border-radius:13px;background:var(--peach);color:#65491f;font-size:.84rem}html[data-theme=dark] .notice{color:#f8dfb8}.notice.warn{background:#fff0dc}.notice.error{background:#ffe5e5;color:#852d2d}
     .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border:1px solid transparent;border-radius:999px;background:var(--lav);color:#fff;font-weight:900;cursor:pointer;text-decoration:none}.btn.secondary{border-color:var(--line);background:var(--surface2);color:var(--ink)}.btn:disabled{opacity:.45;cursor:not-allowed}
-    .statusbox{display:none;margin-top:18px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}.statusbox.show{display:block}.statusrow{display:flex;align-items:center;gap:10px;font-weight:900}.pulse{width:10px;height:10px;border-radius:50%;background:#d69a3a;box-shadow:0 0 0 5px rgba(214,154,58,.14)}.progress{height:8px;margin-top:12px;overflow:hidden;border-radius:20px;background:var(--line)}.progress>i{display:block;width:0;height:100%;background:var(--lav);transition:width .25s}.statusdetail{margin:8px 0 0;color:var(--muted);font-size:.84rem}
+    .statusbox{display:none;margin-top:18px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}.statusbox.show{display:block}.statusrow{display:flex;align-items:center;gap:10px;font-weight:900}.pulse{width:10px;height:10px;border-radius:50%;background:#d69a3a;box-shadow:0 0 0 5px rgba(214,154,58,.14)}.progress{height:8px;margin-top:12px;overflow:hidden;border-radius:20px;background:var(--line)}.progress>i{display:block;width:0;height:100%;background:var(--lav);transition:width .25s}.progress>i.indeterminate{width:35%;animation:buildmove 1.4s ease-in-out infinite alternate}@keyframes buildmove{from{transform:translateX(0)}to{transform:translateX(185%)}}.statusdetail{margin:8px 0 0;color:var(--muted);font-size:.84rem}
     .outputs{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}.outputs.show{display:grid}.output{padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--surface)}.output strong{display:block}.output p{margin:5px 0 12px;color:var(--muted);font-size:.82rem}.output .btn{width:100%;padding:9px 12px;font-size:.88rem}
     .flasher{display:grid;gap:12px}.flasherrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.chipstate{padding:7px 12px;border-radius:99px;background:var(--surface2);color:var(--muted);font-size:.82rem;font-weight:800}.log{min-height:65px;max-height:150px;overflow:auto;padding:12px;border-radius:13px;background:#171321;color:#d9d0ee;font:12px/1.55 ui-monospace,monospace;white-space:pre-wrap}
     .guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.guide{padding:17px;border:1px solid var(--line);border-radius:16px}.guide h3{margin:0 0 8px;font-size:1rem}.guide p,.guide li{color:var(--muted);font-size:.86rem}.guide ol{padding-left:20px;margin:8px 0}.small{font-size:.78rem;color:var(--muted)}footer{padding:30px 0 42px;text-align:center;color:var(--muted);font-size:.8rem}
@@ -127,7 +127,8 @@
       $("statusBox").classList.add("show");
       $("statusText").textContent = title;
       $("statusDetail").textContent = detail;
-      $("progressBar").style.width = Math.max(0,Math.min(100,percent)) + "%";
+      $("progressBar").classList.toggle("indeterminate",percent<0);
+      $("progressBar").style.width = percent<0 ? "35%" : Math.max(0,Math.min(100,percent)) + "%";
     }
     function log(message) {
       const box = $("flashLog");
@@ -236,11 +237,10 @@
         }
         const label = status==="queued" ? "Queued" : status==="building" ? "Building firmware" : status;
         const elapsed = Math.floor((Date.now()-started)/1000);
-        const percent = status==="queued" ? 8 : Math.min(92,20+Math.floor(elapsed/18));
-        setStatus(label,"Build ID: "+currentBuildId+" · "+elapsed+" seconds elapsed",percent);
+        setStatus(label,"Build ID: "+currentBuildId+" · "+elapsed+" seconds elapsed",-1);
         await new Promise(resolve=>setTimeout(resolve,4000));
       }
-      setStatus("Still processing","The build has not finished yet. Keep this page open and try checking again shortly.",90);
+      setStatus("Still processing","The build has not finished yet. Keep this page open and try checking again shortly.",-1);
     }
     $("buildBtn").addEventListener("click",async()=>{
       const error=validateGPIO(); if(error){updateGPIOState();return;}
