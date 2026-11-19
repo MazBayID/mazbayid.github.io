@@ -182,6 +182,7 @@ All three tables have RLS enabled and no public policies. Backend service-role a
 - Enforce variant, GPIO, file-size, and build-concurrency allow-lists on the server.
 - The build rate-limit fingerprint uses only `cf-connecting-ip`; it does not trust `x-forwarded-for` or `x-real-ip`. If the trusted header is missing or malformed, build creation fails closed with HTTP 503. The managed-proxy spoofing guarantee still requires explicit verification before backend deployment.
 - Backend Edge Functions are type-checked in CI with Deno, and the Supabase JS dependency is pinned to `2.119.1` for reproducible deployments.
+- Callback artifact processing uses a 10-minute database lease to prevent duplicate callbacks racing over the same Storage objects. The callback validates repository/workflow/run/attempt/commit provenance, limits callback payload and downloaded archive sizes, and checks the exact archive file set and expanded file sizes. Migration `20261120113000_callback_processing_lease.sql` is pending deployment; these backend changes remain in PR #5 only.
 - Add per-client rate limiting and a bounded build queue.
 - Preserve the official default GPIO map and firmware behavior when no customization is supplied.
 - Never expose experimental microphone configuration in version 1.
