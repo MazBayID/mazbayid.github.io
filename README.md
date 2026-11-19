@@ -1,4 +1,4 @@
-# MazBayID — Cozy Cute Tech Workshop
+# MazBayID — Workshop
 
 The official portfolio and project landing page for **MazBayID**.
 
