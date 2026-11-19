@@ -28,7 +28,7 @@ async function failBuild(buildId: string, code: string) {
     finished_at: new Date().toISOString(),
     error_code: code,
     error_message_safe: "The build artifact could not be verified or stored. Please retry the build.",
-  }).eq("id", buildId);
+  }).eq("id", buildId).in("status", ["queued", "building"]);
 }
 
 async function sha256Hex(bytes: Uint8Array) {
@@ -73,35 +73,61 @@ Deno.serve(async (req: Request) => {
   if (!build) return json({ error: "build_not_found" }, 404);
 
   if (event === "started") {
-    const { error } = await supabase.from("firmware_builds").update({
+    if (build.status !== "queued" && build.status !== "building") {
+      return json({ error: "build_state_conflict" }, 409);
+    }
+    if (!Number.isSafeInteger(runId) || runId <= 0
+        || !Number.isSafeInteger(runAttempt) || runAttempt < 1
+        || !sourceSha || !/^[a-f0-9]{40,64}$/i.test(sourceSha)) {
+      return json({ error: "invalid_workflow_identity" }, 400);
+    }
+    if (build.github_run_id && Number(build.github_run_id) !== runId) {
+      return json({ error: "github_run_identity_mismatch" }, 403);
+    }
+    const { data: updated, error } = await supabase.from("firmware_builds").update({
       status: "building",
-      github_run_id: Number.isFinite(runId) ? runId : null,
-      github_run_attempt: Number.isFinite(runAttempt) ? runAttempt : 1,
+      github_run_id: runId,
+      github_run_attempt: runAttempt,
       source_commit_sha: sourceSha,
-      started_at: new Date().toISOString(),
+      started_at: build.started_at ?? new Date().toISOString(),
       error_code: null,
       error_message_safe: null,
-    }).eq("id", buildId);
+    }).eq("id", buildId).in("status", ["queued", "building"])
+      .or("github_run_id.is.null,github_run_id.eq." + runId)
+      .select("id").maybeSingle();
     if (error) return json({ error: "build_update_failed" }, 500);
+    if (!updated) return json({ error: "build_state_conflict" }, 409);
     return json({ ok: true, status: "building" });
   }
 
   if (event !== "completed") return json({ error: "unsupported_event" }, 400);
+  if (build.status !== "queued" && build.status !== "building") {
+    return json({ error: "build_state_conflict" }, 409);
+  }
+  if (!Number.isSafeInteger(runId) || runId <= 0
+      || !Number.isSafeInteger(runAttempt) || runAttempt < 1) {
+    return json({ error: "invalid_workflow_identity" }, 400);
+  }
+  if (build.github_run_id && Number(build.github_run_id) !== runId) {
+    return json({ error: "github_run_identity_mismatch" }, 403);
+  }
 
   const jobStatus = body.job_status;
   const artifactId = Number(body.artifact_id);
   if (jobStatus !== "success" || !Number.isSafeInteger(artifactId) || artifactId <= 0) {
     const finalStatus = jobStatus === "cancelled" ? "cancelled" : "failed";
-    const { error } = await supabase.from("firmware_builds").update({
+    const { data: updated, error } = await supabase.from("firmware_builds").update({
       status: finalStatus,
-      github_run_id: Number.isFinite(runId) ? runId : null,
-      github_run_attempt: Number.isFinite(runAttempt) ? runAttempt : 1,
+      github_run_id: runId,
+      github_run_attempt: runAttempt,
       source_commit_sha: sourceSha,
       finished_at: new Date().toISOString(),
       error_code: jobStatus === "cancelled" ? "build_cancelled" : "build_failed",
       error_message_safe: "The firmware build did not complete successfully.",
-    }).eq("id", buildId);
+    }).eq("id", buildId).in("status", ["queued", "building"])
+      .select("id").maybeSingle();
     if (error) return json({ error: "build_update_failed" }, 500);
+    if (!updated) return json({ error: "build_state_conflict" }, 409);
     return json({ ok: true, status: finalStatus });
   }
 
@@ -231,16 +257,20 @@ Deno.serve(async (req: Request) => {
     return json({ error: "artifact_metadata_save_failed" }, 500);
   }
 
-  const { error: updateError } = await supabase.from("firmware_builds").update({
+  const { data: completed, error: updateError } = await supabase.from("firmware_builds").update({
     status: "succeeded",
-    github_run_id: Number.isFinite(runId) ? runId : null,
-    github_run_attempt: Number.isFinite(runAttempt) ? runAttempt : 1,
+    github_run_id: runId,
+    github_run_attempt: runAttempt,
     source_commit_sha: sourceSha,
     finished_at: new Date().toISOString(),
     error_code: null,
     error_message_safe: null,
-  }).eq("id", buildId);
-  if (updateError) return json({ error: "build_completion_update_failed" }, 500);
+  }).eq("id", buildId).in("status", ["queued", "building"])
+    .eq("github_run_id", runId).select("id").maybeSingle();
+  if (updateError || !completed) {
+    await bucket.remove(rows.map((row) => row.object_path));
+    return json({ error: updateError ? "build_completion_update_failed" : "build_state_conflict" }, updateError ? 500 : 409);
+  }
 
   return json({ ok: true, status: "succeeded", artifact_count: rows.length });
 });
