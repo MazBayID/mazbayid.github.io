@@ -94,6 +94,16 @@ const EXPECTED_WORKFLOW_IDS: Record<string, number> = {
   via_chronos: 423651921,
   mochi_chronos: 423852508,
 };
+const EXPECTED_WORKFLOW_PATHS: Record<string, string> = {
+  via_wifi: ".github/workflows/build-firmware-via-wifi.yml",
+  via_chronos: ".github/workflows/build-firmware-via-chronos.yml",
+  mochi_chronos: ".github/workflows/build-firmware-mochi-chronos.yml",
+};
+const EXPECTED_ARTIFACT_PREFIXES: Record<string, string> = {
+  via_wifi: "neo-clock-via-wifi-",
+  via_chronos: "neo-clock-via-chronos-",
+  mochi_chronos: "neo-clock-mochi-chronos-",
+};
 const MAX_ARTIFACT_ARCHIVE_BYTES = 20 * 1024 * 1024;
 const MAX_EXPANDED_ARTIFACT_BYTES = 16 * 1024 * 1024;
 const MAX_ADVANCED_ZIP_BYTES = 10 * 1024 * 1024;
@@ -341,8 +351,11 @@ Deno.serve(async (req: Request) => {
   if (Number(runMeta.id) !== runId
       || Number(runMeta.repository?.id) !== EXPECTED_REPOSITORY_ID
       || Number(runMeta.workflow_id) !== EXPECTED_WORKFLOW_IDS[build.variant]
+      || runMeta.path !== EXPECTED_WORKFLOW_PATHS[build.variant]
       || runMeta.head_sha !== sourceSha
-      || Number(runMeta.run_attempt) !== runAttempt) {
+      || Number(runMeta.run_attempt) !== runAttempt
+      || typeof artifactMeta.name !== "string"
+      || !artifactMeta.name.startsWith(EXPECTED_ARTIFACT_PREFIXES[build.variant] + sourceSha)) {
     await failBuild(buildId, "github_workflow_identity_mismatch");
     return json({ error: "github_workflow_identity_mismatch" }, 403);
   }
