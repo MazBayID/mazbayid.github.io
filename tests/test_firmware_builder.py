@@ -104,7 +104,8 @@ class FirmwareBuilderTests(unittest.TestCase):
         for marker in (
             "EXPECTED_REPOSITORY_ID", "EXPECTED_WORKFLOW_IDS",
             "workflowRun.head_sha !== sourceSha", "runMeta.workflow_id",
-            "runMeta.run_attempt", "artifact_archive_size_mismatch",
+            "runMeta.run_attempt", "EXPECTED_WORKFLOW_PATHS",
+            "EXPECTED_ARTIFACT_PREFIXES", "artifact_archive_size_mismatch",
             "MAX_ARTIFACT_ARCHIVE_BYTES",
             "MAX_EXPANDED_ARTIFACT_BYTES", "MAX_ADVANCED_ZIP_BYTES",
             "MAX_BUILD_INFO_BYTES", "artifact_file_set_invalid",
