@@ -82,7 +82,7 @@ async function sha256Hex(value: string) {
 
 function isValidClientIp(value: string) {
   const octets = value.split(".");
-  if (octets.length === 4 && octets.every((part) => /^\\d{1,3}$/.test(part)
+  if (octets.length === 4 && octets.every((part) => /^\d{1,3}$/.test(part)
       && Number(part) >= 0 && Number(part) <= 255)) return true;
   if (!value.includes(":") || value.length > 45 || !/^[0-9a-f:.]+$/i.test(value)) return false;
   try {
@@ -96,7 +96,7 @@ async function fingerprintHash(req: Request) {
   // Only use the managed Cloudflare client-IP header. Forwarding chains can
   // contain caller-controlled values and must not define the rate-limit key.
   const clientIp = req.headers.get("cf-connecting-ip")?.trim();
-  if (!clientIp || clientIp.length > 64 || /[\\s,]/.test(clientIp) || !isValidClientIp(clientIp)) {
+  if (!clientIp || clientIp.length > 64 || /[\s,]/.test(clientIp) || !isValidClientIp(clientIp)) {
     throw new Error("trusted_client_ip_unavailable");
   }
   const key = await crypto.subtle.importKey(
