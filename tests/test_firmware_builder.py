@@ -85,6 +85,24 @@ class FirmwareBuilderTests(unittest.TestCase):
         self.assertIn("function isValidClientIp", source)
         self.assertIn('new URL("http://[" + value + "]/', source)
 
+    def test_client_ip_validator_accepts_and_rejects_expected_values(self) -> None:
+        source = Path("firmware-builder/supabase/functions/firmware-build/index.ts").read_text(encoding="utf-8")
+        start = source.index("function isValidClientIp")
+        end = source.index("async function fingerprintHash", start)
+        validator = source[start:end]
+        script = validator + """
+if (!isValidClientIp("203.0.113.5")) process.exit(1);
+if (!isValidClientIp("2001:db8::1")) process.exit(2);
+if (isValidClientIp("256.1.1.1")) process.exit(3);
+if (isValidClientIp("not-an-ip")) process.exit(4);
+if (isValidClientIp("2001:::1")) process.exit(5);
+"""
+        with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8") as test_script:
+            test_script.write(script)
+            test_script.flush()
+            result = subprocess.run(["node", test_script.name], capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_callback_rejects_terminal_state_replays(self) -> None:
         source = Path("firmware-builder/supabase/functions/firmware-build-callback/index.ts").read_text(encoding="utf-8")
         self.assertIn('build.status !== "queued" && build.status !== "building"', source)
