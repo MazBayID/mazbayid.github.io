@@ -139,7 +139,7 @@
       busy = value;
       $("buildBtn").disabled = value || !!validateGPIO();
       document.querySelectorAll('input[name="variant"], #gpioGrid select, #resetGpio').forEach(el => el.disabled = value);
-      $("connectBtn").disabled = value || !buildReady || !("serial" in navigator);
+      $("connectBtn").disabled = value || !buildReady || !("serial" in navigator) || !!loader;
       $("flashBtn").disabled = value || !loader || !buildReady;
     }
     async function invalidateBuild() {
