@@ -76,6 +76,21 @@ class FirmwareBuilderTests(unittest.TestCase):
         ):
             self.assertIn(marker, self.html)
 
+    def test_rate_limit_uses_only_cf_client_ip(self) -> None:
+        source = Path("firmware-builder/supabase/functions/firmware-build/index.ts").read_text(encoding="utf-8")
+        fingerprint = source.split("async function fingerprintHash", 1)[1].split("function newStatusToken", 1)[0]
+        self.assertIn('req.headers.get("cf-connecting-ip")', fingerprint)
+        self.assertNotIn("x-forwarded-for", fingerprint)
+        self.assertNotIn("x-real-ip", fingerprint)
+        self.assertIn("rate_limit_identity_unavailable", source)
+
+    def test_callback_rejects_terminal_state_replays(self) -> None:
+        source = Path("firmware-builder/supabase/functions/firmware-build-callback/index.ts").read_text(encoding="utf-8")
+        self.assertIn('build.status !== "queued" && build.status !== "building"', source)
+        self.assertIn('.in("status", ["queued", "building"])', source)
+        self.assertIn('.eq("github_run_id", runId)', source)
+        self.assertIn('invalid_workflow_identity', source)
+
     def test_module_javascript_syntax(self) -> None:
         self.assertTrue(self.parser.module_scripts, "No JavaScript module found")
         source = "\n".join(self.parser.module_scripts)
