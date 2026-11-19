@@ -108,7 +108,8 @@ class FirmwareBuilderTests(unittest.TestCase):
             "MAX_ARTIFACT_ARCHIVE_BYTES",
             "MAX_EXPANDED_ARTIFACT_BYTES", "MAX_ADVANCED_ZIP_BYTES",
             "MAX_BUILD_INFO_BYTES", "artifact_file_set_invalid",
-            "readResponseBounded", "readBodyBounded",
+            "readResponseBounded", "readBodyBounded", "unzipBounded",
+            "UnzipInflate", "UnzipPassThrough",
         ):
             self.assertIn(marker, callback)
 
