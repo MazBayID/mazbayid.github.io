@@ -83,6 +83,7 @@ class FirmwareBuilderTests(unittest.TestCase):
         self.assertNotIn("x-real-ip", fingerprint)
         self.assertIn("rate_limit_identity_unavailable", source)
         self.assertIn("function isValidClientIp", source)
+        self.assertIn("if (Object.values(config).includes(2))", source)
         self.assertIn('new URL("http://[" + value + "]/', source)
 
     def test_client_ip_validator_accepts_and_rejects_expected_values(self) -> None:
