@@ -78,7 +78,7 @@ class FirmwareBuilderTests(unittest.TestCase):
 
     def test_module_javascript_syntax(self) -> None:
         self.assertTrue(self.parser.module_scripts, "No JavaScript module found")
-        source = "\\n".join(self.parser.module_scripts)
+        source = "\n".join(self.parser.module_scripts)
         with tempfile.NamedTemporaryFile("w", suffix=".mjs", encoding="utf-8") as script:
             script.write(source)
             script.flush()
