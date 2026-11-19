@@ -41,9 +41,13 @@
     h1{margin:13px 0 8px;font-size:clamp(2.1rem,6vw,3.3rem);line-height:1.08;letter-spacing:-.06em}
     .intro p{margin:0;color:var(--muted)}
     .guestbook-shell{overflow:hidden;padding:clamp(12px,2.5vw,24px);border:1px solid var(--line);border-radius:26px;background:var(--surface);box-shadow:var(--shadow)}
-    .guestbook-frame{display:block;width:100%;min-height:900px;border:0;border-radius:14px;background:var(--surface)}
-    .external-link{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;margin:17px 0 0;color:var(--muted);font-size:.83rem;text-align:center}
-    .external-link a{color:var(--lav);font-weight:900;text-decoration:underline;text-underline-offset:3px}
+    .guestbook-card{display:grid;justify-items:center;gap:12px;padding:clamp(28px,7vw,64px) 18px;text-align:center;border:1px dashed var(--line);border-radius:18px;background:linear-gradient(135deg,var(--lav-soft),var(--mint))}
+    .guestbook-icon{display:grid;place-items:center;width:64px;height:64px;border-radius:22px;background:var(--surface);font-size:2rem;box-shadow:var(--shadow)}
+    .guestbook-card h2{margin:0;font-size:1.35rem;letter-spacing:-.03em}
+    .guestbook-card p{max-width:460px;margin:0;color:var(--muted);font-size:.92rem}
+    .guestbook-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin-top:8px;padding:12px 20px;border:0;border-radius:999px;background:var(--lav);color:#fff;font-weight:950;box-shadow:0 8px 20px rgba(120,87,174,.22);transition:transform .18s ease,filter .18s ease}
+    .guestbook-button:hover{transform:translateY(-2px);filter:brightness(1.05)}
+    .external-link{margin:17px 0 0;color:var(--muted);font-size:.8rem;text-align:center}
     .footer{padding:18px 0 26px;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem;text-align:center}
     @media(max-width:520px){.main{padding-top:30px}.nav{min-height:64px}.home-link{padding-inline:11px}.guestbook-shell{padding:7px;border-radius:18px}.guestbook-frame{min-height:850px}}
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
@@ -71,21 +75,17 @@
     </section>
 
     <section class="guestbook-shell" aria-label="Public guestbook">
-      <iframe
-        class="guestbook-frame"
-        src="https://pestbook.net/view-guestbook?Name=mazbayid"
-        title="MazBayID public guestbook"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin">
-        Your browser does not support embedded pages.
-        <a href="https://pestbook.net/view-guestbook?Name=mazbayid" target="_blank" rel="noopener noreferrer">Open the MazBayID guestbook</a>.
-      </iframe>
+      <div class="guestbook-card">
+        <div class="guestbook-icon" aria-hidden="true">✉</div>
+        <h2 data-en="Your note belongs here" data-id="Pesanmu bisa ditinggalkan di sini">Your note belongs here</h2>
+        <p data-en="Open the MazBayID guestbook to leave a message and read notes from other visitors." data-id="Buka buku tamu MazBayID untuk meninggalkan pesan dan membaca pesan dari pengunjung lain.">Open the MazBayID guestbook to leave a message and read notes from other visitors.</p>
+        <a class="guestbook-button" href="https://pestbook.net/view-guestbook?Name=mazbayid" target="_blank" rel="noopener noreferrer">
+          <span data-en="Visit the guestbook" data-id="Buka buku tamu">Visit the guestbook</span> <span aria-hidden="true">↗</span>
+        </a>
+      </div>
     </section>
 
-    <p class="external-link">
-      <span data-en="Having trouble viewing the guestbook?" data-id="Kesulitan melihat buku tamu?">Having trouble viewing the guestbook?</span>
-      <a href="https://pestbook.net/view-guestbook?Name=mazbayid" target="_blank" rel="noopener noreferrer" data-en="Open it on Pestbook ↗" data-id="Buka di Pestbook ↗">Open it on Pestbook ↗</a>
-    </p>
+    <p class="external-link" data-en="The guestbook opens securely on Pestbook in a new tab." data-id="Buku tamu dibuka melalui Pestbook di tab baru.">The guestbook opens securely on Pestbook in a new tab.</p>
   </main>
 
   <footer class="footer">
