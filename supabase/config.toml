@@ -1,0 +1,4 @@
+project_id = "mazbayid-guestbook"
+
+[db.migrations]
+enabled = true
