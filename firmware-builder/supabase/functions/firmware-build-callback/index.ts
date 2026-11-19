@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
   }
   const { data: build, error: lookupError } = await supabase
     .from("firmware_builds")
-    .select("id,variant,status")
+    .select("id,variant,status,github_run_id")
     .eq("id", buildId)
     .maybeSingle();
   if (lookupError) return json({ error: "build_lookup_failed" }, 500);
@@ -105,6 +105,32 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, status: finalStatus });
   }
 
+  if (!Number.isSafeInteger(runId) || runId <= 0 || build.github_run_id !== runId) {
+    await failBuild(buildId, "github_run_identity_mismatch");
+    return json({ error: "github_run_identity_mismatch" }, 403);
+  }
+
+  const artifactMetaResponse = await fetch(
+    "https://api.github.com/repos/MazBayID/esp_clock/actions/artifacts/" + artifactId,
+    {
+      headers: {
+        "Authorization": "Bearer " + GITHUB_TOKEN,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "NEO-CLOCK-Firmware-Builder",
+      },
+    },
+  );
+  if (!artifactMetaResponse.ok) {
+    await failBuild(buildId, "github_artifact_metadata_failed");
+    return json({ error: "github_artifact_metadata_failed" }, 502);
+  }
+  const artifactMeta = await artifactMetaResponse.json();
+  if (artifactMeta.expired || Number(artifactMeta.workflow_run?.id) !== runId) {
+    await failBuild(buildId, "github_artifact_run_mismatch");
+    return json({ error: "github_artifact_run_mismatch" }, 403);
+  }
+
   const artifactResponse = await fetch(
     "https://api.github.com/repos/MazBayID/esp_clock/actions/artifacts/" + artifactId + "/zip",
     {
@@ -122,6 +148,10 @@ Deno.serve(async (req: Request) => {
   }
 
   const archiveBytes = new Uint8Array(await artifactResponse.arrayBuffer());
+  if (archiveBytes.byteLength > 20 * 1024 * 1024) {
+    await failBuild(buildId, "artifact_archive_too_large");
+    return json({ error: "artifact_archive_too_large" }, 413);
+  }
   let files: Record<string, Uint8Array>;
   try {
     files = unzipSync(archiveBytes);
