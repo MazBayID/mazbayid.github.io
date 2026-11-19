@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.119.1";
 import { unzipSync } from "npm:fflate@0.8.2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
