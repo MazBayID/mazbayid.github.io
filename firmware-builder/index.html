@@ -136,9 +136,28 @@
     }
     function setBusy(value) {
       busy = value;
-      $("buildBtn").disabled = value;
+      $("buildBtn").disabled = value || !!validateGPIO();
+      document.querySelectorAll('input[name="variant"], #gpioGrid select, #resetGpio').forEach(el => el.disabled = value);
       $("connectBtn").disabled = value || !buildReady || !("serial" in navigator);
       $("flashBtn").disabled = value || !loader || !buildReady;
+    }
+    async function invalidateBuild() {
+      if (!statusToken && !buildReady && !loader) return;
+      buildReady = false;
+      statusToken = null;
+      currentBuildId = null;
+      mergedUrl = null;
+      advancedUrl = null;
+      $("outputs").classList.remove("show");
+      $("connectBtn").disabled = true;
+      $("flashBtn").disabled = true;
+      $("deviceState").textContent = "Build configuration changed";
+      if (transport) {
+        try { await transport.disconnect(); } catch (_) {}
+      }
+      transport = null;
+      loader = null;
+      if (!busy) setStatus("Configuration changed","Build again to generate firmware for the updated firmware/GPIO selection.",0);
     }
     function gpioConfig() {
       return Object.fromEntries(SIGNALS.map(key => [key,Number($(key).value)]));
@@ -168,9 +187,10 @@
         option.value = String(pin); option.textContent = "GPIO" + pin;
         select.append(option);
       }
-      select.addEventListener("change",updateGPIOState);
+      select.addEventListener("change",()=>{ invalidateBuild(); updateGPIOState(); });
     }
-    $("resetGpio").addEventListener("click",loadDefaults);
+    document.querySelectorAll('input[name="variant"]').forEach(input => input.addEventListener("change",invalidateBuild));
+    $("resetGpio").addEventListener("click",()=>{ invalidateBuild(); loadDefaults(); });
     loadDefaults();
 
     async function api(body) {
