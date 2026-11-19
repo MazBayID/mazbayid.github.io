@@ -203,7 +203,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: claimResult, error: claimError } = await supabase.rpc(
     "claim_firmware_build_callback",
-    { p_build_id: buildId, p_run_id: runId, p_lease_seconds: 600 },
+    { p_build_id: buildId, p_run_id: runId, p_lease_seconds: 1800 },
   );
   if (claimError) return json({ error: "callback_claim_failed" }, 503);
   if (claimResult !== true) return json({ error: "callback_already_processing" }, 409);
@@ -283,6 +283,10 @@ Deno.serve(async (req: Request) => {
   } catch {
     await failBuild(buildId, "artifact_archive_too_large");
     return json({ error: "artifact_archive_too_large" }, 413);
+  }
+  if (archiveBytes.byteLength !== Number(artifactMeta.size_in_bytes)) {
+    await failBuild(buildId, "artifact_archive_size_mismatch");
+    return json({ error: "artifact_archive_size_mismatch" }, 422);
   }
   let files: Record<string, Uint8Array>;
   try {
