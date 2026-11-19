@@ -1,3 +1,4 @@
+# Clean deployment trigger after firmware-builder merge
 name: Deploy GitHub Pages
 
 on:
