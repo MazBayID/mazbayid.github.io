@@ -69,7 +69,7 @@ function validateGPIO(input: unknown) {
   }
 
   const warnings: string[] = [];
-  if (Object.keys(supplied).length && Object.values(config).includes(2)) {
+  if (Object.values(config).includes(2)) {
     warnings.push("GPIO2 is an ESP32-C3 strapping pin; attached circuitry may affect boot.");
   }
   return { config, warnings };
