@@ -112,13 +112,17 @@ The deployed build endpoint intentionally returns `503 builder_backend_not_confi
 
 ## Direct browser flasher
 
-Use Espressif's `esptool-js` as the flashing engine, with a NEO_CLOCK-owned interface.
+The first dedicated interface is implemented at `firmware-builder/index.html` (preview route: `/firmware-builder/`). It includes the three official firmware choices, GPIO selectors and conflict validation, build-status polling, signed artifact downloads, Android/PC instructions, and a direct-flash panel.
+
+The browser uses the public Supabase publishable key only; no service-role or GitHub secret is present in frontend code. The page calls the `firmware-build` Edge Function for build creation/status and uses expiring signed Storage URLs for downloads.
+
+Use Espressif's pinned `esptool-js` v0.7.1 as the flashing engine, with a NEO_CLOCK-owned interface.
 
 - Connect through Web Serial.
 - Detect the ESP32-C3 before writing.
 - Fetch the generated merged image directly from private Storage using a short-lived signed URL.
 - Flash the single merged image at address `0x0000`.
-- Use the metadata from the build package: DIO, 80 MHz, 4 MB.
+- Use the verified package settings: DIO, 80 MHz, 4 MB.
 - Show connection, erase/write progress, verification, reset, success, and recoverable errors.
 - Warn clearly that a full merged image is a clean install and resets saved flash data.
 - Do not begin flashing until the user explicitly presses the Flash button.
@@ -165,9 +169,9 @@ All three tables have RLS enabled and no public policies. Backend service-role a
 1. Standardize and validate build artifacts in `MazBayID/esp_clock` (in progress in PR #8).
 2. Implement GPIO validation and generated build configuration (generator and workflow inputs now added in PR #8; server-side validation remains to be wired).
 3. Establish the isolated Supabase project, build-job tables, and private artifact bucket (completed); deploy Edge Functions and configure secrets next.
-5. Build the dedicated GitHub Pages route and responsive configurator UI.
-6. Integrate `esptool-js` and test on PC.
-7. Test Android using WebSerial USB v1.8 and the user's ESP32-C3.
+5. Build the dedicated GitHub Pages route and responsive configurator UI (initial page created on the development branch; not yet published).
+6. Integrate `esptool-js` and test on PC (initial integration created; physical flashing remains untested).
+7. Test Android using WebSerial USB v1.8 and the user's ESP32-C3 (pending physical test).
 8. Publish only after all three variants pass clean-install flashing tests.
 
 ## Security and operational rules
