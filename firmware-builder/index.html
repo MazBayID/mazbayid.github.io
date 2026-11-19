@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffaf6">
+  <meta name="description" content="Build and flash official NEO_CLOCK firmware for ESP32-C3 SuperMini.">
+  <title>NEO_CLOCK Firmware Builder — MazBayID</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/mascot/octocat-icon.svg">
+  <style>
+    :root{color-scheme:light;--page:#fffaf6;--surface:#fffefd;--surface2:#f5efff;--ink:#30234d;--muted:#695f7b;--line:#e5dced;--lav:#8c69c8;--lavsoft:#eee5ff;--mint:#d9f5ed;--mintink:#286b68;--peach:#fff0dc;--gold:#f6c85f;--shadow:0 12px 34px rgba(74,51,105,.09)}
+    html[data-theme=dark]{color-scheme:dark;--page:#171321;--surface:#211b30;--surface2:#2b2340;--ink:#f8f1ff;--muted:#c1b5d1;--line:#45395b;--lav:#c5a8ff;--lavsoft:#3a2d52;--mint:#203d3b;--mintink:#9de2d3;--peach:#493728;--shadow:0 14px 36px rgba(0,0,0,.22)}
+    *{box-sizing:border-box}body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font:16px/1.6 "Nunito Sans",Nunito,system-ui,-apple-system,"Segoe UI",sans-serif}
+    body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 8% 10%,rgba(220,202,255,.3),transparent 32rem),radial-gradient(ellipse at 92% 32%,rgba(189,240,226,.22),transparent 30rem)}
+    a{color:var(--lav);font-weight:800}button,select{font:inherit}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--lav);outline-offset:3px}
+    .wrap{width:min(980px,calc(100% - 32px));margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}.mark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--lav);color:white;font-weight:1000}.brand strong{font-size:1.15rem;letter-spacing:-.04em}.back{font-size:.88rem;text-decoration:none;color:var(--muted)}
+    .hero{margin:16px 0 24px;padding:clamp(24px,5vw,44px);border:1px solid #dfd0f6;border-radius:30px;background:linear-gradient(112deg,#f1e8ff 0%,#f9f1ff 53%,#e4f8f1 100%);color:#30234d}
+    html[data-theme=dark] .hero{border-color:#4a3c62;background:linear-gradient(112deg,#302441,#292239 53%,#1f3937);color:var(--ink)}
+    .eyebrow{display:inline-block;padding:5px 12px;border:1px solid #cdb9ef;border-radius:99px;font-size:.76rem;font-weight:900;color:#51416f}
+    html[data-theme=dark] .eyebrow{color:#e6d8ff;border-color:#665386}
+    h1{margin:13px 0 8px;font-size:clamp(2rem,6vw,3.35rem);line-height:1.04;letter-spacing:-.065em}.hero p{max-width:650px;margin:0;color:#514568}html[data-theme=dark] .hero p{color:#d4c9e3}
+    .step{margin:16px 0;padding:clamp(20px,4vw,30px);border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--shadow)}
+    .stephead{display:flex;align-items:center;gap:12px;margin-bottom:18px}.num{width:34px;height:34px;display:grid;place-items:center;border-radius:12px;background:var(--lavsoft);color:var(--lav);font-weight:1000}.step h2{margin:0;font-size:1.22rem;letter-spacing:-.035em}.hint{margin:-8px 0 18px;color:var(--muted);font-size:.88rem}
+    .variants{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.variant{position:relative;padding:17px;border:1.5px solid var(--line);border-radius:17px;background:var(--surface);cursor:pointer}.variant:has(input:checked){border-color:var(--lav);background:var(--lavsoft);box-shadow:inset 0 0 0 1px var(--lav)}.variant input{accent-color:var(--lav)}.variant strong{display:block;margin-top:7px}.variant small{display:block;color:var(--muted);font-size:.77rem}
+    .gpio-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.gpio-field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px}.gpio-field label{font-weight:800;font-size:.9rem}.gpio-field select{min-width:100px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--ink)}
+    .notice{margin-top:14px;padding:12px 14px;border-radius:13px;background:var(--peach);color:#65491f;font-size:.84rem}html[data-theme=dark] .notice{color:#f8dfb8}.notice.warn{background:#fff0dc}.notice.error{background:#ffe5e5;color:#852d2d}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border:1px solid transparent;border-radius:999px;background:var(--lav);color:#fff;font-weight:900;cursor:pointer;text-decoration:none}.btn.secondary{border-color:var(--line);background:var(--surface2);color:var(--ink)}.btn:disabled{opacity:.45;cursor:not-allowed}
+    .statusbox{display:none;margin-top:18px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}.statusbox.show{display:block}.statusrow{display:flex;align-items:center;gap:10px;font-weight:900}.pulse{width:10px;height:10px;border-radius:50%;background:#d69a3a;box-shadow:0 0 0 5px rgba(214,154,58,.14)}.progress{height:8px;margin-top:12px;overflow:hidden;border-radius:20px;background:var(--line)}.progress>i{display:block;width:0;height:100%;background:var(--lav);transition:width .25s}.progress>i.indeterminate{width:35%;animation:buildmove 1.4s ease-in-out infinite alternate}@keyframes buildmove{from{transform:translateX(0)}to{transform:translateX(185%)}}.statusdetail{margin:8px 0 0;color:var(--muted);font-size:.84rem}
+    .outputs{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}.outputs.show{display:grid}.output{padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--surface)}.output strong{display:block}.output p{margin:5px 0 12px;color:var(--muted);font-size:.82rem}.output .btn{width:100%;padding:9px 12px;font-size:.88rem}
+    .flasher{display:grid;gap:12px}.flasherrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.chipstate{padding:7px 12px;border-radius:99px;background:var(--surface2);color:var(--muted);font-size:.82rem;font-weight:800}.log{min-height:65px;max-height:150px;overflow:auto;padding:12px;border-radius:13px;background:#171321;color:#d9d0ee;font:12px/1.55 ui-monospace,monospace;white-space:pre-wrap}
+    .guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.guide{padding:17px;border:1px solid var(--line);border-radius:16px}.guide h3{margin:0 0 8px;font-size:1rem}.guide p,.guide li{color:var(--muted);font-size:.86rem}.guide ol{padding-left:20px;margin:8px 0}.small{font-size:.78rem;color:var(--muted)}footer{padding:30px 0 42px;text-align:center;color:var(--muted);font-size:.8rem}
+    @media(max-width:700px){.variants{grid-template-columns:1fr}.gpio-grid,.guide-grid,.outputs{grid-template-columns:1fr}.hero{border-radius:22px}.top{padding:12px 0}.gpio-field{padding:10px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="../"><span class="mark">N</span><strong>NEO_CLOCK</strong></a>
+      <a class="back" href="../">← Back to MazBayID</a>
+    </header>
+    <section class="hero">
+      <span class="eyebrow">ESP32-C3 SUPERMINI · FIRMWARE TOOL</span>
+      <h1>Firmware Builder</h1>
+      <p>Choose an official firmware, adjust GPIO assignments, build your firmware, then flash directly from this page or download the binaries.</p>
+    </section>
+
+    <section class="step" aria-labelledby="variantTitle">
+      <div class="stephead"><span class="num">1</span><h2 id="variantTitle">Choose firmware</h2></div>
+      <p class="hint">Hardware and features are fixed by each official firmware profile. Only GPIO pin assignments can be customized.</p>
+      <div class="variants">
+        <label class="variant"><input type="radio" name="variant" value="via_wifi" checked><strong>via_wifi</strong><small>Arduino CLI · Wi-Fi time sync</small></label>
+        <label class="variant"><input type="radio" name="variant" value="via_chronos"><strong>via_chronos</strong><small>Arduino CLI · Chronos profile</small></label>
+        <label class="variant"><input type="radio" name="variant" value="mochi_chronos"><strong>mochi_chronos</strong><small>PlatformIO · Mochi Chronos</small></label>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="gpioTitle">
+      <div class="stephead"><span class="num">2</span><h2 id="gpioTitle">Configure GPIO</h2></div>
+      <p class="hint">Select the physical GPIO used by each signal on your ESP32-C3 SuperMini. Each signal must use a different pin.</p>
+      <div class="gpio-grid" id="gpioGrid">
+        <div class="gpio-field"><label for="oled_sda">OLED SDA</label><select id="oled_sda"></select></div>
+        <div class="gpio-field"><label for="oled_scl">OLED SCL</label><select id="oled_scl"></select></div>
+        <div class="gpio-field"><label for="speaker_bclk">Speaker BCLK</label><select id="speaker_bclk"></select></div>
+        <div class="gpio-field"><label for="speaker_lrc">Speaker LRC</label><select id="speaker_lrc"></select></div>
+        <div class="gpio-field"><label for="speaker_din">Speaker DIN</label><select id="speaker_din"></select></div>
+        <div class="gpio-field"><label for="button_prev">Button PREV / −</label><select id="button_prev"></select></div>
+        <div class="gpio-field"><label for="button_next">Button NEXT / +</label><select id="button_next"></select></div>
+        <div class="gpio-field"><label for="button_mode">Button MODE / OK</label><select id="button_mode"></select></div>
+      </div>
+      <div id="gpioNotice" class="notice">Default GPIO map loaded. GPIO2 is a boot-strapping pin; connected circuitry may affect boot.</div>
+      <div class="actions"><button class="btn secondary" id="resetGpio" type="button">Reset default pins</button></div>
+    </section>
+
+    <section class="step" aria-labelledby="buildTitle">
+      <div class="stephead"><span class="num">3</span><h2 id="buildTitle">Build firmware</h2></div>
+      <p class="hint">The server validates the pin map and compiles the selected official firmware. Do not disconnect from the page while the build is running.</p>
+      <button class="btn" id="buildBtn" type="button">Build firmware</button>
+      <div class="statusbox" id="statusBox" aria-live="polite">
+        <div class="statusrow"><span class="pulse" id="statusPulse"></span><span id="statusText">Waiting for build…</span></div>
+        <div class="progress"><i id="progressBar"></i></div>
+        <p class="statusdetail" id="statusDetail">Your build status will appear here.</p>
+      </div>
+      <div class="outputs" id="outputs">
+        <div class="output"><strong>merged.bin</strong><p>One complete 4 MB image. Best for direct flashing and simple clean installs.</p><button class="btn" id="downloadMerged" type="button">Download merged BIN</button></div>
+        <div class="output"><strong>Advanced BIN ZIP</strong><p>Separate bootloader, partition table, app firmware, exact offsets and flash instructions.</p><button class="btn secondary" id="downloadAdvanced" type="button">Download Advanced ZIP</button></div>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="flashTitle">
+      <div class="stephead"><span class="num">4</span><h2 id="flashTitle">Direct browser flashing</h2></div>
+      <p class="hint">Connect your ESP32-C3 over USB. The browser asks you to select the serial device. Flash starts only after you press the confirmation button.</p>
+      <div class="flasher">
+        <div class="flasherrow"><span class="chipstate" id="deviceState">No device connected</span><button class="btn secondary" id="connectBtn" type="button" disabled>Connect ESP</button><button class="btn" id="flashBtn" type="button" disabled>Flash firmware</button></div>
+        <div class="notice warn">A full merged-image flash erases the ESP32-C3's 4 MB flash, including saved settings. Make sure you have selected the correct firmware before continuing.</div>
+        <pre class="log" id="flashLog">Flasher ready. Build a firmware first.</pre>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="helpTitle">
+      <div class="stephead"><span class="num">i</span><h2 id="helpTitle">Flashing help</h2></div>
+      <div class="guide-grid">
+        <article class="guide"><h3>Direct flash from this page</h3><ol><li>Connect ESP32-C3 to USB using a data cable.</li><li>Build firmware, then press Connect ESP.</li><li>Select the ESP serial port in the browser dialog.</li><li>Confirm the detected chip is ESP32-C3.</li><li>Press Flash firmware and wait until it finishes.</li></ol><p class="small">Android direct-flash test: open this page in <a href="https://github.com/SchoepsLabs/webserial-android/releases/download/v1.8/WebSerialUSB-1.8.apk" target="_blank" rel="noopener">WebSerial USB APK v1.8</a>, connect with OTG, and check whether the serial-device picker appears. If it does not, use the Android merged-BIN method instead.</p></article>
+        <article class="guide"><h3>Flash merged.bin using a PC</h3><ol><li>Download <code>merged.bin</code>.</li><li>Open a compatible ESP32 flashing tool or use Espressif esptool.</li><li>Select ESP32-C3 and set flash address to <code>0x0000</code>.</li><li>Choose DIO, 80 MHz, 4 MB, then flash.</li></ol></article>
+        <article class="guide"><h3>Flash merged.bin using Android</h3><ol><li>Download <code>merged.bin</code> to your phone.</li><li>Install <a href="https://play.google.com/store/apps/details?id=com.esp_flash.esp_flash_app" target="_blank" rel="noopener">ESP Flash app</a>.</li><li>Connect the board with a USB OTG adapter and data cable.</li><li>Choose the BIN, ESP32-C3, and address <code>0x0000</code>.</li><li>Use DIO, 80 MHz and 4 MB flash settings, then flash.</li></ol><p class="small">App interface and chip options may vary by version.</p></article>
+        <article class="guide"><h3>What is Advanced BIN?</h3><p>The ZIP contains separate binary files. Flash each file at the exact address in <code>FLASH-INSTRUCTIONS.txt</code>. Current standard offsets are bootloader <code>0x0000</code>, partitions <code>0x8000</code>, app <code>0x10000</code>; Arduino variants also include <code>boot_app0.bin</code> at <code>0xE000</code>. Use files from one ZIP only. Never mix builds.</p></article>
+      </div>
+    </section>
+    <footer>NEO_CLOCK Firmware Builder · MazBayID · Built for ESP32-C3 SuperMini</footer>
+  </div>
+
+  <script type="importmap">
+    {"imports":{"esptool-js":"https://esm.sh/esptool-js@0.7.1?bundle"}}
+  </script>
+  <script type="module">
+    import { ESPLoader, Transport } from "esptool-js";
+
+    const API = "https://ymjhfaplponxbjhpvhuq.supabase.co/functions/v1/firmware-build";
+    const SUPABASE_KEY = "sb_publishable_yiz5wrRA7cv36U6RDJ6kag_FwA6R7Yn";
+    const DEFAULTS = {oled_sda:21,oled_scl:20,speaker_bclk:1,speaker_lrc:2,speaker_din:5,button_prev:4,button_next:6,button_mode:7};
+    const PINS = [0,1,2,3,4,5,6,7,10,20,21];
+    const SIGNALS = Object.keys(DEFAULTS);
+    const $ = (id) => document.getElementById(id);
+    let statusToken = null, buildReady = false, busy = false, serialPort = null, transport = null, loader = null, mergedUrl = null, advancedUrl = null, currentBuildId = null;
+
+    function setStatus(title, detail, percent) {
+      $("statusBox").classList.add("show");
+      $("statusText").textContent = title;
+      $("statusDetail").textContent = detail;
+      $("progressBar").classList.toggle("indeterminate",percent<0);
+      $("progressBar").style.width = percent<0 ? "35%" : Math.max(0,Math.min(100,percent)) + "%";
+    }
+    function log(message) {
+      const box = $("flashLog");
+      box.textContent += (box.textContent ? "\n" : "") + message;
+      box.scrollTop = box.scrollHeight;
+    }
+    function setBusy(value) {
+      busy = value;
+      $("buildBtn").disabled = value || !!validateGPIO();
+      document.querySelectorAll('input[name="variant"], #gpioGrid select, #resetGpio').forEach(el => el.disabled = value);
+      $("connectBtn").disabled = value || !buildReady || !("serial" in navigator) || !!loader;
+      $("flashBtn").disabled = value || !loader || !buildReady;
+    }
+    async function invalidateBuild() {
+      if (!statusToken && !buildReady && !loader) return;
+      buildReady = false;
+      statusToken = null;
+      currentBuildId = null;
+      mergedUrl = null;
+      advancedUrl = null;
+      $("outputs").classList.remove("show");
+      $("connectBtn").disabled = true;
+      $("flashBtn").disabled = true;
+      $("deviceState").textContent = "Build configuration changed";
+      if (transport) {
+        try { await transport.disconnect(); } catch (_) {}
+      }
+      transport = null;
+      loader = null;
+      if (!busy) setStatus("Configuration changed","Build again to generate firmware for the updated firmware/GPIO selection.",0);
+    }
+    function gpioConfig() {
+      return Object.fromEntries(SIGNALS.map(key => [key,Number($(key).value)]));
+    }
+    function validateGPIO() {
+      const config = gpioConfig(), values = Object.values(config);
+      const duplicates = values.filter((pin,index) => values.indexOf(pin) !== index);
+      if (duplicates.length) return "GPIO conflict: GPIO" + [...new Set(duplicates)].join(", GPIO") + " is assigned more than once.";
+      if (values.some(pin => !PINS.includes(pin))) return "A selected pin is not in the supported allow-list.";
+      return "";
+    }
+    function updateGPIOState() {
+      const error = validateGPIO();
+      const note = $("gpioNotice");
+      if (error) { note.className="notice error"; note.textContent=error; }
+      else { note.className="notice"; note.textContent="GPIO map valid. GPIO2 is a boot-strapping pin; attached circuitry may affect boot."; }
+      $("buildBtn").disabled = busy || !!error;
+    }
+    function loadDefaults() {
+      for (const key of SIGNALS) $(key).value = String(DEFAULTS[key]);
+      updateGPIOState();
+    }
+    for (const key of SIGNALS) {
+      const select = $(key);
+      for (const pin of PINS) {
+        const option = document.createElement("option");
+        option.value = String(pin); option.textContent = "GPIO" + pin;
+        select.append(option);
+      }
+      select.addEventListener("change",()=>{ invalidateBuild(); updateGPIOState(); });
+    }
+    document.querySelectorAll('input[name="variant"]').forEach(input => input.addEventListener("change",invalidateBuild));
+    $("resetGpio").addEventListener("click",()=>{ invalidateBuild(); loadDefaults(); });
+    loadDefaults();
+
+    async function api(body) {
+      const response = await fetch(API,{
+        method:"POST",
+        headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY},
+        body:JSON.stringify(body)
+      });
+      const data = await response.json().catch(()=>({error:"invalid_server_response"}));
+      if (!response.ok) throw new Error(data.error || ("HTTP "+response.status));
+      return data;
+    }
+    function selectedVariant() {
+      return document.querySelector('input[name="variant"]:checked').value;
+    }
+    async function getStatus() {
+      return api({action:"status",status_token:statusToken});
+    }
+    async function refreshDownloads() {
+      const data = await getStatus();
+      const items = data.downloads || [];
+      mergedUrl = items.find(x=>x.type==="merged_bin")?.url || null;
+      advancedUrl = items.find(x=>x.type==="advanced_zip")?.url || null;
+      return {data,items};
+    }
+    async function pollBuild() {
+      const started = Date.now();
+      while (Date.now()-started < 45*60*1000) {
+        const {data} = await refreshDownloads();
+        const status = data.build.status;
+        if (status==="succeeded") {
+          buildReady = true;
+          $("outputs").classList.add("show");
+          setStatus("Build complete","Your firmware files are ready. Signed download links refresh when requested.",100);
+          $("connectBtn").disabled = !("serial" in navigator);
+          $("flashBtn").disabled = true;
+          return;
+        }
+        if (status==="failed" || status==="cancelled") {
+          buildReady = false;
+          setStatus("Build "+status,data.build.error_message_safe || "The build did not complete.",100);
+          return;
+        }
+        const label = status==="queued" ? "Queued" : status==="building" ? "Building firmware" : status;
+        const elapsed = Math.floor((Date.now()-started)/1000);
+        setStatus(label,"Build ID: "+currentBuildId+" · "+elapsed+" seconds elapsed",-1);
+        await new Promise(resolve=>setTimeout(resolve,4000));
+      }
+      setStatus("Still processing","The build has not finished yet. Keep this page open and try checking again shortly.",-1);
+    }
+    $("buildBtn").addEventListener("click",async()=>{
+      const error=validateGPIO(); if(error){updateGPIOState();return;}
+      if(busy)return;
+      buildReady=false;statusToken=null;mergedUrl=null;advancedUrl=null;currentBuildId=null;
+      $("outputs").classList.remove("show");$("connectBtn").disabled=true;$("flashBtn").disabled=true;
+      setBusy(true);
+      try{
+        setStatus("Submitting build","Validating your firmware and GPIO configuration…",3);
+        const result=await api({action:"create",variant:selectedVariant(),gpio_config:gpioConfig()});
+        statusToken=result.status_token;currentBuildId=result.build_id;
+        const warnings=result.warnings||[];
+        setStatus("Queued",warnings.join(" ")||"Build request accepted.",8);
+        await pollBuild();
+      }catch(error){
+        setStatus("Unable to start build",error.message,0);
+      }finally{setBusy(false);$("connectBtn").disabled=!buildReady||!("serial" in navigator);$("flashBtn").disabled=!loader||!buildReady;}
+    });
+
+    $("downloadMerged").addEventListener("click",async()=>{
+      try{const {data}=await refreshDownloads();const item=(data.downloads||[]).find(x=>x.type==="merged_bin");if(!item)throw new Error("Merged BIN is not ready.");window.location.assign(item.url);}
+      catch(e){alert("Download failed: "+e.message);}
+    });
+    $("downloadAdvanced").addEventListener("click",async()=>{
+      try{const {data}=await refreshDownloads();const item=(data.downloads||[]).find(x=>x.type==="advanced_zip");if(!item)throw new Error("Advanced ZIP is not ready.");window.location.assign(item.url);}
+      catch(e){alert("Download failed: "+e.message);}
+    });
+
+    $("connectBtn").addEventListener("click",async()=>{
+      if(!buildReady||busy)return;
+      if(!("serial" in navigator)){log("Web Serial is not available in this browser.");return;}
+      setBusy(true);$("deviceState").textContent="Connecting…";
+      try{
+        serialPort=await navigator.serial.requestPort();
+        transport=new Transport(serialPort,true);
+        loader=new ESPLoader({transport,baudrate:115200,debugLogging:false,terminal:{
+          clean(){},writeLine(data){log(data)},write(data){log(data)}
+        }});
+        const chip=await loader.main();
+        if(!String(chip).toLowerCase().includes("esp32-c3")){
+          await transport.disconnect();transport=null;loader=null;
+          throw new Error("Detected "+chip+". This firmware requires ESP32-C3.");
+        }
+        $("deviceState").textContent="Connected: "+chip;
+        log("Detected "+chip+". Ready to flash.");
+      }catch(error){
+        $("deviceState").textContent="Not connected";
+        log("Connection error: "+error.message);
+        loader=null;transport=null;
+      }finally{setBusy(false);$("flashBtn").disabled=!loader||!buildReady;}
+    });
+
+    $("flashBtn").addEventListener("click",async()=>{
+      if(!loader||!buildReady||busy)return;
+      const confirmed=confirm("Flash the selected NEO_CLOCK firmware now?\n\nThis is a full 4 MB clean install and erases saved settings on the ESP32-C3.");
+      if(!confirmed)return;
+      setBusy(true);
+      try{
+        setStatus("Preparing flash","Refreshing the secure firmware download…",0);
+        const {data}=await refreshDownloads();
+        const item=(data.downloads||[]).find(x=>x.type==="merged_bin");
+        if(!item)throw new Error("Merged BIN download is unavailable.");
+        const response=await fetch(item.url);
+        if(!response.ok)throw new Error("Could not download firmware image.");
+        const bytes=new Uint8Array(await response.arrayBuffer());
+        if(bytes.byteLength!==4*1024*1024)throw new Error("Firmware image size is invalid.");
+        const digest=await crypto.subtle.digest("SHA-256",bytes);
+        const hash=Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");
+        if(hash!==item.sha256)throw new Error("Firmware checksum mismatch. Flash cancelled.");
+        log("Verified merged.bin SHA-256: "+hash);
+        setStatus("Flashing","Writing 4 MB image to address 0x0000. Do not unplug the board.",2);
+        await loader.writeFlash({
+          fileArray:[{data:bytes,address:0x0000}],
+          flashMode:"dio",flashFreq:"80m",flashSize:"4MB",
+          eraseAll:true,compress:true,
+          reportProgress(_fileIndex,written,total){
+            const percent=total?Math.round(written/total*100):0;
+            setStatus("Flashing firmware",percent+"% written. Keep USB connected.",percent);
+          }
+        });
+        setStatus("Flash complete","Firmware written successfully. Restarting ESP32-C3…",100);
+        log("Flash complete. Resetting device.");
+        try{await loader.after("hard_reset");}catch(e){log("Automatic reset unavailable; press RESET on the board.");}
+        $("deviceState").textContent="Flash complete";
+        await transport.disconnect();loader=null;transport=null;
+      }catch(error){
+        setStatus("Flash failed",error.message,0);
+        log("Flash error: "+error.message);
+      }finally{setBusy(false);$("connectBtn").disabled=!buildReady||!("serial" in navigator);$("flashBtn").disabled=!loader||!buildReady;}
+    });
+
+    if(!("serial" in navigator)){
+      $("deviceState").textContent="Web Serial unavailable";
+      log("This browser does not expose Web Serial. Use a compatible Chrome/Edge browser or download merged.bin.");
+    }
+  </script>
+</body>
+</html>
