@@ -7,127 +7,202 @@
   <meta name="description" content="Leave a little note in the MazBayID guestbook.">
   <title>Guestbook — MazBayID</title>
   <style>
-    :root {
-      color-scheme: light;
-      --page:#fffaf6; --surface:#fffefd; --ink:#30234d;
-      --muted:#695f7b; --line:#e5dced; --lav:#8c69c8; --lav-soft:#eee5ff;
-      --mint:#d9f5ed; --shadow:0 12px 34px rgba(74,51,105,.09);
-    }
-    html[data-theme="dark"] {
-      color-scheme:dark;
-      --page:#171321; --surface:#211b30; --ink:#f8f1ff;
-      --muted:#c1b5d1; --line:#45395b; --lav:#c5a8ff; --lav-soft:#3a2d52;
-      --mint:#203d3b; --shadow:0 14px 36px rgba(0,0,0,.22);
-    }
-    *{box-sizing:border-box}
-    body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font:16px/1.6 "Nunito Sans",Nunito,system-ui,-apple-system,"Segoe UI",sans-serif}
+    :root{color-scheme:light;--page:#fffaf6;--surface:#fffefd;--ink:#30234d;--muted:#695f7b;--line:#e5dced;--lav:#8c69c8;--lav-soft:#eee5ff;--mint:#d9f5ed;--shadow:0 12px 34px rgba(74,51,105,.09)}
+    html[data-theme="dark"]{color-scheme:dark;--page:#171321;--surface:#211b30;--ink:#f8f1ff;--muted:#c1b5d1;--line:#45395b;--lav:#c5a8ff;--lav-soft:#3a2d52;--mint:#203d3b;--shadow:0 14px 36px rgba(0,0,0,.22)}
+    *{box-sizing:border-box}body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font:16px/1.6 "Nunito Sans",Nunito,system-ui,-apple-system,"Segoe UI",sans-serif}
     body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 8% 10%,rgba(220,202,255,.3),transparent 32rem),radial-gradient(ellipse at 92% 32%,rgba(189,240,226,.23),transparent 30rem)}
     html[data-theme="dark"] body:before{background:radial-gradient(ellipse at 8% 10%,rgba(116,83,169,.18),transparent 32rem),radial-gradient(ellipse at 92% 32%,rgba(61,132,121,.14),transparent 30rem)}
-    a{color:inherit;text-decoration:none}
-    button{font:inherit}
-    .container{width:min(980px,calc(100% - 32px));margin-inline:auto}
+    a{color:inherit;text-decoration:none}button,input,textarea{font:inherit}.container{width:min(900px,calc(100% - 32px));margin-inline:auto}
     .header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--page) 88%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
-    .nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .brand{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:1000;letter-spacing:-.05em}
-    .brand-mark{width:40px;height:40px;display:grid;place-items:center;border-radius:14px;background:var(--lav);color:#fff}
-    .brand-mark svg{width:23px;height:23px}
-    .brand-dot{color:var(--lav)}
-    .nav-actions{display:flex;align-items:center;gap:9px}
-    .home-link,.theme-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:.85rem;font-weight:850}
-    .theme-toggle{width:42px;padding:0;cursor:pointer}
-    .main{padding:46px 0 30px}
-    .intro{text-align:center;margin:0 auto 24px;max-width:650px}
+    .nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:1000;letter-spacing:-.05em}
+    .brand-mark{width:40px;height:40px;display:grid;place-items:center;border-radius:14px;background:var(--lav);color:#fff}.brand-mark svg{width:23px;height:23px}.brand-dot{color:var(--lav)}
+    .nav-actions{display:flex;align-items:center;gap:9px}.home-link,.theme-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:.85rem;font-weight:850}
+    .theme-toggle{width:42px;padding:0;cursor:pointer}.main{padding:46px 0 34px}.intro{text-align:center;margin:0 auto 28px;max-width:650px}
     .eyebrow{display:inline-flex;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--lav-soft);color:var(--ink);font-size:.75rem;font-weight:900;letter-spacing:.04em}
-    h1{margin:13px 0 8px;font-size:clamp(2.1rem,6vw,3.3rem);line-height:1.08;letter-spacing:-.06em}
-    .intro p{margin:0;color:var(--muted)}
-    .guestbook-shell{overflow:hidden;padding:clamp(12px,2.5vw,24px);border:1px solid var(--line);border-radius:26px;background:var(--surface);box-shadow:var(--shadow)}
-    .guestbook-card{display:grid;justify-items:center;gap:12px;padding:clamp(28px,7vw,64px) 18px;text-align:center;border:1px dashed var(--line);border-radius:18px;background:linear-gradient(135deg,var(--lav-soft),var(--mint))}
-    .guestbook-icon{display:grid;place-items:center;width:64px;height:64px;border-radius:22px;background:var(--surface);font-size:2rem;box-shadow:var(--shadow)}
-    .guestbook-card h2{margin:0;font-size:1.35rem;letter-spacing:-.03em}
-    .guestbook-card p{max-width:460px;margin:0;color:var(--muted);font-size:.92rem}
-    .guestbook-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin-top:8px;padding:12px 20px;border:0;border-radius:999px;background:var(--lav);color:#fff;font-weight:950;box-shadow:0 8px 20px rgba(120,87,174,.22);transition:transform .18s ease,filter .18s ease}
-    .guestbook-button:hover{transform:translateY(-2px);filter:brightness(1.05)}
-    .external-link{margin:17px 0 0;color:var(--muted);font-size:.8rem;text-align:center}
+    h1{margin:13px 0 8px;font-size:clamp(2.1rem,6vw,3.3rem);line-height:1.08;letter-spacing:-.06em}.intro p{margin:0;color:var(--muted)}
+    .panel{padding:clamp(17px,3vw,26px);border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--shadow)}
+    .panel h2{margin:0 0 5px;font-size:1.22rem;letter-spacing:-.03em}.subtext{margin:0 0 18px;color:var(--muted);font-size:.9rem}
+    .field{display:grid;gap:6px;margin:14px 0}.field label{font-size:.88rem;font-weight:850}.field input,.field textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:var(--page);color:var(--ink);outline:none}
+    .field input:focus,.field textarea:focus{border-color:var(--lav);box-shadow:0 0 0 3px color-mix(in srgb,var(--lav) 20%,transparent)}
+    .field textarea{min-height:126px;resize:vertical}.field small{color:var(--muted);font-size:.78rem}
+    .form-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.submit{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border:0;border-radius:999px;background:var(--lav);color:#fff;font-weight:950;cursor:pointer;box-shadow:0 8px 20px rgba(120,87,174,.22)}
+    .submit:disabled{opacity:.65;cursor:wait}.status{min-height:1.5em;margin:12px 0 0;color:var(--muted);font-size:.86rem}.status.success{color:#23836d}.status.error{color:#c05263}
+    .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:28px 2px 13px}.section-head h2{margin:0;font-size:1.2rem}.count{color:var(--muted);font-size:.8rem}
+    .messages{display:grid;gap:12px}.message{padding:17px 18px;border:1px solid var(--line);border-radius:17px;background:var(--surface)}.message-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}.message-name{font-weight:950}.message-date{color:var(--muted);font-size:.76rem}.message-body{margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+    .empty,.loading{padding:25px 16px;border:1px dashed var(--line);border-radius:17px;color:var(--muted);text-align:center;background:color-mix(in srgb,var(--surface) 80%,var(--lav-soft))}
     .footer{padding:18px 0 26px;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem;text-align:center}
-    @media(max-width:520px){.main{padding-top:30px}.nav{min-height:64px}.home-link{padding-inline:11px}.guestbook-shell{padding:7px;border-radius:18px}.guestbook-frame{min-height:850px}}
+    .honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+    @media(max-width:520px){.main{padding-top:30px}.nav{min-height:64px}.home-link{padding-inline:11px}.panel{border-radius:18px}.form-bottom{align-items:stretch}.submit{width:100%}}
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav container" aria-label="Main navigation">
-      <a class="brand" href="./" aria-label="MazBayID home">
-        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6M16 6l6 6-6 6M14 4l-4 16"/></svg></span>
-        <span>MazBayID<span class="brand-dot">.</span></span>
-      </a>
-      <div class="nav-actions">
-        <a class="home-link" href="./">← <span data-en="Home" data-id="Beranda">Home</span></a>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">☾</button>
-      </div>
-    </nav>
-  </header>
-
+  <header class="header"><nav class="nav container" aria-label="Main navigation">
+    <a class="brand" href="./" aria-label="MazBayID home"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6M16 6l6 6-6 6M14 4l-4 16"/></svg></span><span>MazBayID<span class="brand-dot">.</span></span></a>
+    <div class="nav-actions"><a class="home-link" href="./">← <span data-en="Home" data-id="Beranda">Home</span></a><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">☾</button></div>
+  </nav></header>
   <main class="main container">
-    <section class="intro">
-      <span class="eyebrow">MAZBAYID · GUESTBOOK</span>
-      <h1 data-en="Leave a little note ✉" data-id="Tinggalkan pesan ✉">Leave a little note ✉</h1>
-      <p data-en="A small corner for messages, greetings, ideas, and kind words. Thanks for stopping by!" data-id="Ruang kecil untuk pesan, sapaan, ide, dan kata-kata baik. Terima kasih sudah mampir!">A small corner for messages, greetings, ideas, and kind words. Thanks for stopping by!</p>
+    <section class="intro"><span class="eyebrow">MAZBAYID · GUESTBOOK</span><h1 data-en="Leave a little note ✉" data-id="Tinggalkan pesan ✉">Leave a little note ✉</h1><p data-en="A small corner for messages, greetings, ideas, and kind words. Thanks for stopping by!" data-id="Ruang kecil untuk pesan, sapaan, ide, dan kata-kata baik. Terima kasih sudah mampir!">A small corner for messages, greetings, ideas, and kind words. Thanks for stopping by!</p></section>
+    <section class="panel" aria-labelledby="form-title">
+      <h2 id="form-title" data-en="Write a message" data-id="Tulis pesan">Write a message</h2>
+      <p class="subtext" data-en="Your message will appear after it has been reviewed. No account needed." data-id="Pesanmu akan ditampilkan setelah ditinjau. Tidak perlu akun.">Your message will appear after it has been reviewed. No account needed.</p>
+      <form id="guestbook-form">
+        <div class="field"><label for="visitor-name" data-en="Name (optional)" data-id="Nama (opsional)">Name (optional)</label><input id="visitor-name" name="name" maxlength="40" autocomplete="name" placeholder="Anonymous" data-placeholder-en="Anonymous" data-placeholder-id="Anonim"></div>
+        <div class="field"><label for="visitor-message" data-en="Your message" data-id="Pesanmu">Your message</label><textarea id="visitor-message" name="message" maxlength="500" minlength="1" required placeholder="Say hello..." data-placeholder-en="Say hello..." data-placeholder-id="Katakan halo..."></textarea><small id="char-count">0 / 500</small></div>
+        <div class="honeypot" aria-hidden="true"><label for="website">Leave this field empty</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+        <div class="form-bottom"><span class="subtext" style="margin:0" data-en="Be kind. Keep it under 500 characters." data-id="Gunakan kata-kata yang baik. Maksimal 500 karakter.">Be kind. Keep it under 500 characters.</span><button class="submit" id="submit-button" type="submit"><span data-en="Send message" data-id="Kirim pesan">Send message</span> <span aria-hidden="true">✦</span></button></div>
+        <p class="status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
     </section>
-
-    <section class="guestbook-shell" aria-label="Leave a message">
-      <iframe
-        class="guestbook-frame"
-        src="https://www.ultraguest.com/sign/vkdf9gxn"
-        title="Sign the MazBayID guestbook"
-        width="100%"
-        height="680"
-        style="border:1px solid var(--line);border-radius:14px;max-width:100%;background:var(--surface)"
-        loading="lazy"
-        referrerpolicy="no-referrer"></iframe>
-    </section>
-
-    <section class="guestbook-shell" aria-label="Public guestbook messages" style="margin-top:18px">
-      <iframe
-        class="guestbook-frame"
-        src="https://www.ultraguest.com/embed/vkdf9gxn"
-        title="Recent guestbook messages"
-        width="100%"
-        height="420"
-        style="border:1px solid var(--line);border-radius:14px;max-width:100%;background:var(--surface)"
-        loading="lazy"
-        referrerpolicy="no-referrer"></iframe>
-    </section>
+    <section aria-labelledby="messages-title"><div class="section-head"><h2 id="messages-title" data-en="Community notes" data-id="Pesan komunitas">Community notes</h2><span class="count" id="message-count"></span></div><div class="messages" id="messages"><div class="loading" data-en="Loading messages..." data-id="Memuat pesan...">Loading messages...</div></div></section>
   </main>
-
-  <footer class="footer">
-    © <span id="year">2026</span> MazBayID · <span data-en="Made with curiosity ♡" data-id="Dibuat dengan rasa ingin tahu ♡">Made with curiosity ♡</span>
-  </footer>
-
+  <footer class="footer">© <span id="year">2026</span> MazBayID · <span data-en="Made with curiosity ♡" data-id="Dibuat dengan rasa ingin tahu ♡">Made with curiosity ♡</span></footer>
   <script>
-    const root=document.documentElement;
-    const themeButton=document.getElementById("theme-toggle");
-    let theme="light";
-    try{theme=localStorage.getItem("mazbayid-theme")||"light"}catch(e){}
-    function setTheme(value){
-      theme=value==="dark"?"dark":"light";
-      root.dataset.theme=theme;
-      themeButton.textContent=theme==="dark"?"☀":"☾";
-      themeButton.setAttribute("aria-pressed",String(theme==="dark"));
-      themeButton.setAttribute("aria-label",theme==="dark"?"Switch to light theme":"Switch to dark theme");
-      document.querySelector('meta[name="theme-color"]').content=theme==="dark"?"#171321":"#fffaf5";
+    const SUPABASE_URL = "https://syxhvznulapkldewhume.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_QhhMNaKXj7h_QUbpwTunpw_cmmMZfUf";
+    const API_URL = SUPABASE_URL + "/rest/v1/guestbook_messages";
+    const root = document.documentElement;
+    const themeButton = document.getElementById("theme-toggle");
+    const form = document.getElementById("guestbook-form");
+    const nameInput = document.getElementById("visitor-name");
+    const messageInput = document.getElementById("visitor-message");
+    const statusBox = document.getElementById("form-status");
+    const submitButton = document.getElementById("submit-button");
+    const messagesBox = document.getElementById("messages");
+    const messageCount = document.getElementById("message-count");
+    const charCount = document.getElementById("char-count");
+    let language = "en";
+
+    try { language = localStorage.getItem("mazbayid-language") || "en"; } catch (e) {}
+    if (language !== "id") language = "en";
+    function t(en, id) { return language === "id" ? id : en; }
+    function applyLanguage() {
+      root.lang = language;
+      document.querySelectorAll("[data-en][data-id]").forEach(el => {
+        el.textContent = language === "id" ? el.dataset.id : el.dataset.en;
+      });
+      document.querySelectorAll("[data-placeholder-en]").forEach(el => {
+        el.placeholder = language === "id" ? el.dataset.placeholderId : el.dataset.placeholderEn;
+      });
+      charCount.textContent = messageInput.value.length + " / 500";
+    }
+    applyLanguage();
+
+    let theme = "light";
+    try { theme = localStorage.getItem("mazbayid-theme") || "light"; } catch (e) {}
+    function setTheme(value) {
+      theme = value === "dark" ? "dark" : "light";
+      root.dataset.theme = theme;
+      themeButton.textContent = theme === "dark" ? "☀" : "☾";
+      themeButton.setAttribute("aria-pressed", String(theme === "dark"));
+      themeButton.setAttribute("aria-label", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+      document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#171321" : "#fffaf5";
     }
     setTheme(theme);
-    themeButton.addEventListener("click",()=>{
-      setTheme(theme==="dark"?"light":"dark");
-      try{localStorage.setItem("mazbayid-theme",theme)}catch(e){}
+    themeButton.addEventListener("click", () => {
+      setTheme(theme === "dark" ? "light" : "dark");
+      try { localStorage.setItem("mazbayid-theme", theme); } catch (e) {}
     });
-    let language="en";
-    try{language=localStorage.getItem("mazbayid-language")||"en"}catch(e){}
-    if(language==="id"){
-      root.lang="id";
-      document.querySelectorAll("[data-id]").forEach(el=>el.textContent=el.dataset.id);
+
+    function setStatus(message, kind) {
+      statusBox.textContent = message;
+      statusBox.className = "status" + (kind ? " " + kind : "");
     }
-    document.getElementById("year").textContent=String(new Date().getFullYear());
+    function headers(extra) {
+      return Object.assign({
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }, extra || {});
+    }
+    function formatDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      return new Intl.DateTimeFormat(language === "id" ? "id-ID" : "en", {
+        dateStyle: "medium", timeStyle: "short"
+      }).format(date);
+    }
+    function renderMessages(rows) {
+      messagesBox.replaceChildren();
+      messageCount.textContent = rows.length ? t(rows.length + " shown", rows.length + " ditampilkan") : "";
+      if (!rows.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = t("No messages yet. Be the first to leave a note!", "Belum ada pesan. Jadilah yang pertama meninggalkan pesan!");
+        messagesBox.append(empty);
+        return;
+      }
+      rows.forEach(row => {
+        const article = document.createElement("article");
+        article.className = "message";
+        const top = document.createElement("div");
+        top.className = "message-top";
+        const author = document.createElement("span");
+        author.className = "message-name";
+        author.textContent = row.name || "Anonymous";
+        const date = document.createElement("time");
+        date.className = "message-date";
+        date.dateTime = row.created_at;
+        date.textContent = formatDate(row.created_at);
+        const body = document.createElement("p");
+        body.className = "message-body";
+        body.textContent = row.message;
+        top.append(author, date);
+        article.append(top, body);
+        messagesBox.append(article);
+      });
+    }
+    async function loadMessages() {
+      try {
+        const response = await fetch(API_URL + "?select=name,message,created_at&approved=eq.true&order=created_at.desc&limit=50", {
+          headers: headers({ "Accept": "application/json" })
+        });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const rows = await response.json();
+        renderMessages(rows);
+      } catch (error) {
+        messagesBox.replaceChildren();
+        const box = document.createElement("div");
+        box.className = "empty";
+        box.textContent = t("Messages could not be loaded right now. Please try again later.", "Pesan belum dapat dimuat. Silakan coba lagi nanti.");
+        messagesBox.append(box);
+      }
+    }
+    messageInput.addEventListener("input", () => {
+      charCount.textContent = messageInput.value.length + " / 500";
+    });
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      if (document.getElementById("website").value) return;
+      const name = nameInput.value.trim() || "Anonymous";
+      const message = messageInput.value.trim();
+      if (!message || message.length > 500 || name.length > 40) {
+        setStatus(t("Please check your name and message.", "Periksa kembali nama dan pesanmu."), "error");
+        return;
+      }
+      submitButton.disabled = true;
+      setStatus(t("Sending your message...", "Mengirim pesanmu..."));
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: headers({ "Content-Type": "application/json", "Prefer": "return=minimal" }),
+          body: JSON.stringify({ name, message })
+        });
+        if (!response.ok) {
+          let detail = "";
+          try { detail = (await response.json()).message || ""; } catch (e) {}
+          throw new Error(detail || "HTTP " + response.status);
+        }
+        form.reset();
+        charCount.textContent = "0 / 500";
+        setStatus(t("Thank you! Your message was sent and is waiting for review.", "Terima kasih! Pesanmu terkirim dan sedang menunggu peninjauan."), "success");
+      } catch (error) {
+        setStatus(t("Sorry, your message could not be sent. Please try again later.", "Maaf, pesan belum dapat dikirim. Silakan coba lagi nanti."), "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+    document.getElementById("year").textContent = String(new Date().getFullYear());
+    loadMessages();
   </script>
 </body>
 </html>
