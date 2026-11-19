@@ -79,6 +79,8 @@ GitHub Actions artifacts have a separate `retention-days: 30` setting. This is n
 
 ## Related documentation
 
-- Firmware hardware and default pin map: https://github.com/MazBayID/esp_clock/blob/main/README.md
+- Firmware hardware and default pin map: [HARDWARE_BASELINE.md](https://github.com/MazBayID/esp_clock/blob/main/docs/HARDWARE_BASELINE.md)
+- Regression procedure: [REGRESSION_TEST_CHECKLIST.md](https://github.com/MazBayID/esp_clock/blob/main/docs/REGRESSION_TEST_CHECKLIST.md)
+- Repository overview: https://github.com/MazBayID/esp_clock/blob/main/README.md
 - Firmware Builder page source: `firmware-builder/index.html`
 - Database migrations: `firmware-builder/supabase/migrations/`
