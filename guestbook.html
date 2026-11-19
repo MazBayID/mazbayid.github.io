@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffaf5">
+  <meta name="description" content="Leave a little note in the MazBayID guestbook.">
+  <title>Guestbook — MazBayID</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page:#fffaf6; --surface:#fffefd; --ink:#30234d;
+      --muted:#695f7b; --line:#e5dced; --lav:#8c69c8; --lav-soft:#eee5ff;
+      --mint:#d9f5ed; --shadow:0 12px 34px rgba(74,51,105,.09);
+    }
+    html[data-theme="dark"] {
+      color-scheme:dark;
+      --page:#171321; --surface:#211b30; --ink:#f8f1ff;
+      --muted:#c1b5d1; --line:#45395b; --lav:#c5a8ff; --lav-soft:#3a2d52;
+      --mint:#203d3b; --shadow:0 14px 36px rgba(0,0,0,.22);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font:16px/1.6 "Nunito Sans",Nunito,system-ui,-apple-system,"Segoe UI",sans-serif}
+    body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 8% 10%,rgba(220,202,255,.3),transparent 32rem),radial-gradient(ellipse at 92% 32%,rgba(189,240,226,.23),transparent 30rem)}
+    html[data-theme="dark"] body:before{background:radial-gradient(ellipse at 8% 10%,rgba(116,83,169,.18),transparent 32rem),radial-gradient(ellipse at 92% 32%,rgba(61,132,121,.14),transparent 30rem)}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .container{width:min(980px,calc(100% - 32px));margin-inline:auto}
+    .header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--page) 88%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:1000;letter-spacing:-.05em}
+    .brand-mark{width:40px;height:40px;display:grid;place-items:center;border-radius:14px;background:var(--lav);color:#fff}
+    .brand-mark svg{width:23px;height:23px}
+    .brand-dot{color:var(--lav)}
+    .nav-actions{display:flex;align-items:center;gap:9px}
+    .home-link,.theme-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:.85rem;font-weight:850}
+    .theme-toggle{width:42px;padding:0;cursor:pointer}
+    .main{padding:46px 0 30px}
+    .intro{text-align:center;margin:0 auto 24px;max-width:650px}
+    .eyebrow{display:inline-flex;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--lav-soft);color:var(--ink);font-size:.75rem;font-weight:900;letter-spacing:.04em}
+    h1{margin:13px 0 8px;font-size:clamp(2.1rem,6vw,3.3rem);line-height:1.08;letter-spacing:-.06em}
+    .intro p{margin:0;color:var(--muted)}
+    .guestbook-shell{overflow:hidden;padding:clamp(12px,2.5vw,24px);border:1px solid var(--line);border-radius:26px;background:var(--surface);box-shadow:var(--shadow)}
+    .guestbook-frame{display:block;width:100%;min-height:900px;border:0;border-radius:14px;background:var(--surface)}
+    .external-link{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;margin:17px 0 0;color:var(--muted);font-size:.83rem;text-align:center}
+    .external-link a{color:var(--lav);font-weight:900;text-decoration:underline;text-underline-offset:3px}
+    .footer{padding:18px 0 26px;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem;text-align:center}
+    @media(max-width:520px){.main{padding-top:30px}.nav{min-height:64px}.home-link{padding-inline:11px}.guestbook-shell{padding:7px;border-radius:18px}.guestbook-frame{min-height:850px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="brand" href="./" aria-label="MazBayID home">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6M16 6l6 6-6 6M14 4l-4 16"/></svg></span>
+        <span>MazBayID<span class="brand-dot">.</span></span>
+      </a>
+      <div class="nav-actions">
+        <a class="home-link" href="./">← <span data-en="Home" data-id="Beranda">Home</span></a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">☾</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="main container">
+    <section class="intro">
+      <span class="eyebrow">MAZBAYID · GUESTBOOK</span>
+      <h1 data-en="Leave a little note ✉" data-id="Tinggalkan pesan ✉">Leave a little note ✉</h1>
+      <p data-en="A small corner for messages, greetings, ideas, and kind words. Thanks for stopping by!" data-id="Ruang kecil untuk pesan, sapaan, ide, dan kata-kata baik. Terima kasih sudah mampir!">A small corner for messages, greetings, ideas, and kind words. Thanks for stopping by!</p>
+    </section>
+
+    <section class="guestbook-shell" aria-label="Public guestbook">
+      <iframe
+        class="guestbook-frame"
+        src="https://pestbook.net/view-guestbook?Name=mazbayid"
+        title="MazBayID public guestbook"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin">
+        Your browser does not support embedded pages.
+        <a href="https://pestbook.net/view-guestbook?Name=mazbayid" target="_blank" rel="noopener noreferrer">Open the MazBayID guestbook</a>.
+      </iframe>
+    </section>
+
+    <p class="external-link">
+      <span data-en="Having trouble viewing the guestbook?" data-id="Kesulitan melihat buku tamu?">Having trouble viewing the guestbook?</span>
+      <a href="https://pestbook.net/view-guestbook?Name=mazbayid" target="_blank" rel="noopener noreferrer" data-en="Open it on Pestbook ↗" data-id="Buka di Pestbook ↗">Open it on Pestbook ↗</a>
+    </p>
+  </main>
+
+  <footer class="footer">
+    © <span id="year">2026</span> MazBayID · <span data-en="Made with curiosity ♡" data-id="Dibuat dengan rasa ingin tahu ♡">Made with curiosity ♡</span>
+  </footer>
+
+  <script>
+    const root=document.documentElement;
+    const themeButton=document.getElementById("theme-toggle");
+    let theme="light";
+    try{theme=localStorage.getItem("mazbayid-theme")||"light"}catch(e){}
+    function setTheme(value){
+      theme=value==="dark"?"dark":"light";
+      root.dataset.theme=theme;
+      themeButton.textContent=theme==="dark"?"☀":"☾";
+      themeButton.setAttribute("aria-pressed",String(theme==="dark"));
+      themeButton.setAttribute("aria-label",theme==="dark"?"Switch to light theme":"Switch to dark theme");
+      document.querySelector('meta[name="theme-color"]').content=theme==="dark"?"#171321":"#fffaf5";
+    }
+    setTheme(theme);
+    themeButton.addEventListener("click",()=>{
+      setTheme(theme==="dark"?"light":"dark");
+      try{localStorage.setItem("mazbayid-theme",theme)}catch(e){}
+    });
+    let language="en";
+    try{language=localStorage.getItem("mazbayid-language")||"en"}catch(e){}
+    if(language==="id"){
+      root.lang="id";
+      document.querySelectorAll("[data-id]").forEach(el=>el.textContent=el.dataset.id);
+    }
+    document.getElementById("year").textContent=String(new Date().getFullYear());
+  </script>
+</body>
+</html>
