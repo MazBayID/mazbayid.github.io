@@ -38,6 +38,66 @@ async function sha256Hex(bytes: Uint8Array) {
   const digest = await crypto.subtle.digest("SHA-256", copy.buffer);
   return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+async function readBodyBounded(req: Request, maxBytes: number) {
+  if (Number(req.headers.get("content-length")) > maxBytes) throw new Error("body_too_large");
+  if (!req.body) return new Uint8Array();
+  const reader = req.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel();
+      throw new Error("body_too_large");
+    }
+    chunks.push(value);
+  }
+  const result = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    result.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return result;
+}
+
+async function readResponseBounded(response: Response, maxBytes: number) {
+  if (Number(response.headers.get("content-length")) > maxBytes) throw new Error("response_too_large");
+  if (!response.body) throw new Error("response_body_missing");
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel();
+      throw new Error("response_too_large");
+    }
+    chunks.push(value);
+  }
+  const result = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    result.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return result;
+}
+
+const EXPECTED_REPOSITORY_ID = 1458391655;
+const EXPECTED_WORKFLOW_IDS: Record<string, number> = {
+  via_wifi: 421296915,
+  via_chronos: 423651921,
+  mochi_chronos: 423852508,
+};
+const MAX_ARTIFACT_ARCHIVE_BYTES = 20 * 1024 * 1024;
+const MAX_EXPANDED_ARTIFACT_BYTES = 16 * 1024 * 1024;
+const MAX_ADVANCED_ZIP_BYTES = 10 * 1024 * 1024;
+const MAX_BUILD_INFO_BYTES = 128 * 1024;
 
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -52,10 +112,11 @@ Deno.serve(async (req: Request) => {
 
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
+    const raw = await readBodyBounded(req, 16 * 1024);
+    body = JSON.parse(new TextDecoder().decode(raw));
     if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("invalid");
-  } catch {
-    return json({ error: "invalid_json" }, 400);
+  } catch (error) {
+    return json({ error: error instanceof Error && error.message === "body_too_large" ? "request_too_large" : "invalid_json" }, 400);
   }
 
   const buildId = body.build_id;
@@ -163,9 +224,17 @@ Deno.serve(async (req: Request) => {
     return json({ error: "github_artifact_metadata_failed" }, 502);
   }
   const artifactMeta = await artifactMetaResponse.json();
-  if (artifactMeta.expired || Number(artifactMeta.workflow_run?.id) !== runId) {
-    await failBuild(buildId, "github_artifact_run_mismatch");
-    return json({ error: "github_artifact_run_mismatch" }, 403);
+  const workflowRun = artifactMeta.workflow_run ?? {};
+  if (artifactMeta.expired
+      || Number(workflowRun.id) !== runId
+      || Number(workflowRun.repository_id) !== EXPECTED_REPOSITORY_ID
+      || Number(workflowRun.workflow_id) !== EXPECTED_WORKFLOW_IDS[build.variant]
+      || workflowRun.head_sha !== sourceSha
+      || !Number.isSafeInteger(Number(artifactMeta.size_in_bytes))
+      || Number(artifactMeta.size_in_bytes) < 1
+      || Number(artifactMeta.size_in_bytes) > MAX_ARTIFACT_ARCHIVE_BYTES) {
+    await failBuild(buildId, "github_artifact_metadata_mismatch");
+    return json({ error: "github_artifact_metadata_mismatch" }, 403);
   }
 
   const artifactResponse = await fetch(
@@ -184,8 +253,10 @@ Deno.serve(async (req: Request) => {
     return json({ error: "github_artifact_download_failed" }, 502);
   }
 
-  const archiveBytes = new Uint8Array(await artifactResponse.arrayBuffer());
-  if (archiveBytes.byteLength > 20 * 1024 * 1024) {
+  let archiveBytes: Uint8Array;
+  try {
+    archiveBytes = await readResponseBounded(artifactResponse, MAX_ARTIFACT_ARCHIVE_BYTES);
+  } catch {
     await failBuild(buildId, "artifact_archive_too_large");
     return json({ error: "artifact_archive_too_large" }, 413);
   }
@@ -197,12 +268,26 @@ Deno.serve(async (req: Request) => {
     return json({ error: "artifact_archive_invalid" }, 422);
   }
 
+  const expectedFiles = ["advanced-bin.zip", "build-info.json", "merged.bin"];
+  const actualFiles = Object.keys(files).sort();
+  if (actualFiles.length !== expectedFiles.length
+      || actualFiles.some((name, index) => name !== expectedFiles[index])) {
+    await failBuild(buildId, "artifact_file_set_invalid");
+    return json({ error: "artifact_file_set_invalid" }, 422);
+  }
   const merged = files["merged.bin"];
   const advanced = files["advanced-bin.zip"];
   const buildInfoBytes = files["build-info.json"];
   if (!merged || !advanced || !buildInfoBytes) {
     await failBuild(buildId, "artifact_missing_required_files");
     return json({ error: "artifact_missing_required_files" }, 422);
+  }
+  const expandedTotal = merged.byteLength + advanced.byteLength + buildInfoBytes.byteLength;
+  if (expandedTotal > MAX_EXPANDED_ARTIFACT_BYTES
+      || advanced.byteLength > MAX_ADVANCED_ZIP_BYTES
+      || buildInfoBytes.byteLength > MAX_BUILD_INFO_BYTES) {
+    await failBuild(buildId, "artifact_expanded_size_invalid");
+    return json({ error: "artifact_expanded_size_invalid" }, 413);
   }
   if (merged.byteLength !== 4 * 1024 * 1024) {
     await failBuild(buildId, "merged_image_size_invalid");
