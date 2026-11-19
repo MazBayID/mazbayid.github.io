@@ -4,7 +4,7 @@ alter table public.firmware_builds
 create or replace function public.claim_firmware_build_callback(
   p_build_id uuid,
   p_run_id bigint,
-  p_lease_seconds integer default 600
+  p_lease_seconds integer default 1800
 )
 returns boolean
 language plpgsql
