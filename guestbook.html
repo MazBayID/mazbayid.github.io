@@ -45,7 +45,7 @@
     <section class="intro"><span class="eyebrow">MAZBAYID · GUESTBOOK</span><h1 data-en="Leave a little note ✉" data-id="Tinggalkan pesan ✉">Leave a little note ✉</h1><p data-en="A small corner for messages, greetings, ideas, and kind words. Thanks for stopping by!" data-id="Ruang kecil untuk pesan, sapaan, ide, dan kata-kata baik. Terima kasih sudah mampir!">A small corner for messages, greetings, ideas, and kind words. Thanks for stopping by!</p></section>
     <section class="panel" aria-labelledby="form-title">
       <h2 id="form-title" data-en="Write a message" data-id="Tulis pesan">Write a message</h2>
-      <p class="subtext" data-en="Your message will appear after it has been reviewed. No account needed." data-id="Pesanmu akan ditampilkan setelah ditinjau. Tidak perlu akun.">Your message will appear after it has been reviewed. No account needed.</p>
+      <p class="subtext" data-en="Your message will appear here right away. No account needed." data-id="Pesanmu akan langsung tampil di sini. Tidak perlu akun.">Your message will appear after it has been reviewed. No account needed.</p>
       <form id="guestbook-form">
         <div class="field"><label for="visitor-name" data-en="Name (optional)" data-id="Nama (opsional)">Name (optional)</label><input id="visitor-name" name="name" maxlength="40" autocomplete="name" placeholder="Anonymous" data-placeholder-en="Anonymous" data-placeholder-id="Anonim"></div>
         <div class="field"><label for="visitor-message" data-en="Your message" data-id="Pesanmu">Your message</label><textarea id="visitor-message" name="message" maxlength="500" minlength="1" required placeholder="Say hello..." data-placeholder-en="Say hello..." data-placeholder-id="Katakan halo..."></textarea><small id="char-count">0 / 500</small></div>
@@ -185,7 +185,7 @@
         const response = await fetch(API_URL, {
           method: "POST",
           headers: headers({ "Content-Type": "application/json", "Prefer": "return=minimal" }),
-          body: JSON.stringify({ name, message })
+          body: JSON.stringify({ name, message, approved: true })
         });
         if (!response.ok) {
           let detail = "";
@@ -194,7 +194,8 @@
         }
         form.reset();
         charCount.textContent = "0 / 500";
-        setStatus(t("Thank you! Your message was sent and is waiting for review.", "Terima kasih! Pesanmu terkirim dan sedang menunggu peninjauan."), "success");
+        await loadMessages();
+        setStatus(t("Thank you! Your message is now public.", "Terima kasih! Pesanmu sekarang sudah tampil."), "success");
       } catch (error) {
         setStatus(t("Sorry, your message could not be sent. Please try again later.", "Maaf, pesan belum dapat dikirim. Silakan coba lagi nanti."), "error");
       } finally {
