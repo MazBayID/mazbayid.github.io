@@ -89,7 +89,7 @@ class FirmwareBuilderTests(unittest.TestCase):
         source = Path("firmware-builder/supabase/functions/firmware-build/index.ts").read_text(encoding="utf-8")
         start = source.index("function isValidClientIp")
         end = source.index("async function fingerprintHash", start)
-        validator = source[start:end]
+        validator = source[start:end].replace("function isValidClientIp(value: string)", "function isValidClientIp(value)")
         script = validator + """
 if (!isValidClientIp("203.0.113.5")) process.exit(1);
 if (!isValidClientIp("2001:db8::1")) process.exit(2);
