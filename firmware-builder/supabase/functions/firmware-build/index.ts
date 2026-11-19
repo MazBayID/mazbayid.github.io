@@ -37,7 +37,7 @@ function validateGPIO(input: unknown) {
     throw new Error("gpio_config_must_be_object");
   }
   const supplied = input as Record<string, unknown>;
-  const unknown = Object.keys(supplied).filter((key) => !(key in DEFAULT_GPIO));
+  const unknown = Object.keys(supplied).filter((key) => !Object.hasOwn(DEFAULT_GPIO, key));
   if (unknown.length) throw new Error("unsupported_gpio_signal:" + unknown.join(","));
 
   const config = { ...DEFAULT_GPIO };
