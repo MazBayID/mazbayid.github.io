@@ -22,6 +22,15 @@ function constantTimeEqual(a: string, b: string) {
   return diff === 0;
 }
 
+async function failBuild(buildId: string, code: string) {
+  await supabase.from("firmware_builds").update({
+    status: "failed",
+    finished_at: new Date().toISOString(),
+    error_code: code,
+    error_message_safe: "The build artifact could not be verified or stored. Please retry the build.",
+  }).eq("id", buildId);
+}
+
 async function sha256Hex(bytes: Uint8Array) {
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -108,6 +117,7 @@ Deno.serve(async (req: Request) => {
     },
   );
   if (!artifactResponse.ok) {
+    await failBuild(buildId, "github_artifact_download_failed");
     return json({ error: "github_artifact_download_failed" }, 502);
   }
 
@@ -116,6 +126,7 @@ Deno.serve(async (req: Request) => {
   try {
     files = unzipSync(archiveBytes);
   } catch {
+    await failBuild(buildId, "artifact_archive_invalid");
     return json({ error: "artifact_archive_invalid" }, 422);
   }
 
@@ -123,9 +134,11 @@ Deno.serve(async (req: Request) => {
   const advanced = files["advanced-bin.zip"];
   const buildInfoBytes = files["build-info.json"];
   if (!merged || !advanced || !buildInfoBytes) {
+    await failBuild(buildId, "artifact_missing_required_files");
     return json({ error: "artifact_missing_required_files" }, 422);
   }
   if (merged.byteLength !== 4 * 1024 * 1024) {
+    await failBuild(buildId, "merged_image_size_invalid");
     return json({ error: "merged_image_size_invalid" }, 422);
   }
 
@@ -133,9 +146,11 @@ Deno.serve(async (req: Request) => {
   try {
     buildInfo = JSON.parse(new TextDecoder().decode(buildInfoBytes));
   } catch {
+    await failBuild(buildId, "build_metadata_invalid");
     return json({ error: "build_metadata_invalid" }, 422);
   }
   if (buildInfo.build_id !== buildId || buildInfo.variant !== build.variant) {
+    await failBuild(buildId, "artifact_build_identity_mismatch");
     return json({ error: "artifact_build_identity_mismatch" }, 422);
   }
 
@@ -143,6 +158,7 @@ Deno.serve(async (req: Request) => {
   const expectedHash = images?.merged?.sha256;
   const actualHash = await sha256Hex(merged);
   if (expectedHash !== actualHash) {
+    await failBuild(buildId, "merged_image_hash_mismatch");
     return json({ error: "merged_image_hash_mismatch" }, 422);
   }
 
@@ -162,6 +178,8 @@ Deno.serve(async (req: Request) => {
       upsert: true,
     });
     if (uploadError) {
+      await bucket.remove(rows.map((row) => row.object_path));
+      await failBuild(buildId, "artifact_storage_upload_failed");
       return json({ error: "artifact_storage_upload_failed", file: item.name }, 502);
     }
     rows.push({
@@ -177,7 +195,11 @@ Deno.serve(async (req: Request) => {
   const { error: rowsError } = await supabase
     .from("firmware_build_artifacts")
     .upsert(rows, { onConflict: "build_id,artifact_type" });
-  if (rowsError) return json({ error: "artifact_metadata_save_failed" }, 500);
+  if (rowsError) {
+    await bucket.remove(rows.map((row) => row.object_path));
+    await failBuild(buildId, "artifact_metadata_save_failed");
+    return json({ error: "artifact_metadata_save_failed" }, 500);
+  }
 
   const { error: updateError } = await supabase.from("firmware_builds").update({
     status: "succeeded",
