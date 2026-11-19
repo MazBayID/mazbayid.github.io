@@ -143,7 +143,7 @@ Deno.serve(async (req: Request) => {
 
   if (body.action !== "create") return json({ error: "unsupported_action" }, 400, origin);
   const variant = body.variant;
-  if (typeof variant !== "string" || !(variant in VARIANTS)) {
+  if (typeof variant !== "string" || !Object.hasOwn(VARIANTS, variant)) {
     return json({ error: "unsupported_firmware_variant" }, 400, origin);
   }
 
