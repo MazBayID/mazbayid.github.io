@@ -81,15 +81,17 @@ async function sha256Hex(value: string) {
 }
 
 async function fingerprintHash(req: Request) {
-  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-    ?? req.headers.get("cf-connecting-ip")
-    ?? req.headers.get("x-real-ip")
-    ?? "unknown";
+  // Only use the managed Cloudflare client-IP header. Forwarding chains can
+  // contain caller-controlled values and must not define the rate-limit key.
+  const clientIp = req.headers.get("cf-connecting-ip")?.trim();
+  if (!clientIp || clientIp.length > 64 || /[\\s,]/.test(clientIp)) {
+    throw new Error("trusted_client_ip_unavailable");
+  }
   const key = await crypto.subtle.importKey(
     "raw", new TextEncoder().encode(SERVICE_KEY),
     { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
   );
-  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(forwarded));
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(clientIp));
   return Array.from(new Uint8Array(signature)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
@@ -170,7 +172,12 @@ Deno.serve(async (req: Request) => {
     return json({ error: error instanceof Error ? error.message : "invalid_gpio_config" }, 400, origin);
   }
 
-  const fingerprint = await fingerprintHash(req);
+  let fingerprint: string;
+  try {
+    fingerprint = await fingerprintHash(req);
+  } catch {
+    return json({ error: "rate_limit_identity_unavailable" }, 503, origin);
+  }
   const statusToken = newStatusToken();
   const statusTokenHash = await sha256Hex(statusToken);
   const { data: reservationData, error: reservationError } = await supabase.rpc(
