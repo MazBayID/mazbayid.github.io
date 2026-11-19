@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
   }
   const { data: build, error: lookupError } = await supabase
     .from("firmware_builds")
-    .select("id,variant,status,github_run_id")
+    .select("id,variant,status,github_run_id,started_at")
     .eq("id", buildId)
     .maybeSingle();
   if (lookupError) return json({ error: "build_lookup_failed" }, 500);
@@ -105,7 +105,8 @@ Deno.serve(async (req: Request) => {
     return json({ error: "build_state_conflict" }, 409);
   }
   if (!Number.isSafeInteger(runId) || runId <= 0
-      || !Number.isSafeInteger(runAttempt) || runAttempt < 1) {
+      || !Number.isSafeInteger(runAttempt) || runAttempt < 1
+      || !sourceSha || !/^[a-f0-9]{40,64}$/i.test(sourceSha)) {
     return json({ error: "invalid_workflow_identity" }, 400);
   }
   if (build.github_run_id && Number(build.github_run_id) !== runId) {
