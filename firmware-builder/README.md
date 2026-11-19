@@ -183,3 +183,7 @@ All three tables have RLS enabled and no public policies. Backend service-role a
 - Add per-client rate limiting and a bounded build queue.
 - Preserve the official default GPIO map and firmware behavior when no customization is supplied.
 - Never expose experimental microphone configuration in version 1.
+
+
+## Queue and quota behavior
+The queue reservation RPC checks the active-build capacity before consuming the per-fingerprint hourly quota. A request rejected because the queue is full does not consume one of the three hourly build slots. This fix is tracked by migration `20261120100000_queue_capacity_before_quota.sql` and has been applied to the configured Supabase project.
