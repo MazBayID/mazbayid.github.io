@@ -46,7 +46,22 @@ The optional separate piezo GPIO is also not exposed in version 1. Keep the exis
 - Keep the default pin map valid and unchanged when the user does not customize anything.
 - Validate on the server as well as in the browser. Never trust browser validation alone.
 
-The initial board allow-list must be reviewed against the exact ESP32-C3 SuperMini board revision before enabling arbitrary pin changes.
+Version 1 uses this explicit allow-list: GPIO0, GPIO1, GPIO2, GPIO3, GPIO4, GPIO5, GPIO6, GPIO7, GPIO10, GPIO20, and GPIO21. GPIO8/9, GPIO11–19 are not accepted. GPIO2 remains allowed only with a boot-strapping warning because it is part of the existing default speaker LRC mapping.
+
+The generator accepts a partial JSON object with these exact keys:
+```json
+{
+  "oled_sda": 21,
+  "oled_scl": 20,
+  "speaker_bclk": 1,
+  "speaker_lrc": 2,
+  "speaker_din": 5,
+  "button_prev": 4,
+  "button_next": 6,
+  "button_mode": 7
+}
+```
+Omitted keys retain the official defaults. Duplicate GPIO assignments are rejected. The same validation must run again in the Edge Function before dispatching a build.
 
 ## Build pipeline
 
@@ -85,7 +100,7 @@ Use Espressif's `esptool-js` as the flashing engine, with a NEO_CLOCK-owned inte
 PC Chrome/Edge is the primary reference environment.
 
 Android is a first-version target and must be tested with:
-- The user's proven WebSerial USB Android APK v1.8.
+- The user's proven [WebSerial USB Android APK v1.8](https://github.com/SchoepsLabs/webserial-android/releases/download/v1.8/WebSerialUSB-1.8.apk).
 - USB OTG and the user's actual ESP32-C3 board.
 - Native USB CDC and USB-to-serial bridges where available.
 
@@ -107,14 +122,21 @@ The exact offsets are validated against each merged image by the packaging scrip
 
 ## Backend isolation
 
-The existing Supabase project is named `mazbayid-guestbook`. Do not add Firmware Builder tables, buckets, or functions to that project without an explicit decision. Prefer a separate Supabase project for the Firmware Builder so Guestbook remains isolated.
+The existing Supabase project `mazbayid-guestbook` remains untouched. A separate project now exists:
+
+- Project: `neo-clock-firmware-builder`
+- Project ref: `ymjhfaplponxbjhpvhuq`
+- Region: `ap-southeast-1` (Singapore)
+- Private Storage bucket: `firmware-artifacts`
+- Database tables: `firmware_builds`, `firmware_build_artifacts`, and `firmware_build_rate_limits`
+
+All three tables have RLS enabled and no public policies. Backend service-role access is required. The Storage bucket is private and limited to 20 MB per object.
 
 ## Delivery phases
 
-1. Standardize and validate build artifacts in `MazBayID/esp_clock`.
-2. Implement server-side GPIO validation and generated build configuration.
-3. Add workflow-dispatch inputs and build metadata propagation.
-4. Establish an isolated Supabase project, build-job table, private artifact bucket, and Edge Functions.
+1. Standardize and validate build artifacts in `MazBayID/esp_clock` (in progress in PR #8).
+2. Implement GPIO validation and generated build configuration (generator and workflow inputs now added in PR #8; server-side validation remains to be wired).
+3. Establish the isolated Supabase project, build-job tables, and private artifact bucket (completed); deploy Edge Functions and configure secrets next.
 5. Build the dedicated GitHub Pages route and responsive configurator UI.
 6. Integrate `esptool-js` and test on PC.
 7. Test Android using WebSerial USB v1.8 and the user's ESP32-C3.
