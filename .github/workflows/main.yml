@@ -23,5 +23,15 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check backend Edge Functions
+        run: |
+          deno check firmware-builder/supabase/functions/firmware-build/index.ts
+          deno check firmware-builder/supabase/functions/firmware-build-callback/index.ts
+
       - name: Run Firmware Builder regression tests
         run: python -m unittest discover -s tests -p test_firmware_builder.py -v
