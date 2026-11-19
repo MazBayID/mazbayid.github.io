@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import re
 import subprocess
 import tempfile
 import unittest
@@ -93,15 +92,20 @@ class FirmwareBuilderTests(unittest.TestCase):
 
     def test_callback_uses_single_processing_claim(self) -> None:
         callback = Path("firmware-builder/supabase/functions/firmware-build-callback/index.ts").read_text(encoding="utf-8")
+        migration = Path("firmware-builder/supabase/migrations/20261120113000_callback_processing_lease.sql").read_text(encoding="utf-8")
         self.assertIn('"claim_firmware_build_callback"', callback)
         self.assertIn("callback_claimed_at: null", callback)
         self.assertIn("callback_already_processing", callback)
+        self.assertIn("set callback_claimed_at = now(), github_run_id = p_run_id", migration)
+        self.assertIn("callback_claimed_at is null", migration)
 
     def test_callback_validates_artifact_provenance_and_sizes(self) -> None:
         callback = Path("firmware-builder/supabase/functions/firmware-build-callback/index.ts").read_text(encoding="utf-8")
         for marker in (
             "EXPECTED_REPOSITORY_ID", "EXPECTED_WORKFLOW_IDS",
-            "workflowRun.head_sha !== sourceSha", "MAX_ARTIFACT_ARCHIVE_BYTES",
+            "workflowRun.head_sha !== sourceSha", "runMeta.workflow_id",
+            "runMeta.run_attempt", "artifact_archive_size_mismatch",
+            "MAX_ARTIFACT_ARCHIVE_BYTES",
             "MAX_EXPANDED_ARTIFACT_BYTES", "MAX_ADVANCED_ZIP_BYTES",
             "MAX_BUILD_INFO_BYTES", "artifact_file_set_invalid",
             "readResponseBounded", "readBodyBounded",
