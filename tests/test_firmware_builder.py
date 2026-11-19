@@ -83,7 +83,7 @@ class FirmwareBuilderTests(unittest.TestCase):
         self.assertNotIn("x-real-ip", fingerprint)
         self.assertIn("rate_limit_identity_unavailable", source)
         self.assertIn("function isValidClientIp", source)
-        self.assertIn("new URL(\"http://[\" + value + \"]]/", source)
+        self.assertIn('new URL("http://[" + value + "]/', source)
 
     def test_callback_rejects_terminal_state_replays(self) -> None:
         source = Path("firmware-builder/supabase/functions/firmware-build-callback/index.ts").read_text(encoding="utf-8")
