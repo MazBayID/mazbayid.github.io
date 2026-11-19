@@ -26,6 +26,7 @@ async function failBuild(buildId: string, code: string) {
   await supabase.from("firmware_builds").update({
     status: "failed",
     finished_at: new Date().toISOString(),
+    callback_claimed_at: null,
     error_code: code,
     error_message_safe: "The build artifact could not be verified or stored. Please retry the build.",
   }).eq("id", buildId).in("status", ["queued", "building"]);
@@ -138,6 +139,13 @@ Deno.serve(async (req: Request) => {
     await failBuild(buildId, "github_run_identity_mismatch");
     return json({ error: "github_run_identity_mismatch" }, 403);
   }
+
+  const { data: claimResult, error: claimError } = await supabase.rpc(
+    "claim_firmware_build_callback",
+    { p_build_id: buildId, p_run_id: runId, p_lease_seconds: 600 },
+  );
+  if (claimError) return json({ error: "callback_claim_failed" }, 503);
+  if (claimResult !== true) return json({ error: "callback_already_processing" }, 409);
 
   const artifactMetaResponse = await fetch(
     "https://api.github.com/repos/MazBayID/esp_clock/actions/artifacts/" + artifactId,
@@ -262,6 +270,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: completed, error: updateError } = await supabase.from("firmware_builds").update({
     status: "succeeded",
+    callback_claimed_at: null,
     github_run_id: runId,
     github_run_attempt: runAttempt,
     source_commit_sha: sourceSha,
@@ -271,7 +280,10 @@ Deno.serve(async (req: Request) => {
   }).eq("id", buildId).in("status", ["queued", "building"])
     .eq("github_run_id", runId).select("id").maybeSingle();
   if (updateError || !completed) {
+    await supabase.from("firmware_build_artifacts").delete().eq("build_id", buildId);
     await bucket.remove(rows.map((row) => row.object_path));
+    await supabase.from("firmware_builds").update({ callback_claimed_at: null })
+      .eq("id", buildId).in("status", ["queued", "building"]);
     return json({ error: updateError ? "build_completion_update_failed" : "build_state_conflict" }, updateError ? 500 : 409);
   }
 
