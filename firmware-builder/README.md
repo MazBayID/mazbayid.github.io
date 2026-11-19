@@ -166,10 +166,11 @@ All three tables have RLS enabled and no public policies. Backend service-role a
 
 ## Delivery phases
 
-1. Standardize and validate build artifacts in `MazBayID/esp_clock` (in progress in PR #8).
-2. Implement GPIO validation and generated build configuration (generator and workflow inputs now added in PR #8; server-side validation remains to be wired).
-3. Establish the isolated Supabase project, build-job tables, and private artifact bucket (completed); deploy Edge Functions and configure secrets next.
-5. Build the dedicated GitHub Pages route and responsive configurator UI (initial page created on the development branch; not yet published).
+1. Standardize and validate build artifacts in `MazBayID/esp_clock` (implementation and CI checks completed in PR #8; merge still pending).
+2. Implement GPIO validation and generated build configuration (generator, workflow inputs, and server-side validation are in place).
+3. Establish the isolated Supabase project, build-job tables, and private artifact bucket (completed).
+4. Configure backend secrets and run an end-to-end build test (pending owner/admin secret setup).
+5. Build the dedicated GitHub Pages route and responsive configurator UI (initial page created in PR #5; merge and production preview pending).
 6. Integrate `esptool-js` and test on PC (initial integration created; physical flashing remains untested).
 7. Test Android using WebSerial USB v1.8 and the user's ESP32-C3 (pending physical test).
 8. Publish only after all three variants pass clean-install flashing tests.
