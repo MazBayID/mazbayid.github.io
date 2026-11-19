@@ -148,7 +148,8 @@ Deno.serve(async (req: Request) => {
   }
 
   const githubToken = Deno.env.get("GITHUB_TOKEN");
-  if (!githubToken) return json({ error: "builder_backend_not_configured" }, 503, origin);
+  const callbackSecret = Deno.env.get("BUILDER_CALLBACK_SECRET");
+  if (!githubToken || !callbackSecret) return json({ error: "builder_backend_not_configured" }, 503, origin);
 
   let gpio;
   try {
