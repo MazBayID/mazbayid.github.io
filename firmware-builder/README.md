@@ -89,7 +89,7 @@ Two Edge Functions are deployed in the isolated Supabase project:
 - `firmware-build`: validates firmware/GPIO requests, enforces the per-client build quota, creates a private build record, and dispatches the matching GitHub Actions workflow.
 - `firmware-build-callback`: accepts authenticated workflow lifecycle callbacks, verifies that the artifact belongs to the expected GitHub run, checks the 4 MB merged image and SHA-256, and stores the three output files in the private bucket.
 
-Both functions are deployed with JWT verification disabled because they use their own request controls. The public build function enforces the GitHub Pages origin, server-side allow-lists, a random status token, and a quota of three requests per client per hour. The callback requires a separate high-entropy shared secret.
+Both functions are deployed with JWT verification disabled because they use their own request controls. The public build function enforces the GitHub Pages origin, server-side allow-lists, a random status token, a quota of three requests per client per hour, and a global maximum of five queued/building jobs. Stale jobs are marked failed after 45 minutes. The callback requires a separate high-entropy shared secret.
 
 Before accepting public builds, configure these secrets:
 
@@ -158,7 +158,7 @@ The existing Supabase project `mazbayid-guestbook` remains untouched. A separate
 - Private Storage bucket: `firmware-artifacts`
 - Database tables: `firmware_builds`, `firmware_build_artifacts`, and `firmware_build_rate_limits`
 
-All three tables have RLS enabled and no public policies. Backend service-role access is required. The Storage bucket is private and limited to 20 MB per object.
+All three tables have RLS enabled and no public policies. Backend service-role access is required. The Storage bucket is private and limited to 20 MB per object. The applied database migrations are versioned under `firmware-builder/supabase/migrations/`.
 
 ## Delivery phases
 
