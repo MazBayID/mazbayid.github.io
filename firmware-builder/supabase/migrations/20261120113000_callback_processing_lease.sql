@@ -19,10 +19,10 @@ begin
   end if;
 
   update public.firmware_builds
-  set callback_claimed_at = now()
+  set callback_claimed_at = now(), github_run_id = p_run_id
   where id = p_build_id
     and status in ('queued', 'building')
-    and github_run_id = p_run_id
+    and (github_run_id is null or github_run_id = p_run_id)
     and (callback_claimed_at is null
          or callback_claimed_at < now() - make_interval(secs => p_lease_seconds));
 
