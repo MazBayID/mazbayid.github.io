@@ -113,7 +113,7 @@ if (isValidClientIp("2001:::1")) process.exit(5);
 
     def test_callback_uses_single_processing_claim(self) -> None:
         callback = Path("firmware-builder/supabase/functions/firmware-build-callback/index.ts").read_text(encoding="utf-8")
-        migration = Path("firmware-builder/supabase/migrations/20261120113000_callback_processing_lease.sql").read_text(encoding="utf-8")
+        migration = Path("firmware-builder/supabase/migrations/20261120004733_callback_processing_lease.sql").read_text(encoding="utf-8")
         self.assertIn('"claim_firmware_build_callback"', callback)
         self.assertIn("callback_claimed_at: null", callback)
         self.assertIn("callback_already_processing", callback)
