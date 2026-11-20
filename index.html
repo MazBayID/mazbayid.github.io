@@ -51,10 +51,8 @@
     .nav-tools{display:flex;align-items:center;gap:8px}
     .icon-button{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);cursor:pointer}
     .icon-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-    .email-button,.button{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:999px;padding:11px 19px;background:var(--lav);color:#fff;font-weight:900;box-shadow:0 7px 16px rgba(140,105,200,.18);transition:transform .2s,box-shadow .2s}
-    .email-button{padding:10px 16px;font-size:.86rem;white-space:nowrap}
-    .email-button .gmail-icon{display:block;width:22px;height:22px;flex:0 0 22px}
-    .email-button:hover,.button:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(140,105,200,.25)}
+    .button{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:999px;padding:11px 19px;background:var(--lav);color:#fff;font-weight:900;box-shadow:0 7px 16px rgba(140,105,200,.18);transition:transform .2s,box-shadow .2s}
+    .button:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(140,105,200,.25)}
     .menu-toggle{display:none}
     .language-picker{position:relative}
     .language-menu{position:absolute;right:0;top:calc(100% + 10px);min-width:180px;padding:7px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);z-index:50}
@@ -137,24 +135,13 @@
     .kofi-close{width:30px;height:30px;border:0;border-radius:50%;background:rgba(255,255,255,.6);color:#173d3a;cursor:pointer}
     .kofi-popup p{margin:10px 0 15px;font-size:.85rem;line-height:1.5}
     .kofi-link{display:inline-flex;padding:9px 13px;border-radius:999px;background:#173d3a;color:#fff;font-size:.8rem;font-weight:900}
-    .secret-terminal-trigger{border:0;background:transparent;color:var(--muted);font:800 .72rem ui-monospace,monospace;opacity:.55;cursor:pointer}
-    .secret-terminal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(15,10,25,.7);backdrop-filter:blur(10px)}
-    .secret-terminal[hidden]{display:none}
-    .secret-terminal-panel{width:min(100%,430px);padding:22px;border:1px solid #8e70bd;border-radius:18px;background:#211b30;color:#f8f1ff;font: .82rem/1.65 ui-monospace,monospace;box-shadow:0 20px 70px rgba(0,0,0,.35)}
-    .secret-terminal-head{display:flex;justify-content:space-between;color:#c5a8ff;margin-bottom:15px;font-size:.72rem}
-    .secret-terminal-close{border:0;background:transparent;color:#d6c8ed;cursor:pointer}
-    .secret-terminal-output{min-height:70px;white-space:pre-line;color:#d8cbe9}
-    .secret-terminal-form{display:flex;gap:8px;align-items:center}
-    .secret-terminal-prompt{color:#a6e8d9}
-    .secret-terminal-input{min-width:0;flex:1;padding:8px 2px;border:0;border-bottom:1px solid #8e70bd;background:transparent;color:#fff;font:inherit;outline:none}
-    .secret-terminal-hint{margin-top:12px;color:#a69ab8;font-size:.68rem}
     @media(max-width:980px){.project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lower-grid{grid-template-columns:1fr 1fr}.contact-card{grid-column:1/-1}}
     @media(max-width:760px){
       .container{width:min(var(--max),calc(100% - 28px))}
       .nav{gap:8px}.brand-name{font-size:1.12rem}.brand-mark{width:40px;height:40px}
       .nav-links{display:none;position:absolute;left:14px;right:14px;top:72px;flex-direction:column;align-items:stretch;border-radius:18px;padding:8px;box-shadow:var(--shadow)}
       .nav-links.open{display:flex}.nav-links a{text-align:center}
-      .nav-tools{gap:6px}.icon-button{width:38px;height:38px}.email-button{display:none}.menu-toggle{display:grid}
+      .nav-tools{gap:6px}.icon-button{width:38px;height:38px}.menu-toggle{display:grid}
       .hero{grid-template-columns:minmax(0,1fr);gap:16px;margin-top:13px;padding:27px 23px 22px;border-radius:25px}
       .hero-copy{width:100%}.hero-actions{position:relative;z-index:3}
       .hero-art{width:100%;margin-top:0}.asset-mascot{width:min(100%,300px);}
@@ -213,7 +200,6 @@
         <button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="nav-links">
           <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
-        <a class="email-button" href="mailto:baydirgaid@gmail.com"><svg class="gmail-icon" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="100%" height="100%" aria-hidden="true" focusable="false"><path d="M34.9 448h81.5V250.2L0 163v250.2C0 432.5 15.7 448 34.9 448" style="fill:#806f6f"/><path d="M395.6 448h81.5c19.3 0 34.9-15.7 34.9-34.9V163l-116.4 87.3" style="fill:#040b05"/><path d="M395.6 99v151.3L512 163v-46.5c0-43.2-49.3-67.8-83.8-41.9" style="fill:#817e7e"/><path d="M116.4 250.2V99L256 203.7 395.6 99v151.3L256 355" style="fill:#514948"/><path d="M0 116.4V163l116.4 87.3V99L83.8 74.5C49.2 48.6 0 73.2 0 116.4" style="fill:#080707"/></svg> <span data-i18n="email">Email me</span></a>
       </div>
     </nav>
   </header>
@@ -324,18 +310,8 @@
     <div class="footer-inner container">
       <span>© <span id="year">2026</span> MazBayID · <span data-i18n="footer">Made with curiosity ♡</span></span>
       <a class="footer-github" href="https://github.com/MazBayID" target="_blank" rel="noopener noreferrer"><span data-i18n="openSource">Open source, always.</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.5 21.6c.55.1.75-.24.75-.53v-2.05c-3.06.67-3.71-1.3-3.71-1.3-.5-1.27-1.23-1.6-1.23-1.6-1-.68.08-.67.08-.67 1.1.08 1.68 1.13 1.68 1.13.98 1.68 2.56 1.2 3.18.92.1-.71.38-1.2.69-1.48-2.44-.28-5.01-1.22-5.01-5.45 0-1.2.43-2.18 1.13-2.95-.11-.28-.49-1.4.11-2.91 0 0 .92-.3 3.05 1.13a10.6 10.6 0 0 1 5.56 0c2.12-1.43 3.04-1.13 3.04-1.13.61 1.51.23 2.63.12 2.91.7.77 1.12 1.75 1.12 2.95 0 4.24-2.57 5.16-5.02 5.44.4.35.74 1.02.74 2.06v3.06c0 .3.2.64.76.53A11.1 11.1 0 0 0 12 .9Z"/></svg></a>
-      <button class="secret-terminal-trigger" id="secret-terminal-open" type="button" aria-label="Open terminal">&gt;_</button>
     </div>
   </footer>
-
-  <div class="secret-terminal" id="secret-terminal" hidden>
-    <section class="secret-terminal-panel" role="dialog" aria-modal="true" aria-labelledby="secret-terminal-title">
-      <div class="secret-terminal-head"><span id="secret-terminal-title">MAZBAYID // SYSTEM TERMINAL</span><button class="secret-terminal-close" id="secret-terminal-close" type="button">[ ESC ]</button></div>
-      <div class="secret-terminal-output" id="secret-terminal-output" aria-live="polite">NEURAL LINK ESTABLISHED</div>
-      <form class="secret-terminal-form" id="secret-terminal-form"><label class="secret-terminal-prompt" for="secret-terminal-input">&gt;</label><input class="secret-terminal-input" id="secret-terminal-input" name="command" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Terminal command"></form>
-      <div class="secret-terminal-hint">ENTER COMMAND TO CONTINUE</div>
-    </section>
-  </div>
 
   <script>
     const translations = {
@@ -477,33 +453,6 @@
     kofiClose.addEventListener("click",()=>{toggleKofi(false);kofiTrigger.focus()});
     kofiModal.addEventListener("click",e=>{if(e.target===kofiModal){toggleKofi(false);kofiTrigger.focus()}});
     document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!kofiModal.hidden){toggleKofi(false);kofiTrigger.focus()}});
-
-    const terminal=document.getElementById("secret-terminal"),terminalOpen=document.getElementById("secret-terminal-open"),terminalClose=document.getElementById("secret-terminal-close"),terminalForm=document.getElementById("secret-terminal-form"),terminalInput=document.getElementById("secret-terminal-input"),terminalOutput=document.getElementById("secret-terminal-output");
-    function resetTerminal(){terminalInput.disabled=false;terminalInput.value="";terminalOutput.textContent="NEURAL LINK ESTABLISHED"}
-    function closeTerminal(){terminal.hidden=true;resetTerminal();terminalOpen.focus()}
-    terminalOpen.addEventListener("click",()=>{resetTerminal();terminal.hidden=false;terminalInput.focus()});
-    window.addEventListener("pageshow",resetTerminal);
-    terminalClose.addEventListener("click",closeTerminal);
-    terminal.addEventListener("click",e=>{if(e.target===terminal)closeTerminal()});
-    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!terminal.hidden)closeTerminal()});
-    terminalForm.addEventListener("submit",e=>{
-      e.preventDefault();
-      const command=terminalInput.value.toUpperCase().replace(/\s/g,"");
-      const routes={
-        CP:{path:"/cpassets/",message:"ROUTING TO CP ASSET LIBRARY..."},
-        CPPREVIEW:{path:"/preview-cpassets/",message:"ROUTING TO CYBER PROTOCOL ASSET PREVIEW..."}
-      };
-      const route=routes[command];
-      if(!route){
-        terminalOutput.textContent="UNKNOWN COMMAND.\nAVAILABLE: CP, CPPREVIEW\nACCESS DENIED.";
-        terminalInput.value="";
-        terminalInput.focus();
-        return;
-      }
-      terminalOutput.textContent="ACCESS GRANTED.\n"+route.message;
-      terminalInput.value="";
-      window.setTimeout(()=>{window.location.assign(route.path)},400);
-    });
   </script>
 </body>
 </html>
