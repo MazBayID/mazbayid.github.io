@@ -63,6 +63,14 @@ class FirmwareBuilderTests(unittest.TestCase):
             {"via_wifi", "via_chronos", "mochi_chronos"},
         )
 
+    def test_kofi_modal_has_a_working_open_handler(self) -> None:
+        for page in (Path("index.html"), PAGE):
+            html = page.read_text(encoding="utf-8")
+            self.assertIn('id="kofi-modal"', html, str(page))
+            self.assertIn('id="kofiframe"', html, str(page))
+            self.assertIn("function toggleKofi(open=kofiModal.hidden)", html, str(page))
+            self.assertIn("kofiModal.hidden=!open", html, str(page))
+
     def test_frontend_does_not_contain_server_credentials(self) -> None:
         forbidden = ("SUPABASE_SERVICE_ROLE_KEY", "GITHUB_TOKEN", "BUILDER_CALLBACK_SECRET")
         for marker in forbidden:

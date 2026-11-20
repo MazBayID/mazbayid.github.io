@@ -380,6 +380,12 @@
 
 
     const kofiModal=document.getElementById("kofi-modal"),kofiTrigger=document.getElementById("kofi-trigger"),kofiClose=document.getElementById("kofi-close"),kofiWidget=document.querySelector(".kofi-widget");
+    function toggleKofi(open=kofiModal.hidden){
+      kofiModal.hidden=!open;
+      kofiTrigger.setAttribute("aria-expanded",String(open));
+      document.body.style.overflow=open?"hidden":"";
+      if(open)kofiClose.focus();
+    }
     let kofiPointerStart=null,kofiMoved=false;
     try{
       const savedPosition=JSON.parse(localStorage.getItem("mazbayid-kofi-position")||"null");
