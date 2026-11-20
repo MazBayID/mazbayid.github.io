@@ -143,6 +143,30 @@ if (isValidClientIp("2001:::1")) process.exit(5);
         ):
             self.assertIn(marker, callback)
 
+    def test_experiments_page_lists_all_requested_projects(self) -> None:
+        page = Path("experiments/index.html")
+        self.assertTrue(page.is_file(), "Experiments page is missing")
+        html = page.read_text(encoding="utf-8")
+        for marker in (
+            "Firmware-Xiaozhi-Mod_v1.0",
+            "Hening_Launcher",
+            "PyTutor-Indonesia",
+            "4Game",
+            "https://github.com/MazBayID/Firmware-Xiaozhi-Mod_v1.0",
+            "https://github.com/MazBayID/Hening_Launcher",
+            "https://github.com/MazBayID/PyTutor-Indonesia",
+            "https://github.com/MazBayID/4Game",
+            "CPython 3.13",
+            "mazbayid-language",
+            "mazbayid-theme",
+        ):
+            self.assertIn(marker, html)
+
+    def test_homepage_experiments_card_links_to_catalog(self) -> None:
+        html = Path("index.html").read_text(encoding="utf-8")
+        self.assertIn('href="/experiments/"', html)
+        self.assertIn("Explore a collection of apps, firmware, learning tools, and creative experiments.", html)
+
     def test_module_javascript_syntax(self) -> None:
         self.assertTrue(self.parser.module_scripts, "No JavaScript module found")
         source = "\n".join(self.parser.module_scripts)
