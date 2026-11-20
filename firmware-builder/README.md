@@ -50,18 +50,22 @@ The current browser flasher uses `esptool-js@0.7.1`, detects the chip before wri
 
 The isolated Supabase project uses:
 
-- Edge Functions: `firmware-build` (active version 7) and `firmware-build-callback` (active version 5).
+- Edge Functions: `firmware-build` (active version 8), `firmware-build-callback` (active version 6), and `firmware-storage-cleanup` (active version 2).
 - Private Storage bucket: `firmware-artifacts`, maximum 20 MiB per object.
 - Tables: `firmware_builds`, `firmware_build_artifacts`, and `firmware_build_rate_limits`; RLS is enabled and no public policies are configured.
-- Build quota: three requests per client fingerprint per hour.
+- Build quota: three requests per client fingerprint per hour. The fingerprint uses only the Cloudflare-managed `cf-connecting-ip` header; caller-controlled forwarding chains are ignored.
 - Queue limit: five active jobs.
 - Stale build timeout: 45 minutes.
 - Signed download URL lifetime: 300 seconds.
-- Build records currently carry an `expires_at` timestamp seven days after creation; status requests after expiry are rejected.
+- Build records carry an `expires_at` timestamp seven days after creation; status requests after expiry are rejected.
+- Successful build artifacts are automatically deleted from Supabase Storage after one hour from `finished_at`. Supabase Cron invokes the cleanup Edge Function every minute, so deletion occurs at the first cleanup run after the one-hour threshold. Failed or still-running builds are excluded.
+- The cleanup token is held in Supabase Vault; the token retrieval RPC is executable only by `service_role`.
 
-GitHub Actions artifacts have a separate `retention-days: 30` setting. This is not the same as Supabase Storage retention.
+GitHub Actions artifacts have a separate `retention-days: 30` setting. This is not the same as Supabase Storage retention. Signed URL expiry (5 minutes), build-record expiry (7 days), and Storage artifact retention (1 hour after success) are three separate controls.
 
-**Important storage lifecycle note:** the current deployed database does not have a `cron.job` relation / configured pg_cron cleanup job, and the deployed callback does not remove successful artifacts after the build-record expiry. The expiry check prevents status access; it does not delete Storage objects. Files in the private bucket remain until a separate cleanup process removes them. No Firmware Cache or 15-minute auto-delete has been implemented.
+The callback uses a database processing lease to prevent duplicate concurrent processing. It validates the GitHub artifact's repository, workflow ID and path, run ID and attempt, source commit SHA, artifact naming, archive size, and embedded build ID / variant before uploading to private Storage.
+
+No Firmware Cache is used.
 
 ## Verified status
 
@@ -70,12 +74,11 @@ GitHub Actions artifacts have a separate `retention-days: 30` setting. This is n
 - CI and API-dispatched builds for all three variants completed successfully at that firmware commit.
 - The project owner has reported a successful end-to-end physical test: website deployed, build completed, flashing succeeded, and firmware ran on the board. The exact tested variant was not recorded, so this must not be interpreted as physical validation of all three variants.
 
-## Open audit items — not yet changed
+## Remaining validation
 
-1. **Client fingerprint header trust:** the active `firmware-build` source currently checks `x-forwarded-for` first, then `cf-connecting-ip`, then `x-real-ip`. This differs from the earlier intended fail-closed design that trusted only a verified proxy header. Confirm which header is reliably set by the deployed edge proxy, then correct the implementation and test spoofed-header cases before relying on the fingerprint as a security boundary.
-2. **Callback processing lease:** migration `20261120113000_callback_processing_lease.sql` exists in the website repository but is absent from the currently applied database migration list. The active callback source does not call `claim_firmware_build_callback`. Do not claim duplicate-callback race protection until both the migration and callback implementation are deployed and tested.
-3. **Callback provenance:** current callback checks the expected GitHub run ID against artifact metadata and checks build ID / variant in `build-info.json`. It does not currently demonstrate full independent validation of repository, workflow identity, source commit SHA, and run attempt. Keep the security claim limited until those fields are explicitly cross-checked.
-4. **Storage cleanup:** choose and implement a retention/cleanup policy separately. Do not confuse signed-URL expiry or build-record expiry with object deletion.
+- The cleanup schedule and its first live executions have succeeded. The initial cleanup removed all 15 previously expired Storage objects and their 15 artifact metadata rows; the current bucket object count and artifact metadata count were both verified as zero.
+- A new firmware build should still be run as a smoke test after the hardening deployment. Confirm that its artifacts can be downloaded during the first hour and that the cleanup job removes them after the one-hour retention threshold.
+- Duplicate callback protection and spoofed forwarding-header resistance are implemented in production, but have not yet been exercised with dedicated adversarial/concurrency tests.
 
 ## Related documentation
 
