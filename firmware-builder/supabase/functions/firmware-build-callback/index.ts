@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.1";
-import { Unzip, UnzipInflate, UnzipPassThrough } from "npm:fflate@0.8.2";
+import { Inflate, Unzip, UnzipPassThrough } from "npm:fflate@0.8.2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -109,6 +109,25 @@ const MAX_EXPANDED_ARTIFACT_BYTES = 16 * 1024 * 1024;
 const MAX_ADVANCED_ZIP_BYTES = 10 * 1024 * 1024;
 const MAX_BUILD_INFO_BYTES = 128 * 1024;
 
+// Use fflate's synchronous Inflate stream in the Edge Runtime. UnzipInflate
+// switches large entries to worker-backed AsyncInflate, which is not reliable
+// in this server runtime and can throw while starting the decoder.
+type UnzipDataHandler = (error: Error | null, chunk: Uint8Array, final: boolean) => void;
+
+class SyncUnzipInflate {
+  static compression = 8;
+  ondata!: UnzipDataHandler;
+  private inflater: Inflate;
+
+  constructor(_filename: string, _size?: number) {
+    this.inflater = new Inflate((chunk, final) => this.ondata(null, chunk, final));
+  }
+
+  push(chunk: Uint8Array, final: boolean) {
+    this.inflater.push(chunk, final);
+  }
+}
+
 function unzipBounded(bytes: Uint8Array): Promise<Record<string, Uint8Array>> {
   return new Promise((resolve, reject) => {
     const caps: Record<string, number> = {
@@ -176,7 +195,7 @@ function unzipBounded(bytes: Uint8Array): Promise<Record<string, Uint8Array>> {
         fail("artifact_compression_unsupported");
       }
     });
-    unzip.register(UnzipInflate);
+    unzip.register(SyncUnzipInflate);
     unzip.register(UnzipPassThrough);
     try {
       unzip.push(bytes, true);
