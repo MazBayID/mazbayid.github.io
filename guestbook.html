@@ -34,6 +34,19 @@
     .honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
     @media(max-width:520px){.main{padding-top:30px}.nav{min-height:64px}.home-link{padding-inline:11px}.panel{border-radius:18px}.form-bottom{align-items:stretch}.submit{width:100%}}
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  
+    .kofi-widget{position:fixed;right:22px;bottom:22px;z-index:70;touch-action:none}
+    .kofi-trigger{width:62px;height:62px;display:grid;place-items:center;border:0;border-radius:50%;background:#7de0d1;color:#103d3a;box-shadow:0 9px 24px rgba(39,128,119,.24);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+    .kofi-trigger:active{cursor:grabbing}
+    .kofi-trigger img{display:block;width:34px;height:34px;object-fit:contain}
+    .kofi-modal[hidden]{display:none}
+    .kofi-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:12px;background:rgba(10,12,20,.72);backdrop-filter:blur(9px)}
+    .kofi-dialog{width:min(480px,100%);height:min(760px,calc(100dvh - 24px));display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(125,224,209,.35);border-radius:18px;background:#f9f9f9;box-shadow:0 24px 80px rgba(0,0,0,.38)}
+    .kofi-dialog-head{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;background:#f9f9f9}
+    .kofi-close{width:30px;height:30px;border:0;border-radius:50%;background:#e9eeed;color:#263b39;font-size:21px;line-height:1;cursor:pointer}
+    .kofi-embed{display:block;width:100%;height:calc(100% - 42px);min-height:0;border:0;padding:0 4px 4px;background:#f9f9f9}
+    @media(max-width:520px){.kofi-modal{padding:8px}.kofi-dialog{height:calc(100dvh - 16px);border-radius:14px}}
+
   </style>
 </head>
 <body>
@@ -56,6 +69,9 @@
     </section>
     <section aria-labelledby="messages-title"><div class="section-head"><h2 id="messages-title" data-en="Community notes" data-id="Pesan komunitas">Community notes</h2><span class="count" id="message-count"></span></div><div class="messages" id="messages"><div class="loading" data-en="Loading messages..." data-id="Memuat pesan...">Loading messages...</div></div></section>
   </main>
+
+  <aside class="kofi-widget" aria-label="Support MazBayID"><button class="kofi-trigger" id="kofi-trigger" type="button" aria-label="Open Ko-fi donation panel" aria-expanded="false" aria-controls="kofi-modal"><img src="https://cdn.simpleicons.org/kofi/000000" alt="" width="34" height="34" draggable="false"></button></aside>
+  <div class="kofi-modal" id="kofi-modal" role="dialog" aria-modal="true" aria-label="Support MazBayID on Ko-fi" hidden><section class="kofi-dialog"><div class="kofi-dialog-head"><button class="kofi-close" id="kofi-close" type="button" aria-label="Close donation panel">×</button></div><iframe class="kofi-embed" id="kofiframe" src="https://ko-fi.com/mazbayid/?hidefeed=true&widget=true&embed=true&preview=true" title="MazBayID Ko-fi donation panel" loading="lazy" allow="payment"></iframe></section></div>
   <footer class="footer">© <span id="year">2026</span> MazBayID · <span data-en="Made with curiosity ♡" data-id="Dibuat dengan rasa ingin tahu ♡">Made with curiosity ♡</span></footer>
   <script>
     const SUPABASE_URL = "https://syxhvznulapkldewhume.supabase.co";
@@ -202,6 +218,21 @@
         submitButton.disabled = false;
       }
     });
+
+    const kofiModal=document.getElementById("kofi-modal"),kofiTrigger=document.getElementById("kofi-trigger"),kofiClose=document.getElementById("kofi-close"),kofiWidget=document.querySelector(".kofi-widget");
+    function toggleKofi(force){const open=typeof force==="boolean"?force:kofiModal.hidden;kofiModal.hidden=!open;kofiTrigger.setAttribute("aria-expanded",String(open));document.body.style.overflow=open?"hidden":"";if(open)kofiClose.focus()}
+    let kofiPointerStart=null,kofiMoved=false;
+    try{const p=JSON.parse(localStorage.getItem("mazbayid-kofi-position")||"null");if(p&&Number.isFinite(p.left)&&Number.isFinite(p.top)){kofiWidget.style.left=Math.max(0,Math.min(p.left,innerWidth-62))+"px";kofiWidget.style.top=Math.max(0,Math.min(p.top,innerHeight-62))+"px";kofiWidget.style.right="auto";kofiWidget.style.bottom="auto"}}catch(e){}
+    kofiTrigger.addEventListener("pointerdown",e=>{if(e.button!==undefined&&e.button!==0)return;const r=kofiWidget.getBoundingClientRect();kofiPointerStart={x:e.clientX,y:e.clientY,left:r.left,top:r.top,id:e.pointerId};kofiMoved=false;kofiTrigger.setPointerCapture(e.pointerId)});
+    kofiTrigger.addEventListener("pointermove",e=>{if(!kofiPointerStart||e.pointerId!==kofiPointerStart.id)return;const dx=e.clientX-kofiPointerStart.x,dy=e.clientY-kofiPointerStart.y;if(!kofiMoved&&Math.hypot(dx,dy)<6)return;kofiMoved=true;e.preventDefault();const x=Math.max(0,Math.min(kofiPointerStart.left+dx,innerWidth-62)),y=Math.max(0,Math.min(kofiPointerStart.top+dy,innerHeight-62));kofiWidget.style.left=x+"px";kofiWidget.style.top=y+"px";kofiWidget.style.right="auto";kofiWidget.style.bottom="auto"});
+    function finishKofi(e){if(!kofiPointerStart||e.pointerId!==kofiPointerStart.id)return;if(kofiMoved){const r=kofiWidget.getBoundingClientRect();try{localStorage.setItem("mazbayid-kofi-position",JSON.stringify({left:r.left,top:r.top}))}catch(err){}}kofiPointerStart=null}
+    kofiTrigger.addEventListener("pointerup",finishKofi);kofiTrigger.addEventListener("pointercancel",finishKofi);
+    kofiTrigger.addEventListener("click",e=>{if(kofiMoved){e.preventDefault();e.stopPropagation();kofiMoved=false;return}toggleKofi()});
+    kofiClose.addEventListener("click",()=>{toggleKofi(false);kofiTrigger.focus()});
+    kofiModal.addEventListener("click",e=>{if(e.target===kofiModal){toggleKofi(false);kofiTrigger.focus()}});
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!kofiModal.hidden){toggleKofi(false);kofiTrigger.focus()}});
+    window.addEventListener("resize",()=>{if(kofiWidget.style.left){const r=kofiWidget.getBoundingClientRect();kofiWidget.style.left=Math.max(0,Math.min(r.left,innerWidth-62))+"px";kofiWidget.style.top=Math.max(0,Math.min(r.top,innerHeight-62))+"px"}});
+
     document.getElementById("year").textContent = String(new Date().getFullYear());
     loadMessages();
   </script>

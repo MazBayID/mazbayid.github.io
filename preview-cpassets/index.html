@@ -18,7 +18,20 @@ button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}.wrap{wid
 @media(max-width:700px){.wrap{width:min(100% - 26px,1440px)}.topbar{height:58px}.toolbar{top:58px}.hero{padding:38px 0 24px}.hero-side{display:grid;grid-template-columns:repeat(3,1fr)}.stat{min-width:0;padding:10px}.stat strong{font-size:19px}.toolbar-inner{grid-template-columns:1fr 1fr}.toolbar-inner .search{grid-column:1/-1}.toolbar-inner .select{width:100%}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.thumb{height:145px;padding:10px}.card-body{padding:10px}.card-title{font-size:12px}.detail{grid-template-columns:1fr;padding:13px}.preview-stage{min-height:260px}.dialog{max-height:95vh}.results-line{padding-top:14px}}
 @media(max-width:390px){.grid{grid-template-columns:1fr 1fr}.thumb{height:125px}.hero h1{font-size:34px}.brand{font-size:13px}.top-link{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}}
-</style>
+
+    .kofi-widget{position:fixed;right:22px;bottom:22px;z-index:70;touch-action:none}
+    .kofi-trigger{width:62px;height:62px;display:grid;place-items:center;border:0;border-radius:50%;background:#7de0d1;color:#103d3a;box-shadow:0 9px 24px rgba(39,128,119,.24);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+    .kofi-trigger:active{cursor:grabbing}
+    .kofi-trigger img{display:block;width:34px;height:34px;object-fit:contain}
+    .kofi-modal[hidden]{display:none}
+    .kofi-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:12px;background:rgba(10,12,20,.72);backdrop-filter:blur(9px)}
+    .kofi-dialog{width:min(480px,100%);height:min(760px,calc(100dvh - 24px));display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(125,224,209,.35);border-radius:18px;background:#f9f9f9;box-shadow:0 24px 80px rgba(0,0,0,.38)}
+    .kofi-dialog-head{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;background:#f9f9f9}
+    .kofi-close{width:30px;height:30px;border:0;border-radius:50%;background:#e9eeed;color:#263b39;font-size:21px;line-height:1;cursor:pointer}
+    .kofi-embed{display:block;width:100%;height:calc(100% - 42px);min-height:0;border:0;padding:0 4px 4px;background:#f9f9f9}
+    @media(max-width:520px){.kofi-modal{padding:8px}.kofi-dialog{height:calc(100dvh - 16px);border-radius:14px}}
+
+  </style>
 </head>
 <body>
 <header class="topbar"><div class="wrap top-inner"><div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2.8 20 7v10l-8 4.2L4 17V7z"/><path d="m4.5 7.2 7.5 4 7.5-4M12 11.2v9.5M8 4.9l8 4.2"/></svg></span><span>CYBER PROTOCOL<small>ASSET LIBRARY / PREVIEW</small></span></div><a class="top-link" href="https://github.com/MazBayID/firstGame/tree/main/assets_master" target="_blank" rel="noreferrer">SOURCE REPOSITORY ↗</a></div></header>
@@ -29,6 +42,10 @@ button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}.wrap{wid
 </main>
 <footer class="wrap footer"><span>CYBER PROTOCOL · ASSET MASTER · <span id="updated">LIVE MAIN BRANCH</span></span><span>Images and metadata served from <a href="https://github.com/MazBayID/firstGame" target="_blank" rel="noreferrer">MazBayID/firstGame</a>.</span></footer>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="dialog"><div class="dialog-head"><h2 id="modal-title">Asset details</h2><button class="close" id="close-modal" aria-label="Close">×</button></div><div id="detail-content"></div></div></div>
+
+<aside class="kofi-widget" aria-label="Support MazBayID"><button class="kofi-trigger" id="kofi-trigger" type="button" aria-label="Open Ko-fi donation panel" aria-expanded="false" aria-controls="kofi-modal"><img src="https://cdn.simpleicons.org/kofi/000000" alt="" width="34" height="34" draggable="false"></button></aside>
+<div class="kofi-modal" id="kofi-modal" role="dialog" aria-modal="true" aria-label="Support MazBayID on Ko-fi" hidden><section class="kofi-dialog"><div class="kofi-dialog-head"><button class="kofi-close" id="kofi-close" type="button" aria-label="Close donation panel">×</button></div><iframe class="kofi-embed" id="kofiframe" src="https://ko-fi.com/mazbayid/?hidefeed=true&widget=true&embed=true&preview=true" title="MazBayID Ko-fi donation panel" loading="lazy" allow="payment"></iframe></section></div>
+
 <script>
 (() => {
 "use strict";
@@ -51,5 +68,6 @@ $("search").addEventListener("input",e=>{state.query=e.target.value.trim().toLow
 function close(){if(state.rafId!==null)cancelAnimationFrame(state.rafId);state.rafId=null;state.playing=false;$("modal").classList.remove("open")}$("close-modal").addEventListener("click",close);$("modal").addEventListener("click",e=>{if(e.target===$("modal"))close()});document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});init();
 })();
 </script>
+<script>(()=>{const modal=document.getElementById("kofi-modal"),trigger=document.getElementById("kofi-trigger"),close=document.getElementById("kofi-close");function setOpen(open){modal.hidden=!open;trigger.setAttribute("aria-expanded",String(open));document.body.style.overflow=open?"hidden":"";if(open)close.focus()}trigger.addEventListener("click",()=>setOpen(true));close.addEventListener("click",()=>{setOpen(false);trigger.focus()});modal.addEventListener("click",e=>{if(e.target===modal){setOpen(false);trigger.focus()}});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden){setOpen(false);trigger.focus()}})})();</script>
 </body>
 </html>

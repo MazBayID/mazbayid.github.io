@@ -42,6 +42,19 @@
     .kofi-popup p{margin:10px 0 15px;font-size:.85rem;line-height:1.5}
     .kofi-link{display:inline-flex;padding:9px 13px;border-radius:999px;background:#173d3a;color:#fff;font-size:.8rem;font-weight:900}
     @media(max-width:700px){.variants{grid-template-columns:1fr}.gpio-grid,.guide-grid,.outputs{grid-template-columns:1fr}.hero{border-radius:22px}.top{padding:12px 0}.top-actions{gap:5px;flex-wrap:wrap;justify-content:flex-end}.top-actions select{max-width:112px;padding:7px 6px}.back{font-size:.75rem}.gpio-field{padding:10px}}
+  
+    .kofi-widget{position:fixed;right:22px;bottom:22px;z-index:70;touch-action:none}
+    .kofi-trigger{width:62px;height:62px;display:grid;place-items:center;border:0;border-radius:50%;background:#7de0d1;color:#103d3a;box-shadow:0 9px 24px rgba(39,128,119,.24);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+    .kofi-trigger:active{cursor:grabbing}
+    .kofi-trigger img{display:block;width:34px;height:34px;object-fit:contain}
+    .kofi-modal[hidden]{display:none}
+    .kofi-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:12px;background:rgba(10,12,20,.72);backdrop-filter:blur(9px)}
+    .kofi-dialog{width:min(480px,100%);height:min(760px,calc(100dvh - 24px));display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(125,224,209,.35);border-radius:18px;background:#f9f9f9;box-shadow:0 24px 80px rgba(0,0,0,.38)}
+    .kofi-dialog-head{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;background:#f9f9f9}
+    .kofi-close{width:30px;height:30px;border:0;border-radius:50%;background:#e9eeed;color:#263b39;font-size:21px;line-height:1;cursor:pointer}
+    .kofi-embed{display:block;width:100%;height:calc(100% - 42px);min-height:0;border:0;padding:0 4px 4px;background:#f9f9f9}
+    @media(max-width:520px){.kofi-modal{padding:8px}.kofi-dialog{height:calc(100dvh - 16px);border-radius:14px}}
+
   </style>
 </head>
 <body>
@@ -117,16 +130,18 @@
         <article class="guide"><h3>What is Advanced BIN?</h3><p>The ZIP contains separate binary files. Flash each file at the exact address in <code>FLASH-INSTRUCTIONS.txt</code>. Current standard offsets are bootloader <code>0x0000</code>, partitions <code>0x8000</code>, app <code>0x10000</code>; Arduino variants also include <code>boot_app0.bin</code> at <code>0xE000</code>. Use files from one ZIP only. Never mix builds.</p></article>
       </div>
     </section>
-    <aside class="kofi-widget" aria-label="Support MazBayID">
-    <section class="kofi-popup" id="kofi-popup" aria-labelledby="kofi-title" hidden>
-      <div class="kofi-popup-head"><span id="kofi-title" data-i18n="kofiTitle">A little support ☕</span><button class="kofi-close" id="kofi-close" type="button" aria-label="Close support popup" data-i18n-aria="kofiClose">×</button></div>
-      <p data-i18n="kofiCopy">Enjoying the projects at MazBayID? Your support helps keep new ideas, tools, and experiments growing.</p>
-      <a class="kofi-link" href="https://ko-fi.com/mazbayid" target="_blank" rel="noopener noreferrer" data-i18n="support">Support on Ko-fi ↗</a>
-    </section>
-    <button class="kofi-trigger" id="kofi-trigger" type="button" aria-label="Open Ko-fi support popup" aria-expanded="false" aria-controls="kofi-popup" data-i18n-aria="kofiOpen">
+<aside class="kofi-widget" aria-label="Support MazBayID">
+    <button class="kofi-trigger" id="kofi-trigger" type="button" aria-label="Open Ko-fi donation panel" aria-expanded="false" aria-controls="kofi-modal">
       <img src="https://cdn.simpleicons.org/kofi/000000" alt="" width="34" height="34" draggable="false">
     </button>
   </aside>
+  <div class="kofi-modal" id="kofi-modal" role="dialog" aria-modal="true" aria-label="Support MazBayID on Ko-fi" hidden>
+    <section class="kofi-dialog">
+      <div class="kofi-dialog-head"><button class="kofi-close" id="kofi-close" type="button" aria-label="Close donation panel">×</button></div>
+      <iframe class="kofi-embed" id="kofiframe" src="https://ko-fi.com/mazbayid/?hidefeed=true&widget=true&embed=true&preview=true" title="MazBayID Ko-fi donation panel" loading="lazy" allow="payment"></iframe>
+    </section>
+  </div>
+
 
   <footer data-i18n="footer">NEO_CLOCK Firmware Builder · MazBayID · Built for ESP32-C3 SuperMini</footer>
   </div>
@@ -363,8 +378,8 @@
       log("This browser does not expose Web Serial. Use a compatible Chrome/Edge browser or download merged.bin.");
     }
 
-    const kofiPopup=document.getElementById("kofi-popup"),kofiTrigger=document.getElementById("kofi-trigger"),kofiClose=document.getElementById("kofi-close"),kofiWidget=document.querySelector(".kofi-widget");
-    function toggleKofi(force){const open=typeof force==="boolean"?force:kofiPopup.hidden;kofiPopup.hidden=!open;kofiTrigger.setAttribute("aria-expanded",String(open))}
+
+    const kofiModal=document.getElementById("kofi-modal"),kofiTrigger=document.getElementById("kofi-trigger"),kofiClose=document.getElementById("kofi-close"),kofiWidget=document.querySelector(".kofi-widget");
     let kofiPointerStart=null,kofiMoved=false;
     try{
       const savedPosition=JSON.parse(localStorage.getItem("mazbayid-kofi-position")||"null");
@@ -400,8 +415,8 @@
     kofiTrigger.addEventListener("click",e=>{if(kofiMoved){e.preventDefault();e.stopPropagation();kofiMoved=false;return}toggleKofi()});
     window.addEventListener("resize",()=>{const rect=kofiWidget.getBoundingClientRect();kofiWidgetPosition(rect.left,rect.top)});
     kofiClose.addEventListener("click",()=>{toggleKofi(false);kofiTrigger.focus()});
-    document.addEventListener("click",e=>{if(!e.target.closest(".kofi-widget"))toggleKofi(false)});
-    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!kofiPopup.hidden){toggleKofi(false);kofiTrigger.focus()}});
+    kofiModal.addEventListener("click",e=>{if(e.target===kofiModal){toggleKofi(false);kofiTrigger.focus()}});
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!kofiModal.hidden){toggleKofi(false);kofiTrigger.focus()}});
     (async()=>{let saved=null;try{saved=JSON.parse(sessionStorage.getItem("neoClockBuildSession")||"null")}catch(_){}if(!saved?.status_token||!saved?.build_id)return;statusToken=saved.status_token;currentBuildId=saved.build_id;setBusy(true);const d=translations[languageSelect.value]||translations.en;setStatus(d.resume,"Build ID: "+currentBuildId,-1);try{await pollBuild()}finally{setBusy(false);$("connectBtn").disabled=!buildReady||!("serial" in navigator);$("flashBtn").disabled=!loader||!buildReady}})();
   </script>
 </body>
