@@ -24,12 +24,12 @@ button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}.wrap{wid
     .kofi-trigger:active{cursor:grabbing}
     .kofi-trigger img{display:block;width:34px;height:34px;object-fit:contain}
     .kofi-modal[hidden]{display:none}
-    .kofi-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:12px;background:rgba(10,12,20,.72);backdrop-filter:blur(9px)}
-    .kofi-dialog{width:min(480px,100%);height:min(760px,calc(100dvh - 24px));display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(125,224,209,.35);border-radius:18px;background:#f9f9f9;box-shadow:0 24px 80px rgba(0,0,0,.38)}
+    .kofi-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:16px;background:rgba(10,12,20,.22)}
+    .kofi-dialog{width:min(360px,100%);height:min(560px,calc(100dvh - 32px));display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(125,224,209,.35);border-radius:18px;background:#f9f9f9;box-shadow:0 24px 80px rgba(0,0,0,.38)}
     .kofi-dialog-head{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;background:#f9f9f9}
     .kofi-close{width:30px;height:30px;border:0;border-radius:50%;background:#e9eeed;color:#263b39;font-size:21px;line-height:1;cursor:pointer}
     .kofi-embed{display:block;width:100%;height:calc(100% - 42px);min-height:0;border:0;padding:0 4px 4px;background:#f9f9f9}
-    @media(max-width:520px){.kofi-modal{padding:8px}.kofi-dialog{height:calc(100dvh - 16px);border-radius:14px}}
+    @media(max-width:520px){.kofi-modal{padding:12px}.kofi-dialog{width:100%;height:min(540px,calc(100dvh - 24px));border-radius:14px}}
 
   </style>
 </head>
