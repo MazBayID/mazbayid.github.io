@@ -139,7 +139,7 @@ if (isValidClientIp("2001:::1")) process.exit(5);
             "MAX_EXPANDED_ARTIFACT_BYTES", "MAX_ADVANCED_ZIP_BYTES",
             "MAX_BUILD_INFO_BYTES", "artifact_file_set_invalid",
             "readResponseBounded", "readBodyBounded", "unzipBounded",
-            "UnzipInflate", "UnzipPassThrough",
+            "SyncUnzipInflate", "Inflate", "UnzipPassThrough",
         ):
             self.assertIn(marker, callback)
 
