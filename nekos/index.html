@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fffaf6">
+<meta name="description" content="NekOS Launcher — a cozy space for your everyday apps. Explore features and screenshots of NekOS for Android.">
+<meta property="og:title" content="NekOS Launcher — MazBayID">
+<meta property="og:description" content="A cozy space for your everyday apps.">
+<link rel="icon" type="image/svg+xml" href="../assets/mascot/octocat-icon.svg">
+<title>NekOS Launcher — MazBayID</title>
+<style>
+:root{color-scheme:light;--page:#fffaf6;--surface:#fffefd;--surface2:#f5efff;--ink:#30234d;--muted:#695f7b;--line:#e5dced;--lav:#8c69c8;--lavsoft:#eee5ff;--mint:#d9f5ed;--mintink:#286b68;--blue:#e4edff;--peach:#fff0dc;--shadow:0 12px 34px rgba(74,51,105,.09);--max:1080px}
+html[data-theme=dark]{color-scheme:dark;--page:#171321;--surface:#211b30;--surface2:#2b2340;--ink:#f8f1ff;--muted:#c1b5d1;--line:#45395b;--lav:#c5a8ff;--lavsoft:#3a2d52;--mint:#203d3b;--mintink:#9de2d3;--blue:#26334f;--peach:#493728;--shadow:0 14px 36px rgba(0,0,0,.22)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font:16px/1.6 "Nunito Sans",Nunito,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 8% 10%,rgba(220,202,255,.32),transparent 32rem),radial-gradient(ellipse at 92% 32%,rgba(189,240,226,.24),transparent 30rem)}
+a{color:inherit;text-decoration:none}button{font:inherit}a:focus-visible,button:focus-visible{outline:3px solid var(--lav);outline-offset:3px}
+.wrap{width:min(var(--max),calc(100% - 36px));margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:1000;letter-spacing:-.04em}.brand-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--lav);color:white;font-size:1.15rem}
+.controls{display:flex;gap:8px}.control{min-width:42px;height:42px;padding:0 12px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--ink);font-weight:900;cursor:pointer}
+.back{display:inline-flex;margin:5px 0 18px;color:var(--muted);font-size:.9rem;font-weight:900}
+.hero{display:grid;grid-template-columns:1fr 270px;align-items:center;gap:28px;padding:clamp(25px,5vw,48px);border:1px solid #dfd0f6;border-radius:30px;background:linear-gradient(112deg,#f1e8ff 0%,#f9f1ff 53%,#e4f8f1 100%);box-shadow:var(--shadow)}
+html[data-theme=dark] .hero{border-color:#4a3c62;background:linear-gradient(112deg,#302441 0%,#292239 53%,#1f3937 100%)}
+.eyebrow{display:inline-flex;padding:6px 12px;border:1px solid #cdb9ef;border-radius:999px;background:rgba(255,255,255,.5);color:#4b3a70;font-size:.76rem;font-weight:1000;letter-spacing:.05em;text-transform:uppercase}
+html[data-theme=dark] .eyebrow{background:rgba(255,255,255,.06);color:#e6d8ff;border-color:#665386}
+h1{margin:15px 0 10px;font-size:clamp(2.3rem,5vw,4rem);line-height:1.04;letter-spacing:-.065em}h1 span{color:#8057bd}html[data-theme=dark] h1 span{color:#c8a8ff}
+.hero p{max-width:650px;margin:0;color:#514568;font-size:1.04rem}html[data-theme=dark] .hero p{color:#d4c9e3}
+.logo{width:100%;max-width:240px;aspect-ratio:1;object-fit:cover;border-radius:30px;box-shadow:0 16px 36px rgba(74,51,105,.18);justify-self:center}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:23px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border:1px solid var(--lav);border-radius:999px;background:var(--lav);color:white;font-weight:1000;box-shadow:0 7px 16px rgba(140,105,200,.18);transition:transform .2s}.btn:hover{transform:translateY(-2px)}.btn.secondary{background:var(--surface);color:var(--ink);box-shadow:none}
+.section{padding:42px 0 5px}.heading{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:17px}.kicker{color:var(--lav);font-size:.78rem;font-weight:1000;letter-spacing:.05em;text-transform:uppercase}h2{margin:4px 0 0;font-size:clamp(1.55rem,3vw,2rem);letter-spacing:-.05em}.muted{color:var(--muted)}
+.screens{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.shot{margin:0;padding:10px;border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow)}.shot img{display:block;width:100%;height:auto;aspect-ratio:9/19;object-fit:cover;border-radius:14px;background:var(--surface2)}.shot figcaption{padding:9px 4px 1px;color:var(--muted);font-size:.78rem;font-weight:800;text-align:center}
+.features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.feature{padding:19px;border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}.feature-icon{width:38px;height:38px;display:grid;place-items:center;margin-bottom:10px;border-radius:12px;background:var(--lavsoft);font-size:1.15rem}.feature h3{margin:0 0 5px;font-size:1rem}.feature p{margin:0;color:var(--muted);font-size:.86rem}
+.details{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{padding:22px;border:1px solid var(--line);border-radius:21px;background:var(--surface);box-shadow:var(--shadow)}.panel h3{margin:0 0 10px}.specs{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;margin:0;font-size:.88rem}.specs dt{color:var(--muted)}.specs dd{margin:0;font-weight:900}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:38px 0 22px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}footer a{color:var(--lav);font-weight:900}
+@media(max-width:720px){.hero{grid-template-columns:1fr;text-align:left}.logo{grid-row:1;width:150px;border-radius:22px}.screens{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.features{grid-template-columns:1fr 1fr}.details{grid-template-columns:1fr}.section{padding-top:34px}}
+@media(max-width:420px){.screens{grid-template-columns:1fr 1fr}.shot{padding:7px}.shot img{border-radius:10px}.features{grid-template-columns:1fr}.btn{width:100%}.wrap{width:calc(100% - 28px)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body><div class="wrap">
+<header>
+<a class="brand" href="../" aria-label="MazBayID home"><span class="brand-mark">M</span><span>MazBayID</span></a>
+<div class="controls"><button class="control" id="language" type="button" aria-label="Switch language">EN</button><button class="control" id="theme" type="button" aria-label="Toggle theme">◐</button></div>
+</header>
+<a class="back" href="../" data-en="← Back to homepage" data-id="← Kembali ke beranda">← Kembali ke beranda</a>
+<main>
+<section class="hero">
+<div>
+<span class="eyebrow" data-en="Featured Android project" data-id="Project Android unggulan">Project Android unggulan</span>
+<h1>NekOS <span>Launcher</span></h1>
+<p data-en="A cozy space for your everyday apps. NekOS is a simple Android launcher with a cozy-tech, cat-themed look—designed to make your favorite apps comfortable to find, organize, and open." data-id="Ruang nyaman untuk aplikasi sehari-hari. NekOS adalah launcher Android sederhana dengan tampilan cozy-tech bertema kucing, dirancang agar aplikasi favorit mudah ditemukan, diatur, dan dibuka.">Ruang nyaman untuk aplikasi sehari-hari. NekOS adalah launcher Android sederhana dengan tampilan cozy-tech bertema kucing, dirancang agar aplikasi favorit mudah ditemukan, diatur, dan dibuka.</p>
+<div class="actions">
+<a class="btn" href="https://github.com/MazBayID/NekOS/releases/download/v0.6.1/app-release.apk" data-en="↓ Download APK · v0.6.1" data-id="↓ Unduh APK · v0.6.1">↓ Unduh APK · v0.6.1</a>
+<a class="btn secondary" href="https://github.com/MazBayID/NekOS/releases/tag/v0.6.1" target="_blank" rel="noopener noreferrer" data-en="View release ↗" data-id="Lihat release ↗">Lihat release ↗</a>
+</div>
+</div>
+<img class="logo" src="https://raw.githubusercontent.com/MazBayID/NekOS/main/main_assets/NekOS_A.jpg" alt="NekOS launcher artwork">
+</section>
+
+<section class="section">
+<div class="heading"><div><div class="kicker" data-en="A closer look" data-id="Tampilan NekOS">Tampilan NekOS</div><h2 data-en="Made for everyday use" data-id="Dirancang untuk penggunaan sehari-hari">Dirancang untuk penggunaan sehari-hari</h2></div><span class="muted">v0.6.1</span></div>
+<div class="screens">
+<figure class="shot"><img src="https://raw.githubusercontent.com/MazBayID/NekOS/25ca7edbff48e9fc9e11ec1bf0e52c2187466541/user_screenshot/v0.6.1/ss_1.png" alt="NekOS home screen preview" loading="lazy"><figcaption data-en="Home screen" data-id="Layar utama">Layar utama</figcaption></figure>
+<figure class="shot"><img src="https://raw.githubusercontent.com/MazBayID/NekOS/25ca7edbff48e9fc9e11ec1bf0e52c2187466541/user_screenshot/v0.6.1/ss_2.png" alt="NekOS app organization preview" loading="lazy"><figcaption data-en="App organization" data-id="Pengelompokan aplikasi">Pengelompokan aplikasi</figcaption></figure>
+<figure class="shot"><img src="https://raw.githubusercontent.com/MazBayID/NekOS/25ca7edbff48e9fc9e11ec1bf0e52c2187466541/user_screenshot/v0.6.1/ss_3.png" alt="NekOS app drawer preview" loading="lazy"><figcaption data-en="App drawer" data-id="App drawer">App drawer</figcaption></figure>
+<figure class="shot"><img src="https://raw.githubusercontent.com/MazBayID/NekOS/25ca7edbff48e9fc9e11ec1bf0e52c2187466541/user_screenshot/v0.6.1/ss_4.png" alt="NekOS app search preview" loading="lazy"><figcaption data-en="App search" data-id="Pencarian aplikasi">Pencarian aplikasi</figcaption></figure>
+<figure class="shot"><img src="https://raw.githubusercontent.com/MazBayID/NekOS/25ca7edbff48e9fc9e11ec1bf0e52c2187466541/user_screenshot/v0.6.1/ss_5.png" alt="NekOS customization preview" loading="lazy"><figcaption data-en="Personal appearance" data-id="Tampilan personal">Tampilan personal</figcaption></figure>
+<figure class="shot"><img src="https://raw.githubusercontent.com/MazBayID/NekOS/25ca7edbff48e9fc9e11ec1bf0e52c2187466541/user_screenshot/v0.6.1/ss_6.png" alt="NekOS settings preview" loading="lazy"><figcaption data-en="Launcher details" data-id="Detail launcher">Detail launcher</figcaption></figure>
+</div>
+</section>
+
+<section class="section">
+<div class="heading"><div><div class="kicker" data-en="What it offers" data-id="Fitur utama">Fitur utama</div><h2 data-en="A focused launcher, not a crowded dashboard" data-id="Launcher sederhana, bukan dashboard yang ramai">Launcher sederhana, bukan dashboard yang ramai</h2></div></div>
+<div class="features">
+<article class="feature"><div class="feature-icon">⭐</div><h3>Favorite Grid</h3><p data-en="Keep your frequently used apps close in a 5 × 3 home grid." data-id="Simpan aplikasi yang sering digunakan dalam grid utama 5 × 3.">Simpan aplikasi yang sering digunakan dalam grid utama 5 × 3.</p></article>
+<article class="feature"><div class="feature-icon">🏷️</div><h3>Tag Rail</h3><p data-en="Create colorful app groups, arrange them, and assign installed apps." data-id="Buat grup aplikasi berwarna, atur urutannya, dan masukkan aplikasi terpasang.">Buat grup aplikasi berwarna, atur urutannya, dan masukkan aplikasi terpasang.</p></article>
+<article class="feature"><div class="feature-icon">🔎</div><h3>App Drawer &amp; Search</h3><p data-en="Browse launchable apps and find them by name with case-insensitive search." data-id="Jelajahi aplikasi dan temukan berdasarkan nama tanpa membedakan huruf besar-kecil.">Jelajahi aplikasi dan temukan berdasarkan nama tanpa membedakan huruf besar-kecil.</p></article>
+<article class="feature"><div class="feature-icon">🎨</div><h3 data-en="Personal appearance" data-id="Tampilan personal">Tampilan personal</h3><p data-en="Choose a built-in Home background or use your own wallpaper." data-id="Pilih latar bawaan Home atau gunakan wallpaper sendiri.">Pilih latar bawaan Home atau gunakan wallpaper sendiri.</p></article>
+<article class="feature"><div class="feature-icon">👆</div><h3 data-en="Familiar interactions" data-id="Interaksi familiar">Interaksi familiar</h3><p data-en="Long-press app icons for actions and use familiar Android system screens." data-id="Tekan lama ikon aplikasi untuk membuka tindakan dan gunakan layar sistem Android yang familiar.">Tekan lama ikon aplikasi untuk membuka tindakan dan gunakan layar sistem Android yang familiar.</p></article>
+<article class="feature"><div class="feature-icon">🧩</div><h3 data-en="Profile awareness" data-id="Dukungan profil">Dukungan profil</h3><p data-en="App entries distinguish apps across Android profiles." data-id="Entri aplikasi membedakan aplikasi dari profil Android yang berbeda.">Entri aplikasi membedakan aplikasi dari profil Android yang berbeda.</p></article>
+</div>
+</section>
+
+<section class="section details">
+<div class="panel"><h3 data-en="Project information" data-id="Informasi proyek">Informasi proyek</h3><dl class="specs"><dt data-en="Latest version" data-id="Versi terbaru">Versi terbaru</dt><dd>0.6.1</dd><dt>Platform</dt><dd>Android 8.0+</dd><dt>Application ID</dt><dd>com.nekos.android</dd><dt>License</dt><dd>MIT</dd><dt data-en="Status" data-id="Status">Status</dt><dd data-en="Active development" data-id="Masih dikembangkan">Masih dikembangkan</dd></dl></div>
+<div class="panel"><h3 data-en="Explore the project" data-id="Jelajahi proyek">Jelajahi proyek</h3><p class="muted" data-en="Get the APK, read the release notes, or explore the source code and development history." data-id="Unduh APK, baca catatan rilis, atau telusuri source code dan riwayat pengembangannya.">Unduh APK, baca catatan rilis, atau telusuri source code dan riwayat pengembangannya.</p><div class="actions"><a class="btn" href="https://github.com/MazBayID/NekOS/releases/download/v0.6.1/app-release.apk" data-en="Download APK" data-id="Unduh APK">Unduh APK</a><a class="btn secondary" href="https://github.com/MazBayID/NekOS" target="_blank" rel="noopener noreferrer" data-en="Source repository ↗" data-id="Repositori source ↗">Repositori source ↗</a></div></div>
+</section>
+</main>
+<footer><span>© 2026 MazBayID · <span data-en="Made with curiosity ♡" data-id="Dibuat dengan rasa ingin tahu ♡">Dibuat dengan rasa ingin tahu ♡</span></span><a href="../">MazBayID ↗</a></footer>
+</div>
+<script>
+const root=document.documentElement,themeButton=document.getElementById("theme"),languageButton=document.getElementById("language");
+let theme="light",language="id";
+try{theme=localStorage.getItem("mazbayid-theme")||"light";language=localStorage.getItem("mazbayid-language")||"id"}catch(e){}
+function setTheme(value){root.dataset.theme=value;themeButton.textContent=value==="dark"?"☀":"◐";themeButton.setAttribute("aria-pressed",String(value==="dark"));document.querySelector('meta[name="theme-color"]').content=value==="dark"?"#171321":"#fffaf6";try{localStorage.setItem("mazbayid-theme",value)}catch(e){}}
+function setLanguage(value){language=value==="en"?"en":"id";root.lang=language;document.querySelectorAll("[data-en][data-id]").forEach(el=>{el.textContent=el.dataset[language]});languageButton.textContent=language==="id"?"EN":"ID";try{localStorage.setItem("mazbayid-language",language)}catch(e){}}
+setTheme(theme==="dark"?"dark":"light");setLanguage(language);
+themeButton.addEventListener("click",()=>setTheme(root.dataset.theme==="dark"?"light":"dark"));
+languageButton.addEventListener("click",()=>setLanguage(language==="id"?"en":"id"));
+</script>
+</body></html>
