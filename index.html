@@ -106,6 +106,8 @@
     .nekos-content{min-width:0}
     .nekos-card .project-top{margin-bottom:12px}
     .nekos-card h3{font-size:clamp(1.5rem,3vw,2.1rem);letter-spacing:-.045em}
+    .nekos-title-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+    .nekos-tagline{color:var(--lav);font-size:.9rem;font-weight:900;letter-spacing:.04em}
     .nekos-card p{max-width:650px;margin:0 0 18px;font-size:1rem;line-height:1.6}
     .project-top{display:flex;align-items:center;gap:13px;margin-bottom:10px}
     .project-icon{width:48px;height:48px;display:grid;place-items:center;flex:0 0 auto;color:var(--lav)}
@@ -249,7 +251,7 @@
             <img src="https://raw.githubusercontent.com/MazBayID/NekOS/main/main_assets/NekOS_A.jpg" alt="NekOS Launcher logo">
           </div>
           <div class="nekos-content">
-            <div class="project-top"><h3>NekOS Launcher</h3></div>
+            <div class="project-top"><div class="nekos-title-wrap"><h3>NekOS Launcher</h3><span class="nekos-tagline">ニャーフェクトリー ミニマル</span></div></div>
             <p data-i18n="nekosDesc">A cozy-tech Android launcher with a Favorite Grid, colorful Tag groups, and a searchable App Drawer.</p>
             <div class="project-status"><span class="status-dot"></span><span data-i18n="nekosStatus">Featured project · v0.6.1</span></div>
           </div>
