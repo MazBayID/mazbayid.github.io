@@ -98,6 +98,15 @@
     .project-card:nth-child(2){background:linear-gradient(135deg,var(--mint),var(--surface))}
     .project-card:nth-child(3){background:linear-gradient(135deg,var(--peach),var(--surface))}
     .project-card:nth-child(4){background:linear-gradient(135deg,var(--blue),var(--surface))}
+    .nekos-card{grid-column:1/-1;display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr);align-items:center;gap:clamp(24px,4vw,52px);min-height:260px;padding:34px clamp(24px,4vw,48px);border-color:#d5c3f1;background:linear-gradient(110deg,#e9ddff 0%,#f5efff 48%,#e2f7ef 100%)}
+    html[data-theme="dark"] .nekos-card{border-color:#594875;background:linear-gradient(110deg,#352747 0%,#2b243c 48%,#203b38 100%)}
+    .nekos-visual{display:grid;place-items:center;min-width:0;min-height:170px;padding:22px;border:1px solid rgba(140,105,200,.16);border-radius:22px;background:rgba(255,255,255,.58)}
+    html[data-theme="dark"] .nekos-visual{border-color:rgba(197,168,255,.18);background:rgba(255,255,255,.06)}
+    .nekos-visual img{display:block;width:min(100%,260px);height:130px;object-fit:contain}
+    .nekos-content{min-width:0}
+    .nekos-card .project-top{margin-bottom:12px}
+    .nekos-card h3{font-size:clamp(1.5rem,3vw,2.1rem);letter-spacing:-.045em}
+    .nekos-card p{max-width:650px;margin:0 0 18px;font-size:1rem;line-height:1.6}
     .project-top{display:flex;align-items:center;gap:13px;margin-bottom:10px}
     .project-icon{width:48px;height:48px;display:grid;place-items:center;flex:0 0 auto;color:var(--lav)}
     .project-icon svg{width:45px;height:45px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -148,6 +157,10 @@
       h1{font-size:clamp(2.45rem,10vw,3.8rem)}
       .section{padding-top:45px}.section-heading{align-items:flex-start;flex-direction:column}
       .project-grid{grid-template-columns:1fr 1fr;gap:10px}.project-card{padding:16px 14px;min-height:168px}
+      .nekos-card{grid-template-columns:minmax(0,1fr);gap:18px;padding:22px;min-height:0}
+      .nekos-visual{min-height:145px;padding:16px}
+      .nekos-visual img{width:min(100%,220px);height:110px}
+      .nekos-card .project-top{margin-bottom:8px}
       .project-top{gap:8px}.project-icon{width:38px;height:38px}.project-icon svg{width:36px;height:36px}
       .lower-grid{grid-template-columns:1fr}.contact-card{grid-column:auto}
     }
@@ -232,12 +245,14 @@
       </div>
       <div class="project-grid">
         <article class="project-card nekos-card">
-          <div class="project-top">
-            <span class="project-icon" aria-hidden="true"><img src="https://raw.githubusercontent.com/MazBayID/NekOS/main/main_assets/NekOS_A.jpg" alt="" style="width:48px;height:24px;object-fit:contain;border-radius:8px"></span>
-            <h3>NekOS Launcher</h3>
+          <div class="nekos-visual">
+            <img src="https://raw.githubusercontent.com/MazBayID/NekOS/main/main_assets/NekOS_A.jpg" alt="NekOS Launcher logo">
           </div>
-          <p data-i18n="nekosDesc">A cozy-tech Android launcher with a Favorite Grid, colorful Tag groups, and a searchable App Drawer.</p>
-          <div class="project-status"><span class="status-dot"></span><span data-i18n="nekosStatus">Featured project · v0.6.1</span></div>
+          <div class="nekos-content">
+            <div class="project-top"><h3>NekOS Launcher</h3></div>
+            <p data-i18n="nekosDesc">A cozy-tech Android launcher with a Favorite Grid, colorful Tag groups, and a searchable App Drawer.</p>
+            <div class="project-status"><span class="status-dot"></span><span data-i18n="nekosStatus">Featured project · v0.6.1</span></div>
+          </div>
           <a class="project-card-link" href="/nekos/" aria-label="Explore NekOS Launcher"></a>
         </article>
         <article class="project-card">
