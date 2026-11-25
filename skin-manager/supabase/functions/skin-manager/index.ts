@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.1";
-import { unzipSync } from "npm:fflate@0.8.2";
+import { unzipSync, zipSync } from "npm:fflate@0.8.2";
 
 const URL = Deno.env.get("SUPABASE_URL")!;
 const KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -226,6 +226,20 @@ function validateStructure(files: string[], archive: Record<string, Uint8Array>)
     minVersion: String(skin.min_nekos_version ?? compatibility.min_nekos_version ?? ""),
   };
 }
+function normalizeDefaultTemplate(archive: Record<string, Uint8Array>) {
+  let manifest: Record<string, any>;
+  try { manifest = JSON.parse(new TextDecoder().decode(archive["skin.json"])); }
+  catch { throw new Error("skin.json is not valid JSON"); }
+  const skin = manifest?.skin;
+  if (!skin || typeof skin.id !== "string" || skin.id.trim().toLowerCase() !== "default") {
+    return { changed: false, bytes: null as Uint8Array | null };
+  }
+  const uniqueId = "nekos_default_" + crypto.randomUUID().replaceAll("-", "").slice(0, 12);
+  skin.id = uniqueId;
+  archive["skin.json"] = new TextEncoder().encode(JSON.stringify(manifest));
+  return { changed: true, bytes: zipSync(archive, { level: 6 }) };
+}
+
 async function ensureBuckets() {
   const { data, error } = await db.storage.listBuckets();
   if (error) throw new Error("Unable to inspect Storage buckets");
@@ -284,9 +298,16 @@ Deno.serve(async (req: Request) => {
     const price = Number(priceRaw);
     if (!Number.isSafeInteger(price) || price < 0 || price > 1_000_000_000 || currency !== "IDR") return fail("invalid_price_or_currency", 400);
 
-    const zipBytes = new Uint8Array(await zip.arrayBuffer());
-    const names = readZipDirectory(zipBytes);
-    const archive = unzipSync(zipBytes);
+    let zipBytes = new Uint8Array(await zip.arrayBuffer());
+    let names = readZipDirectory(zipBytes);
+    let archive = unzipSync(zipBytes);
+    const normalized = normalizeDefaultTemplate(archive);
+    if (normalized.changed && normalized.bytes) {
+      zipBytes = normalized.bytes;
+      if (zipBytes.length > MAX_ZIP) return fail("upload_too_large_after_normalization", 413);
+      names = readZipDirectory(zipBytes);
+      archive = unzipSync(zipBytes);
+    }
     const info = validateStructure(names, archive);
     const thumbBytes = new Uint8Array(await thumbnail.arrayBuffer());
     const thumbType = imageInfo(thumbBytes, thumbnail.name.toLowerCase().endsWith(".png") ? "preview.png" : thumbnail.name.toLowerCase().endsWith(".webp") ? "preview.webp" : "preview.png");
@@ -326,14 +347,14 @@ Deno.serve(async (req: Request) => {
       currency,
       status: "published",
       published_at: new Date().toISOString(),
-    }).select("id,name,author,description,price_amount,currency").single();
+    }).select("id,skin_key,name,author,description,price_amount,currency").single();
     if (insertError) {
       await db.storage.from(packageBucket).remove([packagePath]);
       await db.storage.from(PREVIEWS).remove([previewPath]);
       if (insertError.code === "23505") return fail("skin_id_already_exists", 409);
       return fail("skin_publish_failed", 500);
     }
-    return response({ success: true, skin: inserted, message: "Skin berhasil dipublikasikan." }, 201);
+    return response({ success: true, skin: inserted, message: skinId.startsWith("nekos_default_") ? "Template default berhasil dipublikasikan dengan Skin ID komunitas unik: " + skinId : "Skin berhasil dipublikasikan." }, 201);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Invalid skin package";
     return fail("skin_validation_failed", 400, message.slice(0, 500));
