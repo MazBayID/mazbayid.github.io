@@ -77,9 +77,8 @@ function readZipDirectory(bytes: Uint8Array) {
     const mode = external >>> 16;
     if ((mode & 0o170000) === 0o120000) throw new Error("Symbolic links are not allowed");
     if (!ALLOWED_EXT.has(ext(name))) throw new Error("Unsupported file type: " + name);
-    if (name.endsWith(".md") || name.endsWith(".txt")) {
-      if (name.includes("/")) throw new Error("Text documents must be in the ZIP root");
-    }
+    // Nested Markdown index files are part of the official NekOS skin template.
+    // The later path allowlist still rejects all unrecognized locations.
     if (uncompressed > MAX_FILE) throw new Error("File exceeds 8 MB: " + name);
     if (uncompressed > 1_000_000 && (compressed === 0 || uncompressed / compressed > 100)) throw new Error("Suspicious compression ratio: " + name);
     total += uncompressed;
