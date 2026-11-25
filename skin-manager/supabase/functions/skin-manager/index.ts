@@ -282,7 +282,7 @@ Deno.serve(async (req: Request) => {
     if (!zip.name.toLowerCase().endsWith(".zip") || zip.size < 22 || zip.size > MAX_ZIP) return fail("invalid_zip_size_or_name", 400);
     if (thumbnail.size < 16 || thumbnail.size > MAX_THUMB) return fail("invalid_thumbnail_size", 400);
     const price = Number(priceRaw);
-    if (!Number.isFinite(price) || price < 0 || price > 1_000_000_000 || !/^[A-Z]{3}$/.test(currency)) return fail("invalid_price_or_currency", 400);
+    if (!Number.isSafeInteger(price) || price < 0 || price > 1_000_000_000 || currency !== "IDR") return fail("invalid_price_or_currency", 400);
 
     const zipBytes = new Uint8Array(await zip.arrayBuffer());
     const names = readZipDirectory(zipBytes);
