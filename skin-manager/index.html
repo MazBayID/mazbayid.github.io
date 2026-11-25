@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10111a">
+<title>NekOS Skin Manager</title>
+<style>
+:root{color-scheme:dark;--bg:#0d0f18;--panel:#171a27;--line:#292e42;--text:#f2f4ff;--muted:#9ca4bd;--accent:#a78bfa;--cyan:#67e8f9;--bad:#fb7185;--good:#6ee7b7}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#282044 0,transparent 42%),var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+main{width:min(760px,calc(100% - 28px));margin:38px auto 64px}.brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}.mark{width:44px;height:44px;border:1px solid #6554a0;border-radius:14px;display:grid;place-items:center;color:var(--cyan);font-size:23px;background:#211d35}.brand strong{display:block;font-size:17px;letter-spacing:.03em}.brand span{color:var(--muted);font-size:12px}
+h1{font-size:clamp(28px,6vw,42px);line-height:1.1;margin:0 0 10px;letter-spacing:-.04em}.lead{color:var(--muted);margin:0 0 26px}.panel{background:linear-gradient(145deg,#1a1d2b,#131622);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 60px #0005}.panel h2{font-size:17px;margin:0 0 5px}.hint{color:var(--muted);font-size:13px;margin:0 0 18px}
+.field{margin:18px 0}.field label{display:block;font-weight:650;margin-bottom:8px}.field small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+input[type=file],input[type=number],select{width:100%;border:1px solid #353b52;background:#10131e;color:var(--text);border-radius:12px;padding:12px;font:inherit}input:focus,select:focus{outline:2px solid #8b5cf6;outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 130px;gap:12px}.preview{display:none;align-items:center;gap:12px;margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:12px}.preview img{width:72px;height:72px;object-fit:cover;border-radius:10px;background:#0b0d14}.preview span{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+button{width:100%;border:0;border-radius:12px;padding:14px 18px;font:700 15px system-ui;color:#11121b;background:linear-gradient(100deg,var(--accent),var(--cyan));cursor:pointer;margin-top:8px}button:disabled{opacity:.5;cursor:wait}
+.status{display:none;margin-top:16px;padding:12px 14px;border-radius:12px;font-size:13px;overflow-wrap:anywhere}.status.ok{display:block;color:var(--good);background:#0c2a24;border:1px solid #175b4b}.status.err{display:block;color:#fda4af;background:#351923;border:1px solid #713044}.status.wait{display:block;color:#c4b5fd;background:#251d3b;border:1px solid #59418c}
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}.rule{border:1px solid var(--line);background:#11141f;border-radius:12px;padding:11px;font-size:12px;color:var(--muted)}.rule b{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
+.list{margin-top:26px}.list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.list h2{font-size:17px;margin:0}.count{font-size:12px;color:var(--muted)}.skins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.skin{border:1px solid var(--line);background:#151927;border-radius:14px;padding:10px;min-width:0}.skin img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:9px;background:#0c0f18}.skin b{display:block;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.skin small{color:var(--muted)}.price{float:right;color:var(--cyan)}footer{text-align:center;color:#727b95;font-size:12px;margin-top:30px}
+@media(max-width:520px){main{margin-top:24px}.panel{padding:17px}.row{grid-template-columns:1fr 105px}.rules{grid-template-columns:1fr 1fr}.skins{grid-template-columns:1fr 1fr}}
+</style></head>
+<body><main>
+<header class="brand"><div class="mark">✦</div><div><strong>NEKOS / SKIN MANAGER</strong><span>Community skin publishing</span></div></header>
+<h1>Publish a skin.</h1><p class="lead">Unggah paket skin NekOS, thumbnail, dan tentukan harga. Paket yang lolos validasi langsung tersedia di Official Skin Store.</p>
+<section class="panel"><h2>Upload skin</h2><p class="hint">Nama, author, deskripsi, dan Skin ID dibaca otomatis dari skin.json.</p>
+<form id="form">
+<div class="field"><label for="package">Skin ZIP</label><input id="package" name="package" type="file" accept=".zip,application/zip" required><small>ZIP maksimal 32 MB. skin.json wajib berada di root arsip.</small></div>
+<div class="field"><label for="thumbnail">Preview thumbnail</label><input id="thumbnail" name="thumbnail" type="file" accept="image/png,image/webp" required><small>PNG atau WebP, maksimal 3 MB. Thumbnail akan tampil di katalog NekOS.</small><div class="preview" id="preview"><img id="previewImage" alt="Preview skin"><span id="previewName"></span></div></div>
+<div class="field"><label for="price">Harga</label><div class="row"><input id="price" name="price" type="number" min="0" max="1000000000" step="1" value="0" required><select id="currency" name="currency"><option value="IDR">IDR</option><option value="USD">USD</option></select></div><small>Isi 0 untuk skin gratis.</small></div>
+<button id="submit" type="submit">Validate &amp; Publish</button><div class="status" id="status" role="status" aria-live="polite"></div>
+</form>
+<div class="rules"><div class="rule"><b>Automatic validation</b>ZIP, manifest, struktur, file, dan aset</div><div class="rule"><b>Instant publishing</b>Langsung masuk katalog jika valid</div><div class="rule"><b>Any Skin ID</b>ID dari manifest tidak dibatasi pola tertentu</div><div class="rule"><b>Private packages</b>ZIP tidak memiliki URL publik</div></div></section>
+<section class="list"><div class="list-head"><h2>Published skins</h2><span class="count" id="count">Loading…</span></div><div class="skins" id="skins"></div></section>
+<footer>NEKOS OFFICIAL SKIN STORE · COMMUNITY CONTRIBUTIONS</footer></main>
+<script>
+const API="https://vizmufbfaghqucsoukne.supabase.co/functions/v1/skin-manager";
+const $=id=>document.getElementById(id),form=$("form"),status=$("status"),submit=$("submit");
+$("thumbnail").addEventListener("change",()=>{const file=$("thumbnail").files[0];if(!file)return;$("previewImage").src=URL.createObjectURL(file);$("previewName").textContent=file.name;$("preview").style.display="flex";});
+function show(message,kind){status.className="status "+kind;status.textContent=message;}
+form.addEventListener("submit",async event=>{
+ event.preventDefault();const zip=$("package").files[0],thumb=$("thumbnail").files[0],price=Number($("price").value);
+ if(!zip||!thumb)return show("Pilih ZIP dan thumbnail terlebih dahulu.","err");
+ if(zip.size>32*1024*1024)return show("ZIP melebihi batas 32 MB.","err");
+ if(thumb.size>3*1024*1024)return show("Thumbnail melebihi batas 3 MB.","err");
+ if(!["image/png","image/webp"].includes(thumb.type))return show("Thumbnail harus PNG atau WebP.","err");
+ const body=new FormData();body.append("package",zip);body.append("thumbnail",thumb);body.append("price",String(price));body.append("currency",$("currency").value);
+ submit.disabled=true;submit.textContent="Validating…";show("Memeriksa ZIP dan mengunggah paket ke Supabase…","wait");
+ try{const res=await fetch(API,{method:"POST",body}),data=await res.json();if(!res.ok)throw new Error(data.details||data.error||"Upload gagal");
+ show("Berhasil dipublikasikan: "+data.skin.name+" · "+data.skin.price_amount+" "+data.skin.currency,"ok");form.reset();$("price").value="0";$("preview").style.display="none";await loadSkins();
+ }catch(error){show(error.message||"Terjadi kesalahan saat upload.","err");}finally{submit.disabled=false;submit.textContent="Validate & Publish";}
+});
+async function loadSkins(){try{const res=await fetch(API);if(!res.ok)throw new Error("catalog");const data=await res.json(),items=data.skins||[];$("count").textContent=items.length+" skins";
+ $("skins").innerHTML=items.map(s=>'<article class="skin"><img src="'+escapeHtml(s.preview_url)+'" alt=""><b>'+escapeHtml(s.name)+'<span class="price">'+(Number(s.price_amount)===0?"FREE":escapeHtml(s.price_amount+" "+s.currency))+'</span></b><small>'+escapeHtml(s.author||"Community")+'</small></article>').join("");
+ }catch{$("count").textContent="Catalog unavailable";}}
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+loadSkins();
+</script></body></html>
