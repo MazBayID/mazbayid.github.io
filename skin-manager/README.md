@@ -26,7 +26,7 @@ The Edge Function uses the platform-provided server credential. Never add a serv
 
 The ZIP keeps the existing NekOS skin package format: `skin.json` at archive root and the existing `icons/`, `components/`, and `motifs/` paths. Skin IDs are treated as opaque strings (non-empty, up to 255 characters); they are not restricted to a slug pattern. Names are unique case-insensitively. A valid upload is published immediately.
 
-The current manager accepts PNG/WebP thumbnails only, up to 3 MB. ZIPs are limited to 32 MB compressed/uncompressed, 400 files, 8 MB per file, and the existing allowed asset locations and image dimensions.
+The official `default` template ID is automatically rewritten to a unique `nekos_default_<id>` community ID before publishing, so the built-in launcher skin remains reserved. The official nested Markdown icon indexes (`icons/tag/icons_index.md` and `icons/ui/ui_index.md`) are accepted; other paths remain allowlisted. The manager accepts PNG/WebP thumbnails up to 3 MB. ZIPs are limited to 32 MB compressed/uncompressed, 400 files, 8 MB per file, and 4096 px per image side. ZIP-slip paths, symlinks, unsupported file types, executable code, and network-required skins remain blocked for security.
 
 ## Endpoints
 
