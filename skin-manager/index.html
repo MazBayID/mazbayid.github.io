@@ -43,7 +43,7 @@ form.addEventListener("submit",async event=>{
  if(!["image/png","image/webp"].includes(thumb.type))return show("Thumbnail harus PNG atau WebP.","err");
  const body=new FormData();body.append("package",zip);body.append("thumbnail",thumb);body.append("price",String(price));body.append("currency",$("currency").value);
  submit.disabled=true;submit.textContent="Validating…";show("Memeriksa ZIP dan mengunggah paket ke Supabase…","wait");
- try{const res=await fetch(API,{method:"POST",body}),data=await res.json();if(!res.ok)throw new Error(data.details||data.error||"Upload gagal");
+ try{const res=await fetch(API,{method:"POST",body}),data=await res.json();if(!res.ok)throw new Error(data.details||(data.error==="skin_id_already_exists"?"Nama atau Skin ID sudah digunakan":data.error)||"Upload gagal");
  show("Berhasil dipublikasikan: "+data.skin.name+" · "+data.skin.price_amount+" "+data.skin.currency,"ok");form.reset();$("price").value="0";$("preview").style.display="none";await loadSkins();
  }catch(error){show(error.message||"Terjadi kesalahan saat upload.","err");}finally{submit.disabled=false;submit.textContent="Validate & Publish";}
 });
