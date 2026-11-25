@@ -1,0 +1,341 @@
+import { createClient } from "npm:@supabase/supabase-js@2.119.1";
+import { unzipSync } from "npm:fflate@0.8.2";
+
+const URL = Deno.env.get("SUPABASE_URL")!;
+const KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+if (!URL || !KEY) throw new Error("Supabase server credentials are unavailable");
+const db = createClient(URL, KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+
+const ORIGIN = "https://mazbayid.github.io";
+const PREVIEWS = "skin-previews";
+const FREE = "skin-packages-free";
+const PREMIUM = "skin-packages-premium";
+const MAX_ZIP = 32 * 1024 * 1024;
+const MAX_THUMB = 3 * 1024 * 1024;
+const MAX_FILES = 400;
+const MAX_FILE = 8 * 1024 * 1024;
+const MAX_TOTAL = 32 * 1024 * 1024;
+const ALLOWED_EXT = new Set([".webp", ".png", ".json", ".md", ".txt"]);
+
+function response(data: unknown, status = 200, origin = ORIGIN) {
+  return new Response(JSON.stringify(data), { status, headers: {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Headers": "content-type, apikey, authorization, x-client-info",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Vary": "Origin",
+  }});
+}
+function fail(code: string, status: number, details?: unknown) {
+  return response({ error: code, ...(details ? { details } : {}) }, status);
+}
+function safePath(name: string) {
+  if (!name || name.startsWith("/") || name.includes("\\") || /^[A-Za-z]:/.test(name)) return false;
+  const parts = name.split("/");
+  return parts.every((p) => p && p !== "." && p !== "..");
+}
+function ext(name: string) {
+  const i = name.lastIndexOf(".");
+  return i < 0 ? "" : name.slice(i).toLowerCase();
+}
+function readZipDirectory(bytes: Uint8Array) {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const min = Math.max(0, bytes.length - 65557);
+  let eocd = -1;
+  for (let i = bytes.length - 22; i >= min; i--) {
+    if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error("ZIP end record not found");
+  const entries = view.getUint16(eocd + 10, true);
+  const cdSize = view.getUint32(eocd + 12, true);
+  let offset = view.getUint32(eocd + 16, true);
+  if (entries > MAX_FILES || offset + cdSize > bytes.length) throw new Error("ZIP directory is invalid or too large");
+  const decoder = new TextDecoder("utf-8", { fatal: true });
+  const seen = new Set<string>();
+  let total = 0;
+  const files: string[] = [];
+  for (let n = 0; n < entries; n++) {
+    if (offset + 46 > bytes.length || view.getUint32(offset, true) !== 0x02014b50) throw new Error("ZIP directory entry is invalid");
+    const flags = view.getUint16(offset + 8, true);
+    const method = view.getUint16(offset + 10, true);
+    const compressed = view.getUint32(offset + 20, true);
+    const uncompressed = view.getUint32(offset + 24, true);
+    const nameLen = view.getUint16(offset + 28, true);
+    const extraLen = view.getUint16(offset + 30, true);
+    const commentLen = view.getUint16(offset + 32, true);
+    const external = view.getUint32(offset + 38, true);
+    const end = offset + 46 + nameLen + extraLen + commentLen;
+    if (end > bytes.length || (flags & 1) !== 0 || ![0, 8].includes(method)) throw new Error("Encrypted or unsupported ZIP entry");
+    const name = decoder.decode(bytes.subarray(offset + 46, offset + 46 + nameLen));
+    offset = end;
+    if (name.endsWith("/")) continue;
+    if (!safePath(name)) throw new Error("Unsafe ZIP path: " + name);
+    const lower = name.toLowerCase();
+    if (seen.has(lower)) throw new Error("Duplicate ZIP path: " + name);
+    seen.add(lower);
+    const mode = external >>> 16;
+    if ((mode & 0o170000) === 0o120000) throw new Error("Symbolic links are not allowed");
+    if (!ALLOWED_EXT.has(ext(name))) throw new Error("Unsupported file type: " + name);
+    if (name.endsWith(".md") || name.endsWith(".txt")) {
+      if (name.includes("/")) throw new Error("Text documents must be in the ZIP root");
+    }
+    if (uncompressed > MAX_FILE) throw new Error("File exceeds 8 MB: " + name);
+    if (uncompressed > 1_000_000 && (compressed === 0 || uncompressed / compressed > 100)) throw new Error("Suspicious compression ratio: " + name);
+    total += uncompressed;
+    if (total > MAX_TOTAL) throw new Error("Uncompressed ZIP exceeds 32 MB");
+    files.push(name);
+  }
+  if (!files.includes("skin.json")) throw new Error("skin.json must be at the ZIP root");
+  return files;
+}
+function imageInfo(bytes: Uint8Array, filename: string) {
+  if (bytes.length < 16) throw new Error("Invalid image: " + filename);
+  let width = 0, height = 0, type = "";
+  if (ext(filename) === ".png" && bytes[0] === 137 && String.fromCharCode(...bytes.slice(1, 4)) === "PNG") {
+    const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    width = v.getUint32(16, false); height = v.getUint32(20, false); type = "image/png";
+  } else if (ext(filename) === ".webp" && String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" && String.fromCharCode(...bytes.slice(8, 12)) === "WEBP") {
+    const chunk = String.fromCharCode(...bytes.slice(12, 16));
+    if (chunk === "VP8X" && bytes.length >= 30) {
+      width = 1 + bytes[24] + (bytes[25] << 8) + (bytes[26] << 16);
+      height = 1 + bytes[27] + (bytes[28] << 8) + (bytes[29] << 16);
+    } else if (chunk === "VP8L" && bytes.length >= 25 && bytes[20] === 0x2f) {
+      width = 1 + (((bytes[22] & 0x3f) << 8) | bytes[21]);
+      height = 1 + (((bytes[24] & 0x0f) << 10) | (bytes[23] << 2) | ((bytes[22] & 0xc0) >> 6));
+    } else if (chunk === "VP8 " && bytes.length >= 30) {
+      width = (bytes[26] | (bytes[27] << 8)) & 0x3fff;
+      height = (bytes[28] | (bytes[29] << 8)) & 0x3fff;
+    }
+    type = "image/webp";
+  }
+  if (!type || width < 1 || height < 1 || width > 4096 || height > 4096) throw new Error("Invalid image or dimensions: " + filename);
+  return { width, height, type };
+}
+function isAllowedSkinPath(path: string) {
+  if (path === "skin.json") return true;
+  if (!path.includes("/") && !path.startsWith(".") && /\.(md|txt)$/i.test(path)) return true;
+  if (new Set([
+    "icons/tag/icons_index.json", "icons/tag/icons_index.md",
+    "icons/ui/ui_index.json", "icons/ui/ui_index.md",
+    "components/tag_badge/badge.json",
+    "components/tag_frame/frame_spritesheet.json",
+    "components/top_frame/topframe_atlas.json",
+    "components/top_frame/topframe_formula.json",
+  ]).has(path)) return true;
+  if (/^icons\/(tag|ui)\/icon_[a-z0-9]+(?:_[a-z0-9]+)*\.webp$/.test(path)) return true;
+  if (path === "components/tag_badge/badge_cat.webp") return true;
+  if (path === "components/tag_frame/frame_spritesheet.webp") return true;
+  if (/^components\/top_frame\/topframe_spritesheet(?:@2x|@4x)?\.png$/.test(path)) return true;
+  return /^motifs\/motif_[a-z0-9]+(?:_[a-z0-9]+)*(?:@512)?\.png$/.test(path);
+}
+function expectedImageSize(path: string): [number, number] | null {
+  if (/^icons\/(tag|ui)\/icon_[a-z0-9]+(?:_[a-z0-9]+)*\.webp$/.test(path)) return [96, 96];
+  if (path === "components/tag_badge/badge_cat.webp") return [128, 128];
+  if (path === "components/tag_frame/frame_spritesheet.webp") return [512, 240];
+  if (path === "components/top_frame/topframe_spritesheet.png") return [134, 64];
+  if (path === "components/top_frame/topframe_spritesheet@2x.png") return [268, 128];
+  if (path === "components/top_frame/topframe_spritesheet@4x.png") return [536, 256];
+  if (/^motifs\/.*@512\.png$/.test(path)) return [512, 512];
+  if (/^motifs\/.*\.png$/.test(path)) return [1024, 1024];
+  return null;
+}
+function validateStructure(files: string[], archive: Record<string, Uint8Array>) {
+  for (const name of files) {
+    if (!isAllowedSkinPath(name)) throw new Error("Unsupported or unexpected skin path: " + name);
+  }
+  let manifest: Record<string, unknown>;
+  try { manifest = JSON.parse(new TextDecoder().decode(archive["skin.json"])); }
+  catch { throw new Error("skin.json is not valid JSON"); }
+  if (!manifest || typeof manifest !== "object" || manifest.schema_version !== 1) {
+    throw new Error("Unsupported skin schema_version (expected 1)");
+  }
+  const skin = manifest.skin as Record<string, unknown> | undefined;
+  if (!skin || typeof skin.id !== "string" || !skin.id.trim() || skin.id.length > 255 || skin.id === "default") {
+    throw new Error("skin.id must be a non-empty unique string (maximum 255 characters)");
+  }
+  if (typeof skin.name !== "string" || !skin.name.trim() || skin.name.length > 80) {
+    throw new Error("skin.name is required (maximum 80 characters)");
+  }
+  if (typeof skin.version !== "string" || !/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(skin.version)) {
+    throw new Error("skin.version must use semantic version format, e.g. 1.0.0");
+  }
+  const compatibility = (manifest.compatibility ?? {}) as Record<string, unknown>;
+  if (compatibility.contains_executable_code === true || compatibility.requires_network === true) {
+    throw new Error("Executable code and network-required skins are not allowed");
+  }
+  const allowedKinds = new Set(["branding", "tag_icon", "ui_icon", "wallpaper", "background", "frame", "badge", "texture", "illustration", "font", "other"]);
+  if (Array.isArray(manifest.assets)) {
+    const ids = new Set<string>();
+    for (const asset of manifest.assets as Record<string, unknown>[]) {
+      if (!asset || typeof asset !== "object" || typeof asset.id !== "string" ||
+          typeof asset.kind !== "string" || !allowedKinds.has(asset.kind) || typeof asset.file !== "string") {
+        throw new Error("Invalid manifest asset entry");
+      }
+      if (ids.has(asset.id)) throw new Error("Duplicate asset ID: " + asset.id);
+      ids.add(asset.id);
+      if (!safePath(asset.file) || !isAllowedSkinPath(asset.file) || !archive[asset.file]) {
+        throw new Error("Manifest asset is missing or unsafe: " + asset.file);
+      }
+    }
+  } else if (manifest.assets !== undefined) throw new Error("assets must be an array");
+  if (Array.isArray(manifest.motifs)) {
+    if (manifest.motifs.length > 1) throw new Error("Only one motif is supported");
+    for (const motif of manifest.motifs as Record<string, unknown>[]) {
+      if (!motif || typeof motif.file !== "string" || !safePath(motif.file) ||
+          !isAllowedSkinPath(motif.file) || !archive[motif.file] || !motif.file.startsWith("motifs/")) {
+        throw new Error("Motif file is missing or unsafe");
+      }
+      if (motif.file_small !== undefined &&
+          (typeof motif.file_small !== "string" || !safePath(motif.file_small) ||
+           !isAllowedSkinPath(motif.file_small) || !archive[motif.file_small])) {
+        throw new Error("Small motif file is missing or unsafe");
+      }
+      if (!["solid", "line"].includes(String(motif.type))) throw new Error("Motif type must be solid or line");
+    }
+  } else if (manifest.motifs !== undefined) throw new Error("motifs must be an array");
+
+  for (const name of files) {
+    if (ext(name) === ".png" || ext(name) === ".webp") {
+      const image = imageInfo(archive[name], name);
+      const expected = expectedImageSize(name);
+      if (expected && (image.width !== expected[0] || image.height !== expected[1])) {
+        throw new Error(name + " must be " + expected[0] + "x" + expected[1] + " pixels");
+      }
+    }
+    if (name.endsWith(".json")) {
+      let parsed: any;
+      try { parsed = JSON.parse(new TextDecoder().decode(archive[name])); }
+      catch { throw new Error("Invalid JSON file: " + name); }
+      if (name.endsWith("icons_index.json") || name.endsWith("ui_index.json")) {
+        if (!parsed || !Array.isArray(parsed.items) || parsed.total !== parsed.items.length) {
+          throw new Error("Invalid icon index: " + name);
+        }
+        for (const item of parsed.items) {
+          if (!item || !Number.isInteger(item.id) || typeof item.name !== "string" ||
+              typeof item.file !== "string" || !archive[name.replace(/[^/]+$/, "") + item.file]) {
+            throw new Error("Icon index references an invalid or missing file: " + name);
+          }
+        }
+      }
+    }
+  }
+  return {
+    skin,
+    schemaVersion: Number(manifest.schema_version),
+    minVersion: String(skin.min_nekos_version ?? compatibility.min_nekos_version ?? ""),
+  };
+}
+async function ensureBuckets() {
+  const { data, error } = await db.storage.listBuckets();
+  if (error) throw new Error("Unable to inspect Storage buckets");
+  const existing = new Set((data ?? []).map((b: { name: string }) => b.name));
+  const specs = [
+    { name: PREVIEWS, public: true, fileSizeLimit: MAX_THUMB, allowedMimeTypes: ["image/png", "image/jpeg", "image/webp"] },
+    { name: FREE, public: false, fileSizeLimit: MAX_ZIP, allowedMimeTypes: ["application/zip", "application/octet-stream"] },
+    { name: PREMIUM, public: false, fileSizeLimit: MAX_ZIP, allowedMimeTypes: ["application/zip", "application/octet-stream"] },
+  ];
+  for (const spec of specs) {
+    if (!existing.has(spec.name)) {
+      const { error: createError } = await db.storage.createBucket(spec.name, spec);
+      if (createError && !String(createError.message).toLowerCase().includes("already")) throw new Error("Unable to create Storage bucket: " + spec.name);
+    }
+  }
+}
+async function sha256(bytes: Uint8Array) {
+  const hash = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+async function catalog() {
+  const { data, error } = await db.from("skins")
+    .select("id,skin_key,name,author,description,schema_version,min_nekos_version,preview_path,package_sha256,package_size_bytes,price_amount,currency,created_at")
+    .eq("status", "published").order("created_at", { ascending: false }).limit(100);
+  if (error) throw new Error("Catalog query failed");
+  return (data ?? []).map((skin: Record<string, unknown>) => ({
+    ...skin,
+    preview_url: db.storage.from(PREVIEWS).getPublicUrl(String(skin.preview_path)).data.publicUrl,
+  }));
+}
+Deno.serve(async (req: Request) => {
+  const origin = req.headers.get("origin") ?? "";
+  if (origin !== ORIGIN) return fail("origin_not_allowed", 403, origin || "missing origin");
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: {
+    "Access-Control-Allow-Origin": ORIGIN,
+    "Access-Control-Allow-Headers": "content-type, apikey, authorization, x-client-info",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Vary": "Origin",
+  }});
+  if (req.method === "GET") {
+    try { return response({ skins: await catalog() }); }
+    catch { return fail("catalog_unavailable", 503); }
+  }
+  if (req.method !== "POST") return fail("method_not_allowed", 405);
+  const declared = Number(req.headers.get("content-length") ?? 0);
+  if (declared > MAX_ZIP + MAX_THUMB + 256_000) return fail("upload_too_large", 413);
+  try {
+    const form = await req.formData();
+    const zip = form.get("package");
+    const thumbnail = form.get("thumbnail");
+    const priceRaw = String(form.get("price") ?? "");
+    const currency = String(form.get("currency") ?? "IDR").toUpperCase();
+    if (!(zip instanceof File) || !(thumbnail instanceof File)) return fail("package_and_thumbnail_required", 400);
+    if (!zip.name.toLowerCase().endsWith(".zip") || zip.size < 22 || zip.size > MAX_ZIP) return fail("invalid_zip_size_or_name", 400);
+    if (thumbnail.size < 16 || thumbnail.size > MAX_THUMB) return fail("invalid_thumbnail_size", 400);
+    const price = Number(priceRaw);
+    if (!Number.isFinite(price) || price < 0 || price > 1_000_000_000 || !/^[A-Z]{3}$/.test(currency)) return fail("invalid_price_or_currency", 400);
+
+    const zipBytes = new Uint8Array(await zip.arrayBuffer());
+    const names = readZipDirectory(zipBytes);
+    const archive = unzipSync(zipBytes);
+    const info = validateStructure(names, archive);
+    const thumbBytes = new Uint8Array(await thumbnail.arrayBuffer());
+    const thumbType = imageInfo(thumbBytes, thumbnail.name.toLowerCase().endsWith(".png") ? "preview.png" : thumbnail.name.toLowerCase().endsWith(".webp") ? "preview.webp" : "preview.png");
+    if (thumbType.width < 64 || thumbType.height < 64) return fail("thumbnail_too_small", 400);
+    if (!["image/png", "image/webp"].includes(thumbType.type)) return fail("invalid_thumbnail", 400);
+
+    const skin = info.skin;
+    const skinId = String(skin.id);
+    const packageBucket = price === 0 ? FREE : PREMIUM;
+    const objectId = crypto.randomUUID();
+    const packagePath = objectId + ".zip";
+    const previewExt = thumbType.type === "image/webp" ? "webp" : "png";
+    const previewPath = objectId + "." + previewExt;
+    await ensureBuckets();
+    const [packageUpload, previewUpload] = await Promise.all([
+      db.storage.from(packageBucket).upload(packagePath, zipBytes, { contentType: "application/zip", upsert: false }),
+      db.storage.from(PREVIEWS).upload(previewPath, thumbBytes, { contentType: thumbType.type, upsert: false }),
+    ]);
+    if (packageUpload.error || previewUpload.error) {
+      await db.storage.from(packageBucket).remove([packagePath]);
+      await db.storage.from(PREVIEWS).remove([previewPath]);
+      return fail("storage_upload_failed", 503);
+    }
+    const { data: inserted, error: insertError } = await db.from("skins").insert({
+      skin_key: skinId,
+      name: String(skin.name),
+      author: typeof skin.author === "string" && skin.author.trim() ? skin.author.slice(0, 100) : "Community",
+      description: typeof skin.description === "string" ? skin.description.slice(0, 2000) : null,
+      schema_version: info.schemaVersion,
+      min_nekos_version: info.minVersion || null,
+      preview_path: previewPath,
+      package_bucket: packageBucket,
+      package_path: packagePath,
+      package_sha256: await sha256(zipBytes),
+      package_size_bytes: zipBytes.length,
+      price_amount: price,
+      currency,
+      status: "published",
+      published_at: new Date().toISOString(),
+    }).select("id,name,author,description,price_amount,currency").single();
+    if (insertError) {
+      await db.storage.from(packageBucket).remove([packagePath]);
+      await db.storage.from(PREVIEWS).remove([previewPath]);
+      if (insertError.code === "23505") return fail("skin_id_already_exists", 409);
+      return fail("skin_publish_failed", 500);
+    }
+    return response({ success: true, skin: inserted, message: "Skin berhasil dipublikasikan." }, 201);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Invalid skin package";
+    return fail("skin_validation_failed", 400, message.slice(0, 500));
+  }
+});
