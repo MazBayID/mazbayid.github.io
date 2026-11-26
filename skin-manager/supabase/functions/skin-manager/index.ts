@@ -23,7 +23,7 @@ function response(data: unknown, status = 200, origin = ORIGIN) {
     "Cache-Control": "no-store",
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Headers": "content-type, apikey, authorization, x-client-info",
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
     "Vary": "Origin",
   }});
 }
@@ -294,7 +294,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: {
     "Access-Control-Allow-Origin": ORIGIN,
     "Access-Control-Allow-Headers": "content-type, apikey, authorization, x-client-info",
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
     "Vary": "Origin",
   }});
   if (req.method === "GET") {
@@ -307,6 +307,42 @@ Deno.serve(async (req: Request) => {
     catch { return fail("catalog_unavailable", 503); }
   }
 
+
+  if (req.method === "PUT") {
+    const auth = await requireAdmin(req);
+    if (!auth.ok) return fail(auth.error, auth.status);
+    const skinId = new URL(req.url).searchParams.get("id") ?? "";
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(skinId)) return fail("invalid_skin_id", 400);
+    const { data: current, error: findError } = await db.from("skins")
+      .select("id,status,preview_path").eq("id", skinId).maybeSingle();
+    if (findError) return fail("skin_lookup_failed", 503);
+    if (!current || current.status !== "published") return fail("skin_not_found", 404);
+    let form: FormData;
+    try { form = await req.formData(); } catch { return fail("invalid_form_data", 400); }
+    const thumbnail = form.get("thumbnail");
+    if (!(thumbnail instanceof File)) return fail("thumbnail_required", 400);
+    if (thumbnail.size < 16 || thumbnail.size > MAX_THUMB) return fail("invalid_thumbnail_size", 400);
+    const fileName = thumbnail.name.toLowerCase();
+    const imageType = fileName.endsWith(".png") ? "preview.png" : fileName.endsWith(".webp") ? "preview.webp" : "preview.png";
+    const bytes = new Uint8Array(await thumbnail.arrayBuffer());
+    let info: {width:number;height:number;type:string};
+    try { info = imageInfo(bytes, imageType); } catch { return fail("invalid_thumbnail", 400); }
+    if (info.width < 64 || info.height < 64 || !["image/png","image/webp"].includes(info.type)) return fail("invalid_thumbnail", 400);
+    const extension = info.type === "image/webp" ? "webp" : "png";
+    const nextPath = crypto.randomUUID() + "." + extension;
+    const { error: uploadError } = await db.storage.from(PREVIEWS).upload(nextPath, bytes, {contentType:info.type,upsert:false});
+    if (uploadError) return fail("preview_upload_failed", 503);
+    const { data: updated, error: updateError } = await db.from("skins")
+      .update({preview_path:nextPath}).eq("id",skinId).eq("status","published")
+      .select("id,preview_path").maybeSingle();
+    if (updateError || !updated) {
+      await db.storage.from(PREVIEWS).remove([nextPath]);
+      return fail("preview_update_failed", 500);
+    }
+    const { error: cleanupError } = await db.storage.from(PREVIEWS).remove([String(current.preview_path)]);
+    if (cleanupError) console.error("skin_manager_old_preview_cleanup_failed",cleanupError.message);
+    return response({success:true,skin:updated,preview_url:db.storage.from(PREVIEWS).getPublicUrl(nextPath).data.publicUrl,message:"Preview berhasil diganti."});
+  }
   if (req.method === "PATCH" || req.method === "DELETE") {
     const auth = await requireAdmin(req);
     if (!auth.ok) return fail(auth.error, auth.status);
