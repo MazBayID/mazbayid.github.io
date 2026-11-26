@@ -33,41 +33,70 @@ input[type=file],input[type=number],select{width:100%;border:1px solid #353b52;b
 <div class="rules"><div class="rule"><b>Automatic validation</b>ZIP, manifest, struktur, file, dan aset</div><div class="rule"><b>Instant publishing</b>Langsung masuk katalog jika valid</div><div class="rule"><b>Any Skin ID</b>ID dari manifest tidak dibatasi pola tertentu</div><div class="rule"><b>Private packages</b>ZIP tidak memiliki URL publik</div></div></section>
 <section class="list"><div class="list-head"><h2>Published skins</h2><span class="count" id="count">Loading…</span></div><div class="skins" id="skins"></div></section>
 <footer>NEKOS OFFICIAL SKIN STORE · COMMUNITY CONTRIBUTIONS</footer></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.1"></script>
+
 <script>
 const API="https://vizmufbfaghqucsoukne.supabase.co/functions/v1/skin-manager";
 const SUPABASE_URL="https://vizmufbfaghqucsoukne.supabase.co";
 const SUPABASE_KEY="sb_publishable_PNwDgOkHHBQ39MLpYAUUog_poNd8jI1";
-const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id),form=$("form"),status=$("status"),submit=$("submit");
 let session=null;
 function loginMessage(message,kind){const el=$("loginStatus");el.className="status "+kind;el.textContent=message;}
-async function enterAdmin(nextSession){
- session=nextSession;
- if(!session){$("loginPanel").hidden=false;$("adminPanel").hidden=true;$("adminIntro").hidden=true;$("logout").hidden=true;return;}
- $("loginPanel").hidden=true;loginMessage("Checking admin permission…","wait");
- try{const res=await fetch(API+"?admin=1",{headers:{Authorization:"Bearer "+session.access_token}});const data=await res.json();if(!res.ok)throw new Error(data.error||"Admin access denied");
- $("adminPanel").hidden=false;$("adminIntro").hidden=false;$("logout").hidden=false;$("loginStatus").className="status";await loadSkins();
- }catch(err){await supabase.auth.signOut();session=null;$("loginPanel").hidden=false;$("adminPanel").hidden=true;$("adminIntro").hidden=true;$("logout").hidden=true;loginMessage(err.message==="admin_access_denied"?"Account ini tidak memiliki akses admin.":"Login ditolak: "+err.message,"err");}
+function authHeaders(token){return {"apikey":SUPABASE_KEY,"Authorization":"Bearer "+token,"Content-Type":"application/json"};}
+async function authRequest(path,body){
+ const res=await fetch(SUPABASE_URL+"/auth/v1/"+path,{method:"POST",headers:{"apikey":SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
+ const data=await res.json().catch(()=>({}));
+ if(!res.ok)throw new Error(data.msg||data.message||data.error_description||data.error||"Auth request failed ("+res.status+")");
+ return data;
 }
-$("loginForm").addEventListener("submit",async e=>{e.preventDefault();const btn=$("loginButton");btn.disabled=true;loginMessage("Signing in…","wait");try{const {data,error}=await supabase.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)throw error;await enterAdmin(data.session);}catch(err){loginMessage(err.message||"Login gagal.","err");}finally{btn.disabled=false;}});
-$("logout").addEventListener("click",async()=>{await supabase.auth.signOut();await enterAdmin(null);});
-supabase.auth.onAuthStateChange((event,newSession)=>{
- if(event==="TOKEN_REFRESHED"&&newSession&&session)session=newSession;
- if(event==="SIGNED_OUT"){session=null;$("loginPanel").hidden=false;$("adminPanel").hidden=true;$("adminIntro").hidden=true;$("logout").hidden=true;}
+async function saveSession(s){session=s;try{sessionStorage.setItem("nekos_skin_admin_session",JSON.stringify(s));}catch{}}
+async function clearSession(){session=null;try{sessionStorage.removeItem("nekos_skin_admin_session");}catch{}}
+async function enterAdmin(nextSession){
+ if(!nextSession){await clearSession();$("loginPanel").hidden=false;$("adminPanel").hidden=true;$("adminIntro").hidden=true;$("logout").hidden=true;return;}
+ await saveSession(nextSession);
+ $("loginPanel").hidden=true;
+ try{
+  const res=await fetch(API+"?admin=1",{headers:{"Authorization":"Bearer "+session.access_token}});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(data.error||data.message||"Admin access denied ("+res.status+")");
+  $("adminPanel").hidden=false;$("adminIntro").hidden=false;$("logout").hidden=false;$("loginStatus").className="status";await loadSkins();
+ }catch(err){
+  await clearSession();$("loginPanel").hidden=false;$("adminPanel").hidden=true;$("adminIntro").hidden=true;$("logout").hidden=true;
+  loginMessage("Login gagal pada pemeriksaan admin: "+err.message,"err");
+ }
+}
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const btn=$("loginButton");btn.disabled=true;loginMessage("Signing in…","wait");
+ try{
+  const data=await authRequest("token?grant_type=password",{email:$("email").value.trim(),password:$("password").value});
+  await enterAdmin(data);
+ }catch(err){loginMessage("Login gagal: "+err.message,"err");}
+ finally{btn.disabled=false;}
 });
-supabase.auth.getSession().then(({data})=>enterAdmin(data.session));
+$("logout").addEventListener("click",async()=>{
+ if(session?.access_token)fetch(SUPABASE_URL+"/auth/v1/logout",{method:"POST",headers:authHeaders(session.access_token)}).catch(()=>{});
+ await enterAdmin(null);
+});
+async function restoreSession(){
+ let saved=null;try{saved=JSON.parse(sessionStorage.getItem("nekos_skin_admin_session")||"null");}catch{}
+ if(!saved?.access_token)return;
+ if(saved.expires_at&&saved.expires_at*1000<Date.now()+30000&&saved.refresh_token){
+  try{saved=await authRequest("token?grant_type=refresh_token",{refresh_token:saved.refresh_token});}catch{await clearSession();return;}
+ }
+ await enterAdmin(saved);
+}
 $("thumbnail").addEventListener("change",()=>{const file=$("thumbnail").files[0];if(!file)return;$("previewImage").src=URL.createObjectURL(file);$("previewName").textContent=file.name;$("preview").style.display="flex";});
 function show(message,kind){status.className="status "+kind;status.textContent=message;}
 form.addEventListener("submit",async event=>{
  event.preventDefault();const zip=$("package").files[0],thumb=$("thumbnail").files[0],price=Number($("price").value);
+ if(!session?.access_token)return show("Session admin tidak aktif. Silakan login kembali.","err");
  if(!zip||!thumb)return show("Pilih ZIP dan thumbnail terlebih dahulu.","err");
  if(zip.size>32*1024*1024)return show("ZIP melebihi batas 32 MB.","err");
  if(thumb.size>3*1024*1024)return show("Thumbnail melebihi batas 3 MB.","err");
  if(!["image/png","image/webp"].includes(thumb.type))return show("Thumbnail harus PNG atau WebP.","err");
  const body=new FormData();body.append("package",zip);body.append("thumbnail",thumb);body.append("price",String(price));body.append("currency",$("currency").value);
  submit.disabled=true;submit.textContent="Validating…";show("Memeriksa ZIP dan mengunggah paket ke Supabase…","wait");
- try{const res=await fetch(API,{method:"POST",headers:{Authorization:"Bearer "+session.access_token},body}),data=await res.json();if(!res.ok)throw new Error(data.details||(data.error==="skin_id_already_exists"?"Nama atau Skin ID sudah digunakan":data.error)||"Upload gagal");
+ try{const res=await fetch(API,{method:"POST",headers:{"Authorization":"Bearer "+session.access_token},body}),data=await res.json();if(!res.ok)throw new Error(data.details||(data.error==="skin_id_already_exists"?"Nama atau Skin ID sudah digunakan":data.error)||"Upload gagal");
  show("Berhasil dipublikasikan: "+data.skin.name+" · "+data.skin.price_amount+" "+data.skin.currency,"ok");form.reset();$("price").value="0";$("preview").style.display="none";await loadSkins();
  }catch(error){show(error.message||"Terjadi kesalahan saat upload.","err");}finally{submit.disabled=false;submit.textContent="Validate & Publish";}
 });
@@ -75,5 +104,5 @@ async function loadSkins(){try{const res=await fetch(API);if(!res.ok)throw new E
  $("skins").innerHTML=items.map(s=>'<article class="skin"><img src="'+escapeHtml(s.preview_url)+'" alt=""><b>'+escapeHtml(s.name)+'<span class="price">'+(Number(s.price_amount)===0?"FREE":escapeHtml(s.price_amount+" "+s.currency))+'</span></b><small>'+escapeHtml(s.author||"Community")+'</small></article>').join("");
  }catch{$("count").textContent="Catalog unavailable";}}
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-loadSkins();
+loadSkins();restoreSession();
 </script></body></html>
