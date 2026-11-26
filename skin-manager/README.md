@@ -2,9 +2,18 @@
 
 Public contribution page: https://mazbayid.github.io/skin-manager/
 
+## Admin access
+
+- The manager requires Supabase Auth email/password login.
+- Only confirmed accounts listed in `public.skin_manager_admins` can access upload/publish.
+- The initial allowlisted email is `limited.corporated@gmail.com`.
+- The frontend uses a public publishable key only. The Edge Function validates the access token with Supabase Auth and checks the allowlist using its server-side service credential.
+- The catalogue GET endpoint remains public. Upload POST and `GET ?admin=1` require admin authentication.
+- Apply the migration `supabase/migrations/20261126090000_skin_manager_admin_allowlist.sql` before deploying the updated function. Create the admin user in Supabase Auth and set its password privately; do not place passwords in source control.
+
 ## Flow
 
-1. Contributor uploads a NekOS skin ZIP, preview thumbnail, and price.
+1. Admin signs in and uploads a NekOS skin ZIP, preview thumbnail, and price.
 2. The `skin-manager` Supabase Edge Function validates the ZIP central directory, safe paths, allowed file types, manifest, referenced assets, JSON indexes, and image dimensions.
 3. A valid package is uploaded to a private package bucket and its preview to the public preview bucket.
 4. The `public.skins` row is created with `status = published`; no manual approval step exists.
@@ -31,6 +40,7 @@ The official `default` template ID is automatically rewritten to a unique `nekos
 ## Endpoints
 
 - `GET /functions/v1/skin-manager` — published catalogue for the manager page
-- `POST /functions/v1/skin-manager` — multipart upload: `package`, `thumbnail`, `price`, `currency`
+- `GET /functions/v1/skin-manager?admin=1` — admin permission check (Bearer token required)
+- `POST /functions/v1/skin-manager` — admin-only multipart upload: `package`, `thumbnail`, `price`, `currency`
 
 The browser page only talks to this Edge Function; privileged database and Storage credentials are never shipped to the browser.
