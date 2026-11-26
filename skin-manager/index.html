@@ -14,7 +14,7 @@ input[type=file],input[type=number],select{width:100%;border:1px solid #353b52;b
 .logout{margin:0 0 0 auto;width:auto;padding:8px 12px;font-size:12px;background:#262b3c;color:var(--text);border:1px solid var(--line)}[hidden]{display:none!important}input[type=email],input[type=password]{width:100%;border:1px solid #353b52;background:#10131e;color:var(--text);border-radius:12px;padding:12px;font:inherit}button{width:100%;border:0;border-radius:12px;padding:14px 18px;font:700 15px system-ui;color:#11121b;background:linear-gradient(100deg,var(--accent),var(--cyan));cursor:pointer;margin-top:8px}button:disabled{opacity:.5;cursor:wait}
 .status{display:none;margin-top:16px;padding:12px 14px;border-radius:12px;font-size:13px;overflow-wrap:anywhere}.status.ok{display:block;color:var(--good);background:#0c2a24;border:1px solid #175b4b}.status.err{display:block;color:#fda4af;background:#351923;border:1px solid #713044}.status.wait{display:block;color:#c4b5fd;background:#251d3b;border:1px solid #59418c}
 .rules{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}.rule{border:1px solid var(--line);background:#11141f;border-radius:12px;padding:11px;font-size:12px;color:var(--muted)}.rule b{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
-.list{margin-top:26px}.list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.list h2{font-size:17px;margin:0}.count{font-size:12px;color:var(--muted)}.skins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.skin{border:1px solid var(--line);background:#151927;border-radius:14px;padding:10px;min-width:0}.skin img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:9px;background:#0c0f18}.skin b{display:block;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.skin small{color:var(--muted)}.price{float:right;color:var(--cyan)}footer{text-align:center;color:#727b95;font-size:12px;margin-top:30px}
+.list{margin-top:26px}.list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.list h2{font-size:17px;margin:0}.count{font-size:12px;color:var(--muted)}.skins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.skin{border:1px solid var(--line);background:#151927;border-radius:14px;padding:10px;min-width:0}.skin img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:9px;background:#0c0f18}.skin b{display:block;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.skin small{color:var(--muted)}.price{float:right;color:var(--cyan)}.skin-actions{display:flex;gap:6px;margin-top:10px;align-items:center}.skin-actions input{min-width:0;width:100%;padding:8px;border:1px solid #353b52;background:#10131e;color:var(--text);border-radius:8px;font:inherit}.skin-actions button{width:auto;flex:1;margin:0;padding:9px 7px;font-size:12px;border-radius:8px}.skin-actions .delete-skin{background:#3a1d2a;color:#fda4af;border:1px solid #713044}.skin-actions .save-price{background:#25213b;color:#ddd6fe;border:1px solid #59418c}footer{text-align:center;color:#727b95;font-size:12px;margin-top:30px}
 @media(max-width:520px){main{margin-top:24px}.panel{padding:17px}.row{grid-template-columns:1fr 105px}.rules{grid-template-columns:1fr 1fr}.skins{grid-template-columns:1fr 1fr}}
 </style></head>
 <body><main>
@@ -101,8 +101,27 @@ form.addEventListener("submit",async event=>{
  }catch(error){show(error.message||"Terjadi kesalahan saat upload.","err");}finally{submit.disabled=false;submit.textContent="Validate & Publish";}
 });
 async function loadSkins(){try{const res=await fetch(API);if(!res.ok)throw new Error("catalog");const data=await res.json(),items=data.skins||[];$("count").textContent=items.length+" skins";
- $("skins").innerHTML=items.map(s=>'<article class="skin"><img src="'+escapeHtml(s.preview_url)+'" alt=""><b>'+escapeHtml(s.name)+'<span class="price">'+(Number(s.price_amount)===0?"FREE":escapeHtml(s.price_amount+" "+s.currency))+'</span></b><small>'+escapeHtml(s.author||"Community")+'</small></article>').join("");
+ $("skins").innerHTML=items.map(s=>'<article class="skin"><img src="'+escapeHtml(s.preview_url)+'" alt=""><b>'+escapeHtml(s.name)+'<span class="price">'+(Number(s.price_amount)===0?"FREE":escapeHtml(s.price_amount+" "+s.currency))+'</span></b><small>'+escapeHtml(s.author||"Community")+'</small>'+(session?.access_token?'<div class="skin-actions"><input class="price-input" type="number" min="0" max="1000000000" step="1" value="'+Number(s.price_amount)+'" aria-label="Harga skin"><button class="save-price" type="button" data-action="price" data-id="'+escapeHtml(s.id)+'">Simpan harga</button><button class="delete-skin" type="button" data-action="delete" data-id="'+escapeHtml(s.id)+'">Hapus</button></div>':'')+'</article>').join("");
  }catch{$("count").textContent="Catalog unavailable";}}
+
+$("skins").addEventListener("click",async event=>{
+ const button=event.target.closest("button[data-action]");
+ if(!button)return;
+ if(!session?.access_token)return show("Session admin tidak aktif. Silakan login kembali.","err");
+ const id=button.dataset.id,action=button.dataset.action,card=button.closest(".skin"),priceInput=card?.querySelector(".price-input");
+ if(action==="delete"&&!confirm("Arsipkan skin ini? Skin akan hilang dari katalog publik, tetapi riwayat pembelian tetap disimpan."))return;
+ button.disabled=true;
+ try{
+  if(action==="price"&&(!priceInput||!Number.isSafeInteger(Number(priceInput.value))||Number(priceInput.value)<0||Number(priceInput.value)>1000000000))throw new Error("Harga harus berupa angka bulat antara 0 dan 1.000.000.000 IDR.");
+  const options=action==="price"
+   ?{method:"PATCH",headers:authHeaders(session.access_token),body:JSON.stringify({price_amount:Number(priceInput.value)})}
+   :{method:"DELETE",headers:authHeaders(session.access_token)};
+  const res=await fetch(API+"?id="+encodeURIComponent(id),options),data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(data.details||data.error||"Operasi gagal ("+res.status+")");
+  show(action==="price"?"Harga berhasil diperbarui.":"Skin berhasil dihapus dari katalog.","ok");
+  await loadSkins();
+ }catch(error){show(error.message||"Operasi gagal.","err");button.disabled=false;}
+});
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 loadSkins();restoreSession();
 </script></body></html>
