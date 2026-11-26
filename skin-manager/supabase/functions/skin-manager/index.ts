@@ -259,6 +259,25 @@ async function sha256(bytes: Uint8Array) {
   const hash = await crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+async function requireAdmin(req: Request) {
+  const authorization = req.headers.get("authorization") ?? "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+  if (!match) return { ok: false as const, status: 401, error: "authentication_required" };
+  const { data: userData, error: userError } = await db.auth.getUser(match[1]);
+  const user = userData?.user;
+  if (userError || !user || !user.email || !user.email_confirmed_at) {
+    return { ok: false as const, status: 401, error: "invalid_or_unverified_session" };
+  }
+  const { data: admin, error } = await db.from("skin_manager_admins")
+    .select("email")
+    .eq("email", user.email.toLowerCase())
+    .eq("enabled", true)
+    .maybeSingle();
+  if (error) return { ok: false as const, status: 503, error: "admin_check_unavailable" };
+  if (!admin) return { ok: false as const, status: 403, error: "admin_access_denied" };
+  return { ok: true as const, user };
+}
+
 async function catalog() {
   const { data, error } = await db.from("skins")
     .select("id,skin_key,name,author,description,schema_version,min_nekos_version,preview_path,package_sha256,package_size_bytes,price_amount,currency,created_at")
@@ -279,10 +298,17 @@ Deno.serve(async (req: Request) => {
     "Vary": "Origin",
   }});
   if (req.method === "GET") {
+    if (new URL(req.url).searchParams.get("admin") === "1") {
+      const auth = await requireAdmin(req);
+      if (!auth.ok) return fail(auth.error, auth.status);
+      return response({ authorized: true, email: auth.user.email });
+    }
     try { return response({ skins: await catalog() }); }
     catch { return fail("catalog_unavailable", 503); }
   }
   if (req.method !== "POST") return fail("method_not_allowed", 405);
+  const auth = await requireAdmin(req);
+  if (!auth.ok) return fail(auth.error, auth.status);
   const declared = Number(req.headers.get("content-length") ?? 0);
   if (declared > MAX_ZIP + MAX_THUMB + 256_000) return fail("upload_too_large", 413);
   try {
