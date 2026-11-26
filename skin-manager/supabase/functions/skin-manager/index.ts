@@ -23,7 +23,7 @@ function response(data: unknown, status = 200, origin = ORIGIN) {
     "Cache-Control": "no-store",
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Headers": "content-type, apikey, authorization, x-client-info",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
     "Vary": "Origin",
   }});
 }
@@ -294,7 +294,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: {
     "Access-Control-Allow-Origin": ORIGIN,
     "Access-Control-Allow-Headers": "content-type, apikey, authorization, x-client-info",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
     "Vary": "Origin",
   }});
   if (req.method === "GET") {
@@ -305,6 +305,53 @@ Deno.serve(async (req: Request) => {
     }
     try { return response({ skins: await catalog() }); }
     catch { return fail("catalog_unavailable", 503); }
+  }
+
+  if (req.method === "PATCH" || req.method === "DELETE") {
+    const auth = await requireAdmin(req);
+    if (!auth.ok) return fail(auth.error, auth.status);
+    const skinId = new URL(req.url).searchParams.get("id") ?? "";
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(skinId)) return fail("invalid_skin_id", 400);
+    const { data: current, error: findError } = await db.from("skins")
+      .select("id,status,price_amount,currency,package_bucket,package_path")
+      .eq("id", skinId).maybeSingle();
+    if (findError) return fail("skin_lookup_failed", 503);
+    if (!current || current.status !== "published") return fail("skin_not_found", 404);
+
+    if (req.method === "DELETE") {
+      const { data: archived, error } = await db.from("skins")
+        .update({ status: "archived" }).eq("id", skinId).eq("status", "published")
+        .select("id,status").maybeSingle();
+      if (error || !archived) return fail("skin_archive_failed", 500);
+      return response({ success: true, skin: archived, message: "Skin diarsipkan dan dihapus dari katalog publik." });
+    }
+
+    let body: Record<string, unknown>;
+    try { body = await req.json(); } catch { return fail("invalid_json", 400); }
+    const price = Number(body.price_amount);
+    if (!Number.isSafeInteger(price) || price < 0 || price > 1_000_000_000) return fail("invalid_price", 400);
+    const destinationBucket = price === 0 ? FREE : PREMIUM;
+    let copied = false;
+    if (destinationBucket !== current.package_bucket) {
+      const { error: copyError } = await db.storage.from(String(current.package_bucket))
+        .copy(String(current.package_path), String(current.package_path), { destinationBucket });
+      if (copyError) return fail("package_move_failed", 503, copyError.message);
+      copied = true;
+    }
+    const update: Record<string, unknown> = { price_amount: price, currency: "IDR" };
+    if (copied) update.package_bucket = destinationBucket;
+    const { data: updated, error: updateError } = await db.from("skins")
+      .update(update).eq("id", skinId).eq("status", "published")
+      .select("id,price_amount,currency,package_bucket").maybeSingle();
+    if (updateError || !updated) {
+      if (copied) await db.storage.from(destinationBucket).remove([String(current.package_path)]);
+      return fail("price_update_failed", 500);
+    }
+    if (copied) {
+      const { error: cleanupError } = await db.storage.from(String(current.package_bucket)).remove([String(current.package_path)]);
+      if (cleanupError) console.error("skin_manager_old_package_cleanup_failed", cleanupError.message);
+    }
+    return response({ success: true, skin: updated, message: "Harga skin berhasil diperbarui." });
   }
   if (req.method !== "POST") return fail("method_not_allowed", 405);
   const auth = await requireAdmin(req);
