@@ -1,10 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.1";
 import { unzipSync, zipSync } from "npm:fflate@0.8.2";
 
-const URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-if (!URL || !KEY) throw new Error("Supabase server credentials are unavailable");
-const db = createClient(URL, KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+if (!SUPABASE_URL || !KEY) throw new Error("Supabase server credentials are unavailable");
+const db = createClient(SUPABASE_URL, KEY, { auth: { persistSession: false, autoRefreshToken: false } });
 
 const ORIGIN = "https://mazbayid.github.io";
 const PREVIEWS = "skin-previews";
