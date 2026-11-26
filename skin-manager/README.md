@@ -9,7 +9,7 @@ Public contribution page: https://mazbayid.github.io/skin-manager/
 - The initial allowlisted email is `limited.corporated@gmail.com`.
 - The frontend uses a public publishable key only. The Edge Function validates the access token with Supabase Auth and checks the allowlist using its server-side service credential.
 - The catalogue GET endpoint remains public. Upload POST and `GET ?admin=1` require admin authentication.
-- Apply the migration `supabase/migrations/20261126090000_skin_manager_admin_allowlist.sql` before deploying the updated function. Create the admin user in Supabase Auth and set its password privately; do not place passwords in source control.
+- The migration is located at `skin-manager/supabase/migrations/20261126090000_skin_manager_admin_allowlist.sql` (also applied to the connected Supabase project). Create the admin user in Supabase Auth and set its password privately; do not place passwords in source control.
 
 ## Flow
 
