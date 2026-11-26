@@ -51,7 +51,10 @@ async function enterAdmin(nextSession){
 }
 $("loginForm").addEventListener("submit",async e=>{e.preventDefault();const btn=$("loginButton");btn.disabled=true;loginMessage("Signing in…","wait");try{const {data,error}=await supabase.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)throw error;await enterAdmin(data.session);}catch(err){loginMessage(err.message||"Login gagal.","err");}finally{btn.disabled=false;}});
 $("logout").addEventListener("click",async()=>{await supabase.auth.signOut();await enterAdmin(null);});
-supabase.auth.onAuthStateChange((_event,newSession)=>{if(newSession)enterAdmin(newSession);else if(!session)enterAdmin(null);});
+supabase.auth.onAuthStateChange((event,newSession)=>{
+ if(event==="TOKEN_REFRESHED"&&newSession&&session)session=newSession;
+ if(event==="SIGNED_OUT"){session=null;$("loginPanel").hidden=false;$("adminPanel").hidden=true;$("adminIntro").hidden=true;$("logout").hidden=true;}
+});
 supabase.auth.getSession().then(({data})=>enterAdmin(data.session));
 $("thumbnail").addEventListener("change",()=>{const file=$("thumbnail").files[0];if(!file)return;$("previewImage").src=URL.createObjectURL(file);$("previewName").textContent=file.name;$("preview").style.display="flex";});
 function show(message,kind){status.className="status "+kind;status.textContent=message;}
