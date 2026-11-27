@@ -13,7 +13,7 @@ Public contribution page: https://mazbayid.github.io/skin-manager/
 
 ## Flow
 
-1. Admin signs in and uploads a NekOS skin ZIP, preview thumbnail, and price.
+1. Admin signs in and uploads a NekOS skin ZIP, preview thumbnail, category, and price. Categories (`Free`, `Basic`, `Premium`, `Exclusive`) are independent from price.
 2. The `skin-manager` Supabase Edge Function validates the ZIP central directory, safe paths, allowed file types, manifest, referenced assets, JSON indexes, and image dimensions.
 3. A valid package is uploaded to a private package bucket and its preview to the public preview bucket.
 4. The `public.skins` row is created with `status = published`; no manual approval step exists.
@@ -31,6 +31,12 @@ Storage buckets created automatically on the first valid upload:
 
 The Edge Function uses the platform-provided server credential. Never add a service-role or secret key to this repository or to the GitHub Pages frontend.
 
+## Store categories
+
+Each published skin has a merchandising `category`: `Free`, `Basic`, `Premium`, or `Exclusive`. This is only a grouping label and does not determine the price or storage bucket. The admin chooses the category during upload; price remains independently configurable.
+
+The database migration is `skin-manager/supabase/migrations/20261127000000_add_skin_store_categories.sql`.
+
 ## Package contract
 
 The ZIP keeps the existing NekOS skin package format: `skin.json` at archive root and the existing `icons/`, `components/`, and `motifs/` paths. Skin IDs are treated as opaque strings (non-empty, up to 255 characters); they are not restricted to a slug pattern. Names are unique case-insensitively. A valid upload is published immediately.
@@ -41,7 +47,7 @@ The official `default` template ID is automatically rewritten to a unique `nekos
 
 - `GET /functions/v1/skin-manager` — published catalogue for the manager page
 - `GET /functions/v1/skin-manager?admin=1` — admin permission check (Bearer token required)
-- `POST /functions/v1/skin-manager` — admin-only multipart upload: `package`, `thumbnail`, `price`, `currency`
+- `POST /functions/v1/skin-manager` — admin-only multipart upload: `package`, `thumbnail`, `category`, `price`, `currency`
 - `PATCH /functions/v1/skin-manager?id=<skin-uuid>` — admin-only JSON price update: `{ "price_amount": 15000 }`
 - `DELETE /functions/v1/skin-manager?id=<skin-uuid>` — admin-only soft delete (archives the skin)
 
