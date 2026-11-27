@@ -4,157 +4,53 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10111a">
 <title>NekOS Skin Manager</title>
 <style>
-:root{
- color-scheme:dark;
- --page:#0c1018;--surface:#141b27;--surface-raised:#192231;--field:#0e1520;
- --border:#2a3546;--border-soft:#202b3b;--text:#edf2f8;--muted:#9aa8ba;
- --accent:#9b8af5;--accent-hover:#ad9fff;--cyan:#83cbd4;
- --success:#78d6ae;--danger:#f08c9b;--radius:14px;
-}
-*{box-sizing:border-box}
-[hidden]{display:none!important}
-body{
- margin:0;min-height:100vh;background:var(--page);color:var(--text);
- font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
- -webkit-font-smoothing:antialiased;
-}
-main{width:min(1120px,calc(100% - 48px));margin:32px auto 64px}
-.brand{
- display:flex;align-items:center;gap:12px;min-height:58px;padding:8px 0;
- margin-bottom:42px;border-bottom:1px solid var(--border-soft)
-}
-.mark{
- width:38px;height:38px;display:grid;place-items:center;border-radius:11px;
- color:#e9e5ff;background:#292644;border:1px solid #49436f;font-size:20px
-}
-.brand strong{display:block;font-size:12px;font-weight:750;letter-spacing:.12em}
-.brand span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
-.logout{
- width:auto;margin:0 0 0 auto;min-height:36px;padding:7px 13px;
- color:var(--text);background:var(--surface-raised);border:1px solid var(--border)
-}
-h1{margin:0 0 8px;font-size:clamp(30px,4vw,40px);line-height:1.15;letter-spacing:-.045em;font-weight:720}
-.lead{max-width:660px;margin:0 0 28px;color:var(--muted);font-size:14px;line-height:1.7}
-#adminIntro{margin:26px 0 16px}
-.panel{
- padding:26px;border:1px solid var(--border);border-radius:var(--radius);
- background:var(--surface);box-shadow:0 12px 32px #00000018
-}
-#loginPanel{max-width:480px}
-#adminPanel{max-width:840px}
-.panel h2,.list h2{margin:0;font-size:18px;font-weight:680;letter-spacing:-.025em}
-.hint{margin:6px 0 22px;color:var(--muted);font-size:13px;line-height:1.65}
-.field{margin:20px 0}
-.field label{display:block;margin-bottom:8px;font-size:13px;font-weight:620;color:#dce4ee}
-.field small{display:block;margin-top:7px;color:var(--muted);font-size:11px;line-height:1.55}
-input[type=file],input[type=number],input[type=email],input[type=password],select{
- width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--border);
- border-radius:10px;background:var(--field);color:var(--text);font:inherit;
- transition:border-color .16s,box-shadow .16s
-}
-input[type=file]{padding:8px 10px;font-size:12px}
-input:focus,select:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px #9b8af526}
-.row{display:grid;grid-template-columns:minmax(0,1fr) 136px;gap:12px}
-button{
- display:inline-flex;align-items:center;justify-content:center;gap:7px;
- width:100%;min-height:44px;margin-top:8px;padding:11px 16px;
- border:1px solid transparent;border-radius:10px;background:var(--accent);
- color:#17152b;font:650 13px/1.2 inherit;cursor:pointer;
- transition:background .16s,border-color .16s,transform .16s,opacity .16s
-}
-button:not(:disabled):hover{background:var(--accent-hover)}
-button:not(:disabled):active{transform:translateY(1px)}
-button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
-button:disabled{opacity:.55;cursor:wait}
-.preview{display:none;align-items:center;gap:12px;margin-top:12px;padding:12px;border:1px solid var(--border);border-radius:11px;background:var(--field)}
-.preview img{width:68px;height:68px;object-fit:cover;border-radius:8px;background:#090e16}
-.preview span{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
-.status{display:none;margin-top:14px;padding:11px 13px;border-radius:10px;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
-.status.ok{display:block;color:var(--success);background:#142a25;border:1px solid #285847}
-.status.err{display:block;color:#ffb4bd;background:#301d25;border:1px solid #663442}
-.status.wait{display:block;color:#c8c0ff;background:#25223a;border:1px solid #4a436f}
-.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:22px}
-.rule{padding:13px;border:1px solid var(--border-soft);border-radius:10px;background:#111925;color:var(--muted);font-size:11px;line-height:1.55}
-.rule b{display:block;margin-bottom:4px;color:#dfe6f0;font-size:12px;font-weight:650}
-.list{margin-top:48px}
-.catalog-top{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}
-.eyebrow{color:var(--cyan);font-size:10px;font-weight:700;letter-spacing:.13em}
-.catalog-top h2{margin:5px 0;font-size:25px;line-height:1.2;letter-spacing:-.035em}
-.catalog-top p{margin:0;color:var(--muted);font-size:13px}
-.count{flex:0 0 auto;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:#c5d0df;font-size:11px;font-weight:650;font-variant-numeric:tabular-nums}
-.catalog-tools{display:grid;grid-template-columns:minmax(220px,1fr) auto;align-items:center;gap:14px;margin-bottom:18px}
-.search-wrap{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--muted)}
-.search-wrap span{font-size:19px;line-height:1}
-.search-wrap input{width:100%;min-width:0;padding:10px 0;border:0;outline:0;background:transparent;color:var(--text);font:inherit}
-.search-wrap input:focus{box-shadow:none}
-.filters{display:flex;flex-wrap:wrap;gap:7px}
-.filter{
- width:auto;min-height:34px;margin:0;padding:6px 11px;border:1px solid var(--border);
- border-radius:8px;background:var(--surface);color:#b8c4d4;font-size:11px;font-weight:600;box-shadow:none
-}
-.filter:hover{border-color:#65728a;background:var(--surface-raised)}
-.filter i{margin-left:4px;color:#8291a7;font-style:normal;font-variant-numeric:tabular-nums}
-.filter.active{border-color:#655a9d;background:#292542;color:#e5dfff}
-.filter.active i{color:#c6baff}
-.skins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.skin{
- min-width:0;overflow:hidden;padding:11px;border:1px solid var(--border);
- border-radius:13px;background:var(--surface);transition:border-color .16s,transform .16s
-}
-.skin:hover{border-color:#59647b;transform:translateY(-2px)}
-.skin-art{position:relative;overflow:hidden;border-radius:9px;background:#0a1019}
-.skin img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;transition:transform .2s}
-.skin:hover .skin-art img{transform:scale(1.025)}
-.category-tag{position:absolute;top:8px;left:8px;padding:4px 7px;border:1px solid #ffffff25;border-radius:6px;background:#18212ddd;color:#e9eef7;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.tag-free{background:#17362cdd;color:#a8e9c8}
-.tag-basic{background:#253247dd;color:#d0dceb}
-.tag-premium{background:#342b4bdd;color:#e0d2ff}
-.tag-exclusive{background:#402b35dd;color:#f2c7d5}
-.skin-info{padding:2px 2px 0}
-.skin b{display:block;margin-top:11px;overflow:hidden;color:#e8edf5;font-size:13px;font-weight:650;white-space:nowrap;text-overflow:ellipsis}
-.skin small{display:block;margin-top:5px;color:var(--muted);font-size:10px;letter-spacing:.025em}
-.price{float:right;margin-left:8px;color:var(--cyan);font-size:11px;font-weight:650;font-variant-numeric:tabular-nums}
-.skin-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px;margin-top:12px}
-.skin-actions input.price-input{width:100%;min-width:0;height:36px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--field);color:var(--text);font:inherit;font-size:12px}
-.skin-actions button{min-width:0;min-height:36px;margin:0;padding:7px 8px;border:1px solid var(--border);border-radius:8px;background:#242b3a;color:#dbe3ef;font-size:11px;line-height:1.2;white-space:normal;box-shadow:none}
-.skin-actions .save-price{background:#292542;color:#ddd5ff;border-color:#49416e}
-.skin-actions .preview-change{background:#1b3038;color:#b8e6e9;border-color:#31525a}
-.skin-actions .delete-skin{background:#34212a;color:#f2b7c0;border-color:#60404a}
-.skin-actions button:hover{filter:brightness(1.15)}
-.empty-state{padding:32px 16px;border:1px dashed #3a4658;border-radius:12px;background:var(--surface);color:var(--muted);text-align:center}
-.preview-file{display:none}
-footer{margin-top:42px;padding-top:18px;border-top:1px solid var(--border-soft);color:#758397;font-size:10px;letter-spacing:.09em;text-align:center}
-@media(max-width:760px){
- main{width:min(100% - 32px,680px);margin:24px auto 48px}
- .brand{margin-bottom:34px}
- .catalog-tools{grid-template-columns:1fr}
- .filters{flex-wrap:nowrap;overflow-x:auto;padding:1px 0 5px;scrollbar-width:thin}
- .filter{flex:0 0 auto}
- .skins{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-}
-@media(max-width:480px){
- main{width:calc(100% - 28px);margin-top:18px}
- .brand{margin-bottom:28px}
- .panel{padding:18px}
- #adminPanel{max-width:none}
- .row{grid-template-columns:minmax(0,1fr) 104px;gap:8px}
- .rules{gap:8px}
- .rule{padding:10px}
- .catalog-top{align-items:flex-start}
- .catalog-top h2{font-size:22px}
- .catalog-top p{max-width:230px;font-size:12px}
- .skins{gap:9px}
- .skin{padding:8px}
- .skin-actions{gap:5px}
- .skin-actions button{padding:6px 4px;font-size:10px}
-}
-@media(prefers-reduced-motion:reduce){
- *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
-}
+:root{color-scheme:light;--page:#fffaf6;--surface:#fffefd;--surface-2:#f5efff;--ink:#30234d;--muted:#695f7b;--line:#e5dced;--lav:#8c69c8;--lav-soft:#eee5ff;--mint:#d9f5ed;--mint-ink:#286b68;--blue:#e4edff;--blue-ink:#315bb0;--peach:#fff0dc;--gold:#f6c85f;--shadow:0 12px 34px rgba(74,51,105,.09);--radius:18px}
+html[data-theme=dark]{color-scheme:dark;--page:#171321;--surface:#211b30;--surface-2:#2b2340;--ink:#f8f1ff;--muted:#c1b5d1;--line:#45395b;--lav:#c5a8ff;--lav-soft:#3a2d52;--mint:#203d3b;--mint-ink:#9de2d3;--blue:#26334f;--blue-ink:#b5caff;--peach:#493728;--gold:#f6cf77;--shadow:0 14px 36px rgba(0,0,0,.22)}
+*{box-sizing:border-box} [hidden]{display:none!important}
+body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font:14px/1.55 "Nunito Sans",Nunito,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 8% 10%,rgba(220,202,255,.32),transparent 32rem),radial-gradient(ellipse at 92% 32%,rgba(189,240,226,.24),transparent 30rem),radial-gradient(ellipse at 50% 100%,rgba(255,225,200,.2),transparent 36rem)}
+.admin-shell{display:grid;grid-template-columns:238px minmax(0,1fr);min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;padding:25px 17px;border-right:1px solid var(--line);background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(16px)}
+.brand{display:flex;align-items:center;gap:11px;padding:0 9px 24px;margin-bottom:23px;border-bottom:1px solid var(--line)}
+.mark{width:40px;height:40px;display:grid;place-items:center;border-radius:14px;background:var(--lav);color:#fff;font-size:21px;box-shadow:0 5px 14px rgba(140,105,200,.2)}
+.brand strong{display:block;font-size:13px;font-weight:1000;letter-spacing:-.035em}.brand span{display:block;color:var(--muted);font-size:10px}
+.side-label{padding:0 11px;margin:0 0 9px;color:var(--muted);font-size:9px;font-weight:1000;letter-spacing:.14em;text-transform:uppercase}
+.side-nav{display:grid;gap:5px}.side-nav a{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:11px;color:var(--muted);font-size:12px;font-weight:850;transition:background .18s,color .18s}
+.side-nav a:hover{background:var(--lav-soft);color:var(--ink)}.side-nav a.active{background:var(--lav-soft);color:var(--ink);box-shadow:inset 3px 0 var(--lav)}
+.nav-icon{width:19px;text-align:center;font-size:15px}.sidebar-foot{position:absolute;left:17px;right:17px;bottom:20px;padding:13px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(135deg,var(--lav-soft),var(--mint));font-size:10px;color:var(--muted)}
+.sidebar-foot b{display:block;color:var(--ink);font-size:11px;margin-bottom:3px}
+main{width:min(1500px,100%);min-width:0;margin:0 auto;padding:34px clamp(22px,3vw,48px) 50px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:29px}
+.page-title h1{margin:0;font-size:25px;line-height:1.2;letter-spacing:-.045em;font-weight:1000}.page-title p{margin:5px 0 0;color:var(--muted);font-size:12px}
+.top-actions{display:flex;align-items:center;gap:9px}.top-chip{padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);font-size:10px;font-weight:850}
+.logout{width:auto;min-height:34px;margin:0;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:11px;font-weight:800}
+#loginPanel{max-width:470px;margin:40px auto}.panel{padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
+.panel h2,.list h2{margin:0;font-size:16px;font-weight:1000;letter-spacing:-.025em}.hint{margin:5px 0 18px;color:var(--muted);font-size:11px;line-height:1.6}
+#adminIntro{margin:0 0 14px}.field{margin:14px 0}.field label{display:block;margin-bottom:6px;font-size:11px;font-weight:900}.field small{display:block;margin-top:6px;color:var(--muted);font-size:10px;line-height:1.5}
+input[type=file],input[type=number],input[type=email],input[type=password],select{width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--page);color:var(--ink);font:inherit;font-size:11px}
+input[type=file]{padding:7px}input:focus,select:focus{outline:0;border-color:var(--lav);box-shadow:0 0 0 3px color-mix(in srgb,var(--lav) 17%,transparent)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:9px}
+button{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:38px;margin-top:7px;padding:9px 13px;border:0;border-radius:9px;background:var(--lav);color:#fff;font:850 11px/1.2 inherit;cursor:pointer;transition:transform .16s,filter .16s}
+button:not(:disabled):hover{filter:brightness(1.05);transform:translateY(-1px)}button:disabled{opacity:.55;cursor:wait}
+.preview{display:none;align-items:center;gap:10px;margin-top:10px;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--page)}.preview img{width:56px;height:56px;object-fit:cover;border-radius:8px}.preview span{font-size:10px;color:var(--muted);overflow-wrap:anywhere}
+.status{display:none;margin-top:12px;padding:10px 12px;border-radius:10px;font-size:11px;overflow-wrap:anywhere}.status.ok{display:block;color:var(--mint-ink);background:var(--mint);border:1px solid color-mix(in srgb,var(--mint-ink) 22%,transparent)}.status.err{display:block;color:#a64c62;background:#fff0f2;border:1px solid #efcbd3}.status.wait{display:block;color:var(--blue-ink);background:var(--blue);border:1px solid #cbd9f5}
+.rules{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:15px}.rule{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--muted);font-size:9px;line-height:1.45}.rule b{display:block;margin-bottom:3px;color:var(--ink);font-size:10px}
+.list{margin-top:22px}.catalog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.catalog-head h2{font-size:17px}.count{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:10px;font-weight:900}
+.catalog-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.search-wrap{display:flex;align-items:center;gap:8px;width:min(320px,100%);padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface)}.search-wrap span{color:var(--lav);font-size:17px}.search-wrap input{width:100%;min-width:0;padding:9px 0;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:11px}.search-wrap input:focus{box-shadow:none}
+.filters{display:flex;gap:6px;overflow-x:auto}.filter{flex:0 0 auto;width:auto;min-height:30px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);font-size:9px;box-shadow:none}.filter.active{background:var(--lav-soft);border-color:color-mix(in srgb,var(--lav) 35%,var(--line));color:var(--ink)}.filter i{font-style:normal;opacity:.7;margin-left:3px}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:13px;background:var(--surface);box-shadow:var(--shadow)}
+.skin-table{width:100%;border-collapse:collapse;text-align:left;font-size:11px;white-space:nowrap}.skin-table thead{background:var(--surface-2);color:var(--muted)}.skin-table th{padding:11px 13px;font-size:9px;font-weight:1000;letter-spacing:.06em;text-transform:uppercase}.skin-table td{padding:9px 13px;border-top:1px solid var(--line);vertical-align:middle}.skin-table tbody tr:hover{background:color-mix(in srgb,var(--lav-soft) 36%,var(--surface))}
+.skin-thumb{display:block;width:38px;height:38px;object-fit:cover;border:1px solid var(--line);border-radius:9px;background:var(--page)}.skin-name{display:block;max-width:220px;overflow:hidden;color:var(--ink);font-size:11px;font-weight:900;text-overflow:ellipsis}.skin-author{display:block;margin-top:2px;color:var(--muted);font-size:9px}
+.category-tag,.status-tag{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:var(--lav-soft);color:var(--ink);font-size:9px;font-weight:900}.tag-free{background:var(--mint);color:var(--mint-ink)}.tag-basic{background:var(--blue);color:var(--blue-ink)}.tag-premium{background:var(--lav-soft);color:var(--lav)}.tag-exclusive{background:var(--peach);color:#986a32}.status-tag{background:var(--mint);color:var(--mint-ink)}
+.price-cell{font-variant-numeric:tabular-nums;font-weight:850}.actions{display:flex;align-items:center;gap:5px}.skin-actions{display:flex;align-items:center;gap:5px}.skin-actions input.price-input{width:82px;min-width:72px;height:29px;padding:4px 7px;border:1px solid var(--line);border-radius:7px;background:var(--page);color:var(--ink);font:inherit;font-size:10px}.skin-actions button{width:auto;min-height:29px;margin:0;padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font-size:9px;white-space:nowrap;box-shadow:none}.skin-actions .save-price{background:var(--lav-soft);color:var(--ink)}.skin-actions .preview-change{background:var(--mint);color:var(--mint-ink)}.skin-actions .delete-skin{background:#fff0f2;color:#a64c62;border-color:#efcbd3}.preview-file{display:none}
+.empty-state{padding:28px 12px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center;font-size:11px}
+footer{margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:9px;text-align:center}
+@media(max-width:1050px){.admin-shell{grid-template-columns:205px minmax(0,1fr)}main{padding:26px 20px 40px}.rules{grid-template-columns:repeat(2,minmax(0,1fr))}.catalog-tools{align-items:flex-start;flex-direction:column}.search-wrap{width:100%}.filters{max-width:100%}}
+@media(max-width:700px){.admin-shell{display:block}.sidebar{position:relative;width:100%;height:auto;padding:12px 16px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:0 2px 10px;margin-bottom:10px;border:0}.brand .mark{width:34px;height:34px}.side-label,.sidebar-foot{display:none}.side-nav{display:flex;gap:5px;overflow-x:auto}.side-nav a{flex:0 0 auto;padding:8px 10px;font-size:10px}.side-nav a.active{box-shadow:inset 0 -2px var(--lav)}main{padding:22px 14px 36px}.topbar{margin-bottom:20px}.page-title h1{font-size:21px}.top-chip{display:none}.panel{padding:16px}.catalog-head h2{font-size:15px}.skin-table{min-width:760px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style></head>
-<body><main>
-<header class="brand"><div class="mark">✦</div><div><strong>NEKOS / SKIN MANAGER</strong><span>Admin publishing console</span></div><button id="logout" class="logout" type="button" hidden>Sign out</button></header>
-<h1>Skin Manager.</h1><p class="lead">Admin-only publishing console for NekOS Official Skin Store.</p>
+<body><div class="admin-shell"><aside class="sidebar"><div class="brand"><div class="mark">✦</div><div><strong>MAZBAYID</strong><span>NekOS workspace</span></div></div><p class="side-label">Workspace</p><nav class="side-nav"><a class="active" href="#top"><span class="nav-icon">⌂</span>Overview</a><a href="#adminPanel"><span class="nav-icon">＋</span>Upload skin</a><a href="#catalog"><span class="nav-icon">▤</span>Skin library</a><a href="https://mazbayid.github.io/"><span class="nav-icon">↗</span>Main website</a></nav><div class="sidebar-foot"><b>Cozy-tech workspace ✦</b>Manage your NekOS skin collection with care.</div></aside><main id="top">
+<header class="topbar"><div class="page-title"><h1>Skin Manager</h1><p>Kelola koleksi skin NekOS Official Store.</p></div><div class="top-actions"><span class="top-chip">✦ Cozy-tech workspace</span><button id="logout" class="logout" type="button" hidden>Sign out</button></div></header>
 <section class="panel" id="loginPanel"><h2>Admin login</h2><p class="hint">Sign in using your authorized admin account.</p>
 <form id="loginForm"><div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required placeholder="Admin email"></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Password"></div><button id="loginButton" type="submit">Sign in</button><div class="status" id="loginStatus" role="status" aria-live="polite"></div></form></section>
 <p class="lead" id="adminIntro" hidden>Upload paket skin NekOS. Paket valid akan langsung tersedia di Official Skin Store.</p>
@@ -167,12 +63,12 @@ footer{margin-top:42px;padding-top:18px;border-top:1px solid var(--border-soft);
 <button id="submit" type="submit">Validate &amp; Publish</button><div class="status" id="status" role="status" aria-live="polite"></div>
 </form>
 <div class="rules"><div class="rule"><b>Automatic validation</b>ZIP, manifest, struktur, file, dan aset</div><div class="rule"><b>Instant publishing</b>Langsung masuk katalog jika valid</div><div class="rule"><b>Any Skin ID</b>ID dari manifest tidak dibatasi pola tertentu</div><div class="rule"><b>Private packages</b>ZIP tidak memiliki URL publik</div></div></section>
-<section class="list">
-<div class="catalog-top"><div><span class="eyebrow">LIBRARY OVERVIEW</span><h2>Published skins</h2><p>Kelola koleksi skin NekOS dalam satu tempat.</p></div><span class="count" id="count">Loading…</span></div>
+<section class="list" id="catalog">
+<div class="catalog-head"><h2>Kelola Skin</h2><span class="count" id="count">Loading…</span></div>
 <div class="catalog-tools"><div class="search-wrap"><span>⌕</span><input id="skinSearch" type="search" placeholder="Cari nama skin atau author…" aria-label="Cari skin"></div><div class="filters" id="categoryFilters" role="group" aria-label="Filter kategori"><button type="button" class="filter active" data-category="All">All <i id="filterAll">0</i></button><button type="button" class="filter" data-category="Free">Free <i id="filterFree">0</i></button><button type="button" class="filter" data-category="Basic">Basic <i id="filterBasic">0</i></button><button type="button" class="filter" data-category="Premium">Premium <i id="filterPremium">0</i></button><button type="button" class="filter" data-category="Exclusive">Exclusive <i id="filterExclusive">0</i></button></div></div>
-<div class="skins" id="skins"></div><p class="empty-state" id="emptyState" hidden>Tidak ada skin yang cocok dengan pencarian ini.</p>
+<div class="table-wrap"><table class="skin-table"><thead><tr><th>Preview</th><th>Nama Skin</th><th>Kategori</th><th>Harga</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="skins"></tbody></table></div><p class="empty-state" id="emptyState" hidden>Tidak ada skin yang cocok dengan pencarian ini.</p>
 </section>
-<footer>NEKOS OFFICIAL SKIN STORE · COMMUNITY CONTRIBUTIONS</footer></main>
+<footer>NEKOS OFFICIAL SKIN STORE · COMMUNITY CONTRIBUTIONS</footer></main></div>
 
 <script>
 const API="https://vizmufbfaghqucsoukne.supabase.co/functions/v1/skin-manager";
@@ -244,7 +140,7 @@ let catalogItems=[],activeCategory="All";
 function renderSkins(){
  const query=($("skinSearch")?.value||"").trim().toLowerCase();
  const visible=catalogItems.filter(s=>(activeCategory==="All"||(s.category||"Basic")===activeCategory)&&(!query||String(s.name||"").toLowerCase().includes(query)||String(s.author||"").toLowerCase().includes(query)));
- $("skins").innerHTML=visible.map(s=>'<article class="skin"><div class="skin-art"><img src="'+escapeHtml(s.preview_url)+'" alt=""><span class="category-tag tag-'+escapeHtml((s.category||"Basic").toLowerCase())+'">'+escapeHtml(s.category||"Basic")+'</span></div><div class="skin-info"><b>'+escapeHtml(s.name)+'<span class="price">'+(Number(s.price_amount)===0?"FREE":escapeHtml(s.price_amount+" "+s.currency))+'</span></b><small>BY '+escapeHtml(s.author||"COMMUNITY")+'</small></div>'+(session?.access_token?'<div class="skin-actions"><input class="price-input" type="number" min="0" max="1000000000" step="1" value="'+Number(s.price_amount)+'" aria-label="Harga skin"><button class="save-price" type="button" data-action="price" data-id="'+escapeHtml(s.id)+'">Simpan harga</button><button class="preview-change" type="button" data-action="preview" data-id="'+escapeHtml(s.id)+'">Ganti Preview</button><input class="preview-file" type="file" accept="image/png,image/webp" data-id="'+escapeHtml(s.id)+'" aria-label="Pilih gambar preview"><button class="delete-skin" type="button" data-action="delete" data-id="'+escapeHtml(s.id)+'">Hapus</button></div>':'')+'</article>').join("");
+ $("skins").innerHTML=visible.map(s=>'<tr><td><img class="skin-thumb" src="'+escapeHtml(s.preview_url)+'" alt=""></td><td><span class="skin-name">'+escapeHtml(s.name)+'</span><span class="skin-author">by '+escapeHtml(s.author||"Community")+'</span></td><td><span class="category-tag tag-'+escapeHtml((s.category||"Basic").toLowerCase())+'">'+escapeHtml(s.category||"Basic")+'</span></td><td class="price-cell">'+(Number(s.price_amount)===0?"Gratis":escapeHtml(s.price_amount+" "+s.currency))+'</td><td><span class="status-tag">Aktif</span></td><td>'+(session?.access_token?'<div class="skin-actions"><input class="price-input" type="number" min="0" max="1000000000" step="1" value="'+Number(s.price_amount)+'" aria-label="Harga skin"><button class="save-price" type="button" data-action="price" data-id="'+escapeHtml(s.id)+'">Ubah Harga</button><button class="preview-change" type="button" data-action="preview" data-id="'+escapeHtml(s.id)+'">Ganti Preview</button><input class="preview-file" type="file" accept="image/png,image/webp" data-id="'+escapeHtml(s.id)+'" aria-label="Pilih gambar preview"><button class="delete-skin" type="button" data-action="delete" data-id="'+escapeHtml(s.id)+'">Hapus</button></div>':'—')+'</td></tr>').join("");
  $("emptyState").hidden=visible.length!==0;
 }
 function updateCategoryCounts(){
