@@ -162,7 +162,7 @@ $("skins").addEventListener("click",async event=>{
  const button=event.target.closest("button[data-action]");
  if(!button)return;
  if(!session?.access_token)return show("Session admin tidak aktif. Silakan login kembali.","err");
- const id=button.dataset.id,action=button.dataset.action,card=button.closest(".skin"),priceInput=card?.querySelector(".price-input");
+ const id=button.dataset.id,action=button.dataset.action,card=button.closest("tr"),priceInput=card?.querySelector(".price-input");
  if(action==="preview"){card?.querySelector(".preview-file")?.click();return;}
  if(action==="delete"&&!confirm("Arsipkan skin ini? Skin akan hilang dari katalog publik, tetapi riwayat pembelian tetap disimpan."))return;
  button.disabled=true;
@@ -184,7 +184,7 @@ $("skins").addEventListener("change",async event=>{
  if(!session?.access_token){show("Session admin tidak aktif. Silakan login kembali.","err");return;}
  const file=input.files[0],id=input.dataset.id;
  if(file.size>3*1024*1024||!["image/png","image/webp"].includes(file.type)){show("Pilih PNG atau WebP maksimal 3 MB.","err");input.value="";return;}
- const card=input.closest(".skin"),button=card?.querySelector('[data-action="preview"]');
+ const card=input.closest("tr"),button=card?.querySelector('[data-action="preview"]');
  if(button)button.disabled=true;
  const body=new FormData();body.append("thumbnail",file);
  try{
