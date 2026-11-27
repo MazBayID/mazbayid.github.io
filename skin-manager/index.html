@@ -164,7 +164,7 @@ $("skins").addEventListener("click",async event=>{
  if(!session?.access_token)return show("Session admin tidak aktif. Silakan login kembali.","err");
  const id=button.dataset.id,action=button.dataset.action,card=button.closest("tr"),priceInput=card?.querySelector(".price-input");
  if(action==="preview"){card?.querySelector(".preview-file")?.click();return;}
- if(action==="delete"&&!confirm("Arsipkan skin ini? Skin akan hilang dari katalog publik, tetapi riwayat pembelian tetap disimpan."))return;
+ if(action==="delete"&&!confirm("Hapus skin ini secara permanen? File preview, paket ZIP, dan data transaksi pengujian terkait juga akan dihapus. Tindakan ini tidak dapat dibatalkan."))return;
  button.disabled=true;
  try{
   if(action==="price"&&(!priceInput||!Number.isSafeInteger(Number(priceInput.value))||Number(priceInput.value)<0||Number(priceInput.value)>1000000000))throw new Error("Harga harus berupa angka bulat antara 0 dan 1.000.000.000 IDR.");
@@ -173,7 +173,7 @@ $("skins").addEventListener("click",async event=>{
    :{method:"DELETE",headers:authHeaders(session.access_token)};
   const res=await fetch(API+"?id="+encodeURIComponent(id),options),data=await res.json().catch(()=>({}));
   if(!res.ok)throw new Error(data.details||data.error||"Operasi gagal ("+res.status+")");
-  show(action==="price"?"Harga berhasil diperbarui.":"Skin berhasil dihapus dari katalog.","ok");
+  show(action==="price"?"Harga berhasil diperbarui.":"Skin dan file terkait berhasil dihapus permanen.","ok");
   await loadSkins();
  }catch(error){show(error.message||"Operasi gagal.","err");button.disabled=false;}
 });
