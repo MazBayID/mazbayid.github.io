@@ -373,21 +373,10 @@ Deno.serve(async (req: Request) => {
         if (removeError) return fail("skin_storage_cleanup_failed",503,{bucket:target.bucket,path:target.path,message:removeError.message});
       }
 
-      const { data: orders, error: orderLookupError } = await db.schema("private").from("skin_orders")
-        .select("id").eq("skin_id",skinId);
-      if (orderLookupError) return fail("skin_order_lookup_failed",503,orderLookupError.message);
-      const orderIds = (orders ?? []).map((order: {id:string}) => order.id);
-
-      const { error: entitlementError } = await db.schema("private").from("skin_entitlements").delete().eq("skin_id",skinId);
-      if (entitlementError) return fail("skin_entitlement_cleanup_failed",500,entitlementError.message);
-      if (orderIds.length) {
-        const { error: paymentError } = await db.schema("private").from("skin_payments").delete().in("order_id",orderIds);
-        if (paymentError) return fail("skin_payment_cleanup_failed",500,paymentError.message);
-        const { error: orderDeleteError } = await db.schema("private").from("skin_orders").delete().in("id",orderIds);
-        if (orderDeleteError) return fail("skin_order_cleanup_failed",500,orderDeleteError.message);
+      const { data: deletion, error: deletionError } = await db.rpc("skin_manager_delete_skin",{p_skin_id:skinId});
+      if (deletionError || !deletion || Number(deletion.skin_deleted)!==1) {
+        return fail("skin_record_delete_failed",500,deletionError?.message ?? "Skin record was not deleted");
       }
-      const { data: deleted, error: skinDeleteError } = await db.from("skins").delete().eq("id",skinId).select("id").maybeSingle();
-      if (skinDeleteError || !deleted) return fail("skin_record_delete_failed",500,skinDeleteError?.message ?? "Skin record was not deleted");
       return response({success:true,deleted_skin_id:skinId,deleted_storage_objects:storageTargets.length,deleted_orders:orderIds.length,message:"Skin, preview, package ZIP, dan seluruh data transaksi/pembelian pengujian terkait berhasil dihapus permanen."});
     }
 
