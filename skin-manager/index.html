@@ -16,6 +16,120 @@ input[type=file],input[type=number],select{width:100%;border:1px solid #353b52;b
 .rules{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}.rule{border:1px solid var(--line);background:#11141f;border-radius:12px;padding:11px;font-size:12px;color:var(--muted)}.rule b{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
 .list{margin-top:26px}.list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.list h2{font-size:17px;margin:0}.count{font-size:12px;color:var(--muted)}.skins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.skin{border:1px solid var(--line);background:#151927;border-radius:14px;padding:10px;min-width:0}.skin img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:9px;background:#0c0f18}.skin b{display:block;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.skin small{color:var(--muted)}.price{float:right;color:var(--cyan)}.skin-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px;margin-top:10px;align-items:center}.skin-actions input.price-input{min-width:0;width:100%;height:36px;padding:7px 9px;border:1px solid #353b52;background:#10131e;color:var(--text);border-radius:8px;font:inherit;font-size:13px}.skin-actions button{width:100%;min-width:0;min-height:36px;margin:0;padding:8px 5px;font-size:12px;line-height:1.25;border-radius:8px;white-space:normal}.skin-actions .delete-skin{background:#3a1d2a;color:#fda4af;border:1px solid #713044}.skin-actions .save-price{background:#25213b;color:#ddd6fe;border:1px solid #59418c}.skin-actions .preview-change{background:#172b35;color:#a5f3fc;border:1px solid #285365}.preview-file{display:none}footer{text-align:center;color:#727b95;font-size:12px;margin-top:30px}
 @media(max-width:520px){main{margin-top:24px}.panel{padding:17px}.row{grid-template-columns:1fr 105px}.rules{grid-template-columns:1fr 1fr}.skins{grid-template-columns:1fr 1fr}}
+
+/* Refined NekOS admin visual system */
+:root{
+ color-scheme:dark;--bg:#090b13;--panel:#111522;--line:rgba(166,178,220,.14);
+ --text:#f4f5ff;--muted:#929bb5;--accent:#b7a4ff;--cyan:#8be9f2;
+ --good:#86efc2;--bad:#fda4af;
+}
+body{
+ background:
+  radial-gradient(ellipse at 12% -8%,rgba(117,83,194,.23),transparent 36%),
+  radial-gradient(ellipse at 92% 12%,rgba(46,140,164,.12),transparent 30%),
+  linear-gradient(180deg,#0b0d17 0%,#090b13 65%);
+ letter-spacing:.005em;
+}
+main{width:min(920px,calc(100% - 36px));margin:42px auto 76px}
+.brand{
+ min-height:64px;padding:10px 14px;margin-bottom:42px;
+ border:1px solid var(--line);border-radius:18px;
+ background:rgba(17,21,34,.72);backdrop-filter:blur(16px);
+ box-shadow:0 12px 40px #0003;
+}
+.mark{
+ width:42px;height:42px;border-radius:13px;
+ border:1px solid rgba(183,164,255,.38);
+ background:linear-gradient(145deg,#30264d,#182b3c);
+ box-shadow:inset 0 1px #ffffff18,0 6px 18px #0004;
+}
+.brand strong{font-size:13px;letter-spacing:.12em}
+.brand span{font-size:11px;letter-spacing:.04em}
+h1{font-size:clamp(34px,7vw,52px);letter-spacing:-.055em;margin-bottom:12px}
+.lead{max-width:650px;color:#a6aec5;font-size:14px;margin-bottom:30px}
+#adminIntro{margin-top:26px;margin-bottom:18px}
+.panel{
+ padding:clamp(20px,4vw,30px);border-radius:22px;
+ border:1px solid rgba(170,181,222,.16);
+ background:linear-gradient(145deg,rgba(24,29,46,.96),rgba(15,19,31,.97));
+ box-shadow:0 22px 70px #0005,inset 0 1px #ffffff08;
+}
+.panel h2,.list h2{font-size:18px;letter-spacing:-.02em}
+.hint{font-size:13px;line-height:1.7;color:#9ba5c0;margin:5px 0 24px}
+.field{margin:22px 0}
+.field label{font-size:13px;letter-spacing:.015em;margin-bottom:9px;color:#e5e8f8}
+.field small{font-size:11px;line-height:1.6;color:#818ba7;margin-top:8px}
+input[type=file],input[type=number],input[type=email],input[type=password],select{
+ min-height:46px;padding:11px 14px;border-radius:12px;
+ border:1px solid #343b53;background:#0c101b;color:#f1f3ff;
+ transition:border-color .18s,box-shadow .18s,background .18s;
+}
+input[type=file]{padding:9px 11px}
+input:focus,select:focus{
+ outline:none;border-color:#9d87f5;
+ box-shadow:0 0 0 3px rgba(157,135,245,.14);
+ background:#101425;
+}
+.row{grid-template-columns:minmax(0,1fr) 140px;gap:14px}
+button{
+ min-height:48px;border-radius:13px;padding:13px 20px;
+ background:linear-gradient(105deg,#b7a4ff 0%,#91dce9 100%);
+ box-shadow:0 8px 24px rgba(139,116,218,.16);
+ transition:transform .18s,filter .18s,box-shadow .18s;
+}
+button:not(:disabled):hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 11px 28px #806bd833}
+button:not(:disabled):active{transform:translateY(0)}
+.logout{min-height:36px;border-radius:10px;box-shadow:none}
+.preview{padding:12px;border-radius:14px;background:#0c101b}
+.preview img{border-radius:10px}
+.status{padding:13px 15px;border-radius:13px;line-height:1.6}
+.rules{gap:12px;margin-top:24px}
+.rule{
+ min-height:76px;padding:14px;border-radius:14px;
+ background:rgba(9,13,23,.62);border-color:rgba(158,171,214,.13);
+ line-height:1.55;
+}
+.rule b{font-size:12px;letter-spacing:.015em}
+.list{margin-top:38px}
+.list-head{margin-bottom:16px}
+.count{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#111522}
+.skins{gap:16px}
+.skin{
+ padding:12px;border-radius:17px;
+ background:linear-gradient(155deg,#171c2c,#101522);
+ border-color:rgba(158,171,214,.14);
+ box-shadow:0 10px 30px #0002;
+ transition:transform .2s,border-color .2s,box-shadow .2s;
+}
+.skin:hover{transform:translateY(-3px);border-color:rgba(183,164,255,.38);box-shadow:0 16px 36px #0004}
+.skin img{aspect-ratio:16/10;border-radius:11px;background:#090c14}
+.skin b{font-size:13px;margin-top:11px;letter-spacing:.005em}
+.skin small{display:block;font-size:11px;margin-top:5px;color:#9aa4bf}
+.price{font-size:11px;color:var(--cyan);font-weight:700}
+.skin-actions{gap:8px;margin-top:13px}
+.skin-actions input.price-input{height:38px;border-radius:9px}
+.skin-actions button{min-height:38px;border-radius:9px;box-shadow:none}
+.skin-actions .delete-skin{background:#321c2a;color:#ffb0bd;border-color:#673348}
+.skin-actions .save-price{background:#292341;color:#e0d7ff;border-color:#55477f}
+.skin-actions .preview-change{background:#172b35;color:#a5f3fc;border-color:#285365}
+footer{margin-top:42px;color:#68728d;letter-spacing:.08em;font-size:10px}
+@media(min-width:700px){
+ .skins{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .brand{margin-bottom:48px}
+}
+@media(max-width:520px){
+ main{width:calc(100% - 28px);margin:22px auto 52px}
+ .brand{margin-bottom:34px;padding:9px 11px}
+ .panel{padding:19px;border-radius:18px}
+ .row{grid-template-columns:minmax(0,1fr) 112px;gap:9px}
+ .rules{grid-template-columns:1fr 1fr;gap:9px}
+ .rule{padding:11px;min-height:72px}
+ .skins{gap:10px}
+ .skin{padding:9px;border-radius:14px}
+ .skin-actions{gap:6px}
+ .skin-actions button{font-size:11px;padding:7px 4px}
+}
+
 </style></head>
 <body><main>
 <header class="brand"><div class="mark">✦</div><div><strong>NEKOS / SKIN MANAGER</strong><span>Admin publishing console</span></div><button id="logout" class="logout" type="button" hidden>Sign out</button></header>
