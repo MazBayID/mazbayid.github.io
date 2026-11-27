@@ -278,10 +278,12 @@ async function requireAdmin(req: Request) {
   return { ok: true as const, user };
 }
 
-async function catalog() {
-  const { data, error } = await db.from("skins")
-    .select("id,skin_key,name,author,description,schema_version,min_nekos_version,preview_path,package_sha256,package_size_bytes,price_amount,currency,category,created_at")
-    .eq("status", "published").order("created_at", { ascending: false }).limit(100);
+async function catalog(includeArchived = false) {
+  let query = db.from("skins")
+    .select("id,skin_key,name,author,description,schema_version,min_nekos_version,preview_path,package_sha256,package_size_bytes,price_amount,currency,category,status,created_at")
+    .order("created_at", { ascending: false }).limit(100);
+  if (!includeArchived) query = query.eq("status", "published");
+  const { data, error } = await query;
   if (error) throw new Error("Catalog query failed");
   return (data ?? []).map((skin: Record<string, unknown>) => ({
     ...skin,
@@ -301,7 +303,8 @@ Deno.serve(async (req: Request) => {
     if (new URL(req.url).searchParams.get("admin") === "1") {
       const auth = await requireAdmin(req);
       if (!auth.ok) return fail(auth.error, auth.status);
-      return response({ authorized: true, email: auth.user.email });
+      try { return response({ authorized: true, email: auth.user.email, skins: await catalog(true) }); }
+      catch { return fail("admin_catalog_unavailable", 503); }
     }
     try { return response({ skins: await catalog() }); }
     catch { return fail("catalog_unavailable", 503); }
