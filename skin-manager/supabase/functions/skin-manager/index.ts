@@ -340,8 +340,14 @@ Deno.serve(async (req: Request) => {
       return fail("preview_update_failed", 500);
     }
     const { error: cleanupError } = await db.storage.from(PREVIEWS).remove([String(current.preview_path)]);
-    if (cleanupError) console.error("skin_manager_old_preview_cleanup_failed",cleanupError.message);
-    return response({success:true,skin:updated,preview_url:db.storage.from(PREVIEWS).getPublicUrl(nextPath).data.publicUrl,message:"Preview berhasil diganti."});
+    if (cleanupError) {
+      const { error: rollbackError } = await db.from("skins").update({preview_path:current.preview_path}).eq("id",skinId).eq("preview_path",nextPath);
+      const { error: newFileCleanupError } = await db.storage.from(PREVIEWS).remove([nextPath]);
+      console.error("skin_manager_old_preview_cleanup_failed",cleanupError.message);
+      if (rollbackError || newFileCleanupError) return fail("preview_cleanup_and_rollback_failed",500,{old_preview_cleanup:cleanupError.message,rollback:rollbackError?.message ?? null,new_preview_cleanup:newFileCleanupError?.message ?? null});
+      return fail("old_preview_delete_failed",503,"Preview lama gagal dihapus. Perubahan dibatalkan dan preview sebelumnya dipulihkan.");
+    }
+    return response({success:true,skin:updated,preview_url:db.storage.from(PREVIEWS).getPublicUrl(nextPath).data.publicUrl,message:"Preview berhasil diganti dan file lama telah dihapus."});
   }
   if (req.method === "PATCH" || req.method === "DELETE") {
     const auth = await requireAdmin(req);
@@ -349,17 +355,40 @@ Deno.serve(async (req: Request) => {
     const skinId = new URL(req.url).searchParams.get("id") ?? "";
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(skinId)) return fail("invalid_skin_id", 400);
     const { data: current, error: findError } = await db.from("skins")
-      .select("id,status,price_amount,currency,package_bucket,package_path")
+      .select("id,status,price_amount,currency,package_bucket,package_path,preview_path")
       .eq("id", skinId).maybeSingle();
     if (findError) return fail("skin_lookup_failed", 503);
-    if (!current || current.status !== "published") return fail("skin_not_found", 404);
+    if (!current || !["published","archived"].includes(String(current.status))) return fail("skin_not_found", 404);
 
     if (req.method === "DELETE") {
-      const { data: archived, error } = await db.from("skins")
-        .update({ status: "archived" }).eq("id", skinId).eq("status", "published")
-        .select("id,status").maybeSingle();
-      if (error || !archived) return fail("skin_archive_failed", 500);
-      return response({ success: true, skin: archived, message: "Skin diarsipkan dan dihapus dari katalog publik." });
+      const packageBucket = String(current.package_bucket);
+      if (![FREE, PREMIUM].includes(packageBucket)) return fail("invalid_package_bucket",500);
+      const storageTargets = [
+        { bucket: PREVIEWS, path: String(current.preview_path) },
+        { bucket: packageBucket, path: String(current.package_path) },
+      ];
+      for (const target of storageTargets) {
+        if (!target.path || target.path === "undefined") return fail("invalid_storage_path",500);
+        const { error: removeError } = await db.storage.from(target.bucket).remove([target.path]);
+        if (removeError) return fail("skin_storage_cleanup_failed",503,{bucket:target.bucket,path:target.path,message:removeError.message});
+      }
+
+      const { data: orders, error: orderLookupError } = await db.schema("private").from("skin_orders")
+        .select("id").eq("skin_id",skinId);
+      if (orderLookupError) return fail("skin_order_lookup_failed",503,orderLookupError.message);
+      const orderIds = (orders ?? []).map((order: {id:string}) => order.id);
+
+      const { error: entitlementError } = await db.schema("private").from("skin_entitlements").delete().eq("skin_id",skinId);
+      if (entitlementError) return fail("skin_entitlement_cleanup_failed",500,entitlementError.message);
+      if (orderIds.length) {
+        const { error: paymentError } = await db.schema("private").from("skin_payments").delete().in("order_id",orderIds);
+        if (paymentError) return fail("skin_payment_cleanup_failed",500,paymentError.message);
+        const { error: orderDeleteError } = await db.schema("private").from("skin_orders").delete().in("id",orderIds);
+        if (orderDeleteError) return fail("skin_order_cleanup_failed",500,orderDeleteError.message);
+      }
+      const { data: deleted, error: skinDeleteError } = await db.from("skins").delete().eq("id",skinId).select("id").maybeSingle();
+      if (skinDeleteError || !deleted) return fail("skin_record_delete_failed",500,skinDeleteError?.message ?? "Skin record was not deleted");
+      return response({success:true,deleted_skin_id:skinId,deleted_storage_objects:storageTargets.length,deleted_orders:orderIds.length,message:"Skin, preview, package ZIP, dan seluruh data transaksi/pembelian pengujian terkait berhasil dihapus permanen."});
     }
 
     let body: Record<string, unknown>;
