@@ -377,7 +377,7 @@ Deno.serve(async (req: Request) => {
       if (deletionError || !deletion || Number(deletion.skin_deleted)!==1) {
         return fail("skin_record_delete_failed",500,deletionError?.message ?? "Skin record was not deleted");
       }
-      return response({success:true,deleted_skin_id:skinId,deleted_storage_objects:storageTargets.length,deleted_orders:orderIds.length,message:"Skin, preview, package ZIP, dan seluruh data transaksi/pembelian pengujian terkait berhasil dihapus permanen."});
+      return response({success:true,deleted_skin_id:skinId,deleted_storage_objects:storageTargets.length,deleted_orders:Number(deletion.orders_deleted ?? 0),message:"Skin, preview, package ZIP, dan seluruh data transaksi/pembelian pengujian terkait berhasil dihapus permanen."});
     }
 
     let body: Record<string, unknown>;
