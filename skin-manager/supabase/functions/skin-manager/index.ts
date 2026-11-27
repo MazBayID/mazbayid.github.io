@@ -280,7 +280,7 @@ async function requireAdmin(req: Request) {
 
 async function catalog() {
   const { data, error } = await db.from("skins")
-    .select("id,skin_key,name,author,description,schema_version,min_nekos_version,preview_path,package_sha256,package_size_bytes,price_amount,currency,created_at")
+    .select("id,skin_key,name,author,description,schema_version,min_nekos_version,preview_path,package_sha256,package_size_bytes,price_amount,currency,category,created_at")
     .eq("status", "published").order("created_at", { ascending: false }).limit(100);
   if (error) throw new Error("Catalog query failed");
   return (data ?? []).map((skin: Record<string, unknown>) => ({
@@ -400,6 +400,8 @@ Deno.serve(async (req: Request) => {
     const thumbnail = form.get("thumbnail");
     const priceRaw = String(form.get("price") ?? "");
     const currency = String(form.get("currency") ?? "IDR").toUpperCase();
+    const category = String(form.get("category") ?? "Basic");
+    if (!["Free", "Basic", "Premium", "Exclusive"].includes(category)) return fail("invalid_category", 400);
     if (!(zip instanceof File) || !(thumbnail instanceof File)) return fail("package_and_thumbnail_required", 400);
     if (!zip.name.toLowerCase().endsWith(".zip") || zip.size < 22 || zip.size > MAX_ZIP) return fail("invalid_zip_size_or_name", 400);
     if (thumbnail.size < 16 || thumbnail.size > MAX_THUMB) return fail("invalid_thumbnail_size", 400);
@@ -453,9 +455,10 @@ Deno.serve(async (req: Request) => {
       package_size_bytes: zipBytes.length,
       price_amount: price,
       currency,
+      category,
       status: "published",
       published_at: new Date().toISOString(),
-    }).select("id,skin_key,name,author,description,price_amount,currency").single();
+    }).select("id,skin_key,name,author,description,price_amount,currency,category").single();
     if (insertError) {
       await db.storage.from(packageBucket).remove([packagePath]);
       await db.storage.from(PREVIEWS).remove([previewPath]);
