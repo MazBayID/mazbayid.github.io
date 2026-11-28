@@ -48,7 +48,7 @@ The official `default` template ID is automatically rewritten to a unique `nekos
 - `GET /functions/v1/skin-manager` — published catalogue for the manager page
 - `GET /functions/v1/skin-manager?admin=1` — admin permission check (Bearer token required)
 - `POST /functions/v1/skin-manager` — admin-only multipart upload: `package`, `thumbnail`, `category`, `price`, `currency`
-- `PATCH /functions/v1/skin-manager?id=<skin-uuid>` — admin-only JSON price update: `{ "price_amount": 15000 }`
+- `PATCH /functions/v1/skin-manager?id=<skin-uuid>` — admin-only JSON price update: `{ "price_amount": 15000, "price_usd": 0.99 }`. IDR must be a whole number; USD is stored separately with two decimal places. Free skins use `0` for both prices.
 - `DELETE /functions/v1/skin-manager?id=<skin-uuid>` — admin-only soft delete (archives the skin)
 
 The browser page only talks to this Edge Function; privileged database and Storage credentials are never shipped to the browser.
